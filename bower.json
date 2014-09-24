@@ -1,0 +1,15 @@
+{
+  "name": "tagpro",
+  "private": true,
+  "dependencies": {
+    "amdainty": "0.1.0",
+    "cursors": "0.4.0",
+    "fastclick": "1.0.3",
+    "live": "0.5.1",
+    "pixi": "1.6.1",
+    "react": "0.11.2",
+    "react-router": "517e460130da7a26798b05913677db41d069e103",
+    "superagent": "0.18.2",
+    "underscore": "1.7.0"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "options": {
+    "basePath": "client",
+    "concatAmd": true,
+    "names": {
+      "backbone": "bower_components/backbone/backbone.js",
+      "cursors": "bower_components/cursors/cursors.js",
+      "fastclick": "bower_components/fastclick/lib/fastclick.js",
+      "herit": "bower_components/herit/herit.js",
+      "live": "bower_components/live/live.js",
+      "pixi": "bower_components/pixi/bin/pixi.js",
+      "react": "bower_components/react/react-with-addons.js",
+      "react-router": "bower_components/react-router/dist/react-router.js",
+      "superagent": "bower_components/superagent/superagent.js",
+      "underscore": "bower_components/underscore/underscore.js"
+    },
+    "processors.es6.options.compatFix": true
+  },
+  "targets": {
+    "client/index.es6": "public",
+    "styles/index.scss": "public"
+  }
+}
