@@ -8,7 +8,7 @@
     "live": "0.5.1",
     "pixi": "1.6.1",
     "react": "0.11.2",
-    "react-router": "517e460130da7a26798b05913677db41d069e103",
+    "react-router": "0.7.0",
     "superagent": "0.18.2",
     "underscore": "1.7.0"
   }
