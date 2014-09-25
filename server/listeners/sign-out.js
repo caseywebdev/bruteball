@@ -1,9 +1,6 @@
-var app = require('..');
-var broadcastUsers = require('../interactions/broadcast-users');
+var signSocketOut = require('../interactions/sign-socket-out');
 
-module.exports = function (socket, key, cb) {
-  socket.api = null;
-  socket.user = app.ws.ANONYMOUS_USER;
-  broadcastUsers();
+module.exports = function (socket, data, cb) {
+  signSocketOut(socket);
   cb(null);
 };

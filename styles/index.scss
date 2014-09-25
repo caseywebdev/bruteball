@@ -1,3 +1,10 @@
 body {
   margin: 0;
 }
+
+.ball {
+  background-size: contain;
+  border-radius: 50%;
+  height: 48px;
+  width: 48px;
+}

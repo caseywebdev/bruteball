@@ -21,14 +21,19 @@ export default React.createClass({
     this.update({users: {$set: users}});
   },
 
-  renderUser: function (user, i) {
-    return <div key={i}>{user.display_name}</div>;
+  renderUser: function (user) {
+    return (
+      <div
+        key={user.id}
+        className='ball'
+        style={{backgroundImage: "url('" + user.picture_url + "')"}}
+      />
+    );
   },
 
   render: function () {
     return (
       <div>
-        Users:
         {_.map(this.state.users, this.renderUser)}
       </div>
     );

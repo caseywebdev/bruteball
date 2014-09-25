@@ -1,5 +1,6 @@
 /** @jsx React.DOM */
 
+import _ from 'underscore';
 import Cursors from 'cursors';
 import React from 'react';
 import store from 'store';
@@ -9,48 +10,58 @@ export default React.createClass({
 
   getInitialState: function () {
     return {
-      key: store.get('key')
+      isLoading: false
     };
   },
 
   signOut: function () {
-    this.state.live.fetchAuthKey = null;
     store.remove('key');
-    this.update({key: {$set: null}});
+    this.update({
+      isLoading: {$set: true},
+      key: {$set: null}
+    });
     this.state.live.send('sign-out', null, this.handleSignOut);
   },
 
   handleSignOut: function (er) {
-    if (!er) this.update({user: {$set: null}});
+    var deltas = {isLoading: {$set: false}};
+    if (!er) deltas.user = {$set: null};
+    this.update(deltas);
   },
 
   componentDidMount: function () {
-    this.state.live.on('live:state:connected', this.handleConnected);
-    this.state.live.connect();
-    if (this.state.key) this.signIn();
+    this.state.live.on({
+      'live:state:connected': this.handleConnected,
+      'live:state:disconnected': this.handleDisconnected
+    }).connect();
   },
 
   componentWillUnmount: function () {
-    this.state.live.off('live:state:connected', this.handleConnected);
+    this.state.live.off({
+      'live:state:connected': this.handleConnected,
+      'live:state:disconnected': this.handleDisconnected
+    });
   },
 
-  handleConnected: function (__, user) {
-    this.update({user: {$set: user}});
+  handleConnected: function () {
+    this.signIn();
   },
 
-  fetchAuthKey: function (cb) {
-    cb(null, store.get('key'));
+  signIn: function (key) {
+    if (!key) key = store.get('key');
+    if (!key) return;
+    this.update({isLoading: {$set: true}});
+    this.state.live.send('auth', key, _.partial(this.handleAuth, key));
   },
 
-  signIn: function () {
-    this.state.live.send('auth', this.state.key, this.handleAuth);
+  handleAuth: function (key, er, user) {
+    if (er) return this.signOut();
+    store.set('key', key);
+    this.update({isLoading: {$set: false}, user: {$set: user}});
   },
 
-  handleAuth: function (er, user) {
-    if (er) return window.alert(er.toString());
-    this.state.live.fetchAuthKey = this.fetchAuthKey;
-    store.set('key', this.state.key);
-    this.update({user: {$set: user}});
+  handleSignInClick: function () {
+    this.signIn(this.refs.key.getDOMNode().value);
   },
 
   handleChange: function (ev) {
@@ -71,10 +82,9 @@ export default React.createClass({
       <div>
         <input
           placeholder='Your OrgSync API Key'
-          value={this.state.key}
-          onChange={this.handleChange}
+          ref='key'
         />
-        <button type='button' onClick={this.signIn}>Sign In</button>
+        <button type='button' onClick={this.handleSignInClick}>Sign In</button>
       </div>
     );
   },
@@ -83,7 +93,13 @@ export default React.createClass({
     return (
       <div>
         <h1>TagPro</h1>
-        {this.state.user ? this.renderSignedIn() : this.renderSignedOut()}
+        {
+          this.state.isLoading ?
+          'Loading...' :
+          this.state.user ?
+          this.renderSignedIn() :
+          this.renderSignedOut()
+        }
       </div>
     );
   }

@@ -3,13 +3,9 @@ var broadcastUsers = require('../interactions/broadcast-users');
 var app = require('..');
 var fs = require('fs');
 var path = require('path');
+var signSocketOut = require('../interactions/sign-socket-out');
 var ws = require('ws');
 var wss = exports.server = new ws.Server({server: app.express.server});
-
-var ANONYMOUS_USER = exports.ANONYMOUS_USER = {
-  id: 1,
-  display_name: 'Anonymous'
-};
 
 var listeners = _.reduce(
   fs.readdirSync(__dirname + '/../listeners'),
@@ -23,38 +19,38 @@ var listeners = _.reduce(
   {}
 );
 
-wss.on('connection', function (client) {
-  client.callbacks = [];
-  client.user = ANONYMOUS_USER;
+wss.on('connection', function (socket) {
+  socket.callbacks = [];
 
-  var _send = _.bind(client.send, client);
-  client.send = function (name, data, cb) {
-    if (!name) return;
+  socket._send = socket.send;
+  socket.send = function (name, data, cb) {
+    if (!name || socket.readyState !== ws.OPEN) return;
     var id = _.uniqueId();
     var req = {id: id, name: name, data: data};
-    client.callbacks[id] = cb;
-    _send(JSON.stringify(req));
+    socket.callbacks[id] = cb;
+    socket._send(JSON.stringify(req));
   };
 
-  client.on('message', function (raw) {
-    try { raw = JSON.parse(raw); } catch (er) { return client.close(); }
+  socket.on('message', function (raw) {
+    try { raw = JSON.parse(raw); } catch (er) { return socket.close(); }
     var id = raw.id;
-    var cb = client.callbacks[id];
-    delete client.callbacks[id];
+    var cb = socket.callbacks[id];
+    delete socket.callbacks[id];
     var name = raw.name;
     var listener = listeners[name];
     if (listener) {
-      return listener(client, raw.data, function (er, data) {
+      return listener(socket, raw.data, function (er, data) {
+        if (socket.readyState !== ws.OPEN) return;
         var res = {id: id};
         if (er) res.error = er.toString();
         if (data) res.data = data;
-        _send(JSON.stringify(res));
+        socket._send(JSON.stringify(res));
       });
     }
     if (cb) cb(raw.error && new Error(raw.error), raw.data);
   });
 
-  client.on('close', broadcastUsers);
+  socket.on('close', _.partial(signSocketOut, socket));
 
   broadcastUsers();
 });
