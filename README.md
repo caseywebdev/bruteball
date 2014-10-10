@@ -1,3 +1,3 @@
-# [TagProSync](https://tagprosync.herokuapp.com)
+# [Bruteball](https://bruteball.herokuapp.com)
 
-Because we love TagPro and OrgSync.
+Because we love TagPro.
