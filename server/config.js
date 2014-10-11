@@ -9,7 +9,7 @@ module.exports = {
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
   },
 
-  zmq: 'tcp://127.0.0.1:4000',
+  zmq: process.env.ZMQ_URL || 'tcp://127.0.0.1:4000',
 
   game: {
     fps: 60,
