@@ -16,10 +16,7 @@ export default React.createClass({
   },
 
   render: function () {
-    var cursors = {
-      live: this.getCursor('live'),
-      user: this.getCursor('user')
-    };
+    var cursors = {live: this.getCursor('live'), user: this.getCursor('user')};
     return (
       <div>
         <Header cursors={cursors} />

@@ -1,23 +1,19 @@
 var _ = require('underscore');
-var broadcastUsers = require('../interactions/broadcast-users');
 var app = require('..');
-var fs = require('fs');
-var path = require('path');
+var Game = require('../entities/game');
+var getListeners = require('../interactions/get-listeners');
 var signSocketOut = require('../interactions/sign-socket-out');
+var User = require('../entities/user');
 var ws = require('ws');
 var wss = exports.server = new ws.Server({server: app.express.server});
 
-var listeners = _.reduce(
-  fs.readdirSync(__dirname + '/../listeners'),
-  function (listeners, file) {
-    if (file[0] !== '.') {
-      var basename = path.basename(file, path.extname(file));
-      listeners[basename] = require('../listeners/' + file);
-    }
-    return listeners;
-  },
-  {}
-);
+var listeners = getListeners(__dirname + '/../listeners/ws');
+
+wss.broadcast = function (name, data) {
+  _.invoke(wss.clients, 'send', name, data);
+};
+
+Game.create(User.all);
 
 wss.on('connection', function (socket) {
   socket.callbacks = [];
@@ -51,6 +47,4 @@ wss.on('connection', function (socket) {
   });
 
   socket.on('close', _.partial(signSocketOut, socket));
-
-  broadcastUsers();
 });

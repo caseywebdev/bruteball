@@ -44,19 +44,17 @@ export default React.createClass({
   },
 
   handleConnected: function () {
-    this.signIn();
+    this.setKey();
   },
 
-  signIn: function (key) {
-    if (!key) key = store.get('key');
-    if (!key) return;
+  setKey: function () {
     this.update({isLoading: {$set: true}});
-    this.state.live.send('auth', key, _.partial(this.handleAuth, key));
+    this.state.live.send('set-key', store.get('key'), this.handleSetKey);
   },
 
-  handleAuth: function (key, er, user) {
+  handleSetKey: function (er, user) {
     if (er) return this.signOut();
-    store.set('key', key);
+    store.set('key', user.key);
     this.update({isLoading: {$set: false}, user: {$set: user}});
   },
 
@@ -71,8 +69,7 @@ export default React.createClass({
   renderSignedIn: function () {
     return (
       <div>
-        You are {this.state.user.display_name}!
-        <button type='button' onClick={this.signOut}>Sign Out</button>
+        You are {this.state.user.name}!
       </div>
     );
   },
