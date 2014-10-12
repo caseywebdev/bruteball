@@ -9,6 +9,7 @@
       "fastclick": "bower_components/fastclick/lib/fastclick.js",
       "herit": "bower_components/herit/herit.js",
       "live": "bower_components/live/live.js",
+      "p2": "bower_components/p2js/build/p2.js",
       "react": "bower_components/react/react-with-addons.js",
       "react-router": "bower_components/react-router/dist/react-router.js",
       "superagent": "bower_components/superagent/superagent.js",

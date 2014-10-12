@@ -13,8 +13,6 @@ wss.broadcast = function (name, data) {
   _.invoke(wss.clients, 'send', name, data);
 };
 
-Game.create(User.all);
-
 wss.on('connection', function (socket) {
   socket.callbacks = [];
 
