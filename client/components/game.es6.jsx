@@ -39,7 +39,7 @@ export default React.createClass({
   },
 
   renderMap: function () {
-    _.each(this.state.users, this.renderUser);
+    _.each(this.state.game.u, this.renderUser);
     this.renderer.render(this.scene, this.camera);
     requestAnimationFrame(this.renderMap);
   },
@@ -81,10 +81,6 @@ export default React.createClass({
     moonGlow.scale.multiplyScalar(1.2);
     this.scene.add(moonGlow);
     return ball;
-  },
-
-  setUsers: function (users) {
-    this.update({users: {$set: users}});
   },
 
   render: function () {

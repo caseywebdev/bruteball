@@ -1,9 +1,9 @@
 var _ = require('underscore');
 var app = require('../..');
 var async = require('async');
-var broadcastUsers = require('../../interactions/broadcast-users');
 var createUser = require('../../interactions/create-user');
 var dump = require('../../interactions/dump');
+var Game = require('../../entities/game');
 var User = require('../../entities/user');
 
 var db = app.knex.db;
@@ -11,8 +11,8 @@ var db = app.knex.db;
 module.exports = function (socket, key, cb) {
   var done = function (er, user) {
     if (er) return cb(er);
-    socket.user = User.add(user);
-    broadcastUsers();
+    socket.user = user;
+    Game.addUser(app.games.test, user);
     cb(null, dump('users/show', user, {withPrivate: true}));
   };
   if (!key || !_.isString(key)) return createUser(done);

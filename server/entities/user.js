@@ -1,4 +1,3 @@
-var _ = require('underscore');
 var crypto = require('crypto');
 
 var KEY_DELIM = '-';
@@ -10,20 +9,6 @@ var GRAVATAR = function (md5) {
 };
 
 var DEFAULT_AVATAR_URL = GRAVATAR(DEFAULT_MD5);
-
-var all = exports.all = {};
-
-exports.add = function (user) {
-  return all[user.id] = _.extend(all[user.id] || {}, user);
-};
-
-exports.remove = function (user) {
-  delete all[user.id];
-};
-
-exports.findById = function (id) {
-  return _.find(all, {id: id});
-};
 
 exports.getKey = function (user) {
   return user.id + KEY_DELIM + user.rand;

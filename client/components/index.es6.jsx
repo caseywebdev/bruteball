@@ -2,7 +2,7 @@
 
 import _ from 'underscore';
 import Cursors from 'cursors';
-import Demo from 'components/demo';
+import Game from 'components/game';
 import React from 'react';
 
 var keys = {
@@ -17,17 +17,18 @@ export default React.createClass({
 
   getInitialState: function () {
     return {
-      users: []
+      game: {}
     };
   },
 
   componentDidMount: function () {
-    this.state.live.on('users', this.setUsers);
+    this.state.live.on('game', this.setGame);
     document.addEventListener('keydown', this.handleKey);
     document.addEventListener('keyup', this.handleKey);
   },
 
   componentWillUnmount: function () {
+    this.state.live.off('game', this.setGame);
     document.removeEventListener('keydown', this.handleKey);
     document.removeEventListener('keydown', this.handleKey);
   },
@@ -50,15 +51,15 @@ export default React.createClass({
     }, {x: 0, y: 0});
   },
 
-  setUsers: function (users) {
-    this.update({users: {$set: users}});
+  setGame: function (game) {
+    this.update({game: {$set: game}});
   },
 
   render: function () {
     return (
       <div>
-        <Demo cursors={{
-          users: this.getCursor('users'),
+        <Game cursors={{
+          game: this.getCursor('game'),
           user: this.getCursor('user')
         }} />
       </div>

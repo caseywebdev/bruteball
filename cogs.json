@@ -4,7 +4,6 @@
     "concatAmd": true,
     "names": {
       "backbone": "bower_components/backbone/backbone.js",
-      "cannon": "bower_components/cannon.js/build/cannon.js",
       "cursors": "bower_components/cursors/cursors.js",
       "fastclick": "bower_components/fastclick/lib/fastclick.js",
       "herit": "bower_components/herit/herit.js",
