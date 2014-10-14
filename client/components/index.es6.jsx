@@ -30,13 +30,14 @@ export default React.createClass({
   componentWillUnmount: function () {
     this.state.live.off('game', this.setGame);
     document.removeEventListener('keydown', this.handleKey);
-    document.removeEventListener('keydown', this.handleKey);
+    document.removeEventListener('keyup', this.handleKey);
   },
 
   handleKey: function (ev) {
     var key = keys[ev.which];
-    if (!key) return;
-    key.down = ev.type === 'keydown';
+    var state = ev.type === 'keydown';
+    if (!key || key.down === state) return;
+    key.down = state;
     this.sendAv();
     ev.preventDefault();
   },

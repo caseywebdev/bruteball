@@ -2,6 +2,10 @@ body {
   margin: 0;
 }
 
+canvas {
+  display: block;
+}
+
 .ball {
   background-size: contain;
   border-radius: 50%;

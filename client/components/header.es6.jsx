@@ -87,17 +87,6 @@ export default React.createClass({
   },
 
   render: function () {
-    return (
-      <div>
-        <h1>Bruteball</h1>
-        {
-          this.state.isLoading ?
-          'Loading...' :
-          this.state.user ?
-          this.renderSignedIn() :
-          this.renderSignedOut()
-        }
-      </div>
-    );
+    return null;
   }
 });
