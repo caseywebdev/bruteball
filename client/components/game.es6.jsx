@@ -21,22 +21,27 @@ export default React.createClass({
     document.body.appendChild(this.renderer.domElement);
 
     var light = new THREE.SpotLight(0xffffff, 1, 1000, Math.PI / 2, 1);
-    light.target.position.set(10, 10, 50);
     light.position.set(0, 0, 100);
+    light.target.position.set(10, 10, 50);
     light.castShadow = true;
+    light.shadowCameraFov = 100;
     this.scene.add(light);
 
     var plane = new THREE.PlaneGeometry(100, 100);
     var diffuse = THREE.ImageUtils.loadTexture('/textures/ball/diffuse.jpg');
     diffuse.repeat.x = diffuse.repeat.y = 4;
     diffuse.wrapT = diffuse.wrapS = THREE.RepeatWrapping;
-    var material = new THREE.MeshPhongMaterial({map: diffuse});
+    var material = new THREE.MeshPhongMaterial({
+      map: diffuse,
+      bumpMap: diffuse,
+      bumpScale: 0.05
+    });
     var floor = new THREE.Mesh(plane, material);
     floor.receiveShadow = true;
     this.scene.add(floor);
     this.balls = {};
 
-    this.camera.position.z = 10;
+    this.camera.position.z = 15;
 
     this.renderMap();
   },
@@ -54,7 +59,7 @@ export default React.createClass({
     ball.rotation.set(user.rx, user.ry, user.rz);
     if (this.state.user && user.id === this.state.user.id) {
       this.camera.position.x = ball.position.x;
-      this.camera.position.y = ball.position.y;
+      this.camera.position.y = ball.position.y - 15;
       this.camera.lookAt(ball.position);
     }
   },
