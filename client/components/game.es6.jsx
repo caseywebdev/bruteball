@@ -21,8 +21,8 @@ export default React.createClass({
     document.body.appendChild(this.renderer.domElement);
 
     var light = new THREE.SpotLight(0xffffff, 1, 1000, Math.PI / 2, 1);
-    light.target.position.set(0, 0, 50);
-    light.position.set(0, 10, 100);
+    light.target.position.set(10, 10, 50);
+    light.position.set(0, 0, 100);
     light.castShadow = true;
     this.scene.add(light);
 
