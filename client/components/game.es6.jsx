@@ -7,6 +7,8 @@ import THREE from 'three';
 import glowFragmentShader from 'shaders/fragment/glow';
 import glowVertexShader from 'shaders/vertex/glow';
 
+var MAP_SIZE = 16;
+
 export default React.createClass({
   mixins: [Cursors],
 
@@ -17,27 +19,29 @@ export default React.createClass({
     this.renderer = new THREE.WebGLRenderer({antialias: true});
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     this.renderer.shadowMapEnabled = true;
+    this.renderer.shadowMapCullFace = THREE.CullFaceBack;
     this.renderer.shadowMapType = THREE.PCFSoftShadowMap;
     document.body.appendChild(this.renderer.domElement);
 
-    var light = new THREE.SpotLight(0xffffff, 1, 1000, Math.PI / 2, 1);
+    var light = new THREE.DirectionalLight(0xffffff, 0.8);
     light.position.set(0, 0, 100);
-    light.target.position.set(10, 10, 50);
     light.castShadow = true;
-    light.shadowCameraFov = 100;
+    light.shadowMapWidth = light.shadowMapHeight = 2048;
+
     this.scene.add(light);
 
-    var plane = new THREE.PlaneGeometry(100, 100);
+    var plane = new THREE.PlaneGeometry(MAP_SIZE, MAP_SIZE);
     var diffuse = THREE.ImageUtils.loadTexture('/textures/ball/diffuse.jpg');
-    diffuse.repeat.x = diffuse.repeat.y = 4;
-    diffuse.wrapT = diffuse.wrapS = THREE.RepeatWrapping;
     var material = new THREE.MeshPhongMaterial({
       map: diffuse,
+      specularMap: diffuse,
+      shininess: 30,
       bumpMap: diffuse,
       bumpScale: 0.05
     });
     var floor = new THREE.Mesh(plane, material);
     floor.receiveShadow = true;
+    floor.position.set(MAP_SIZE / 2, -MAP_SIZE / 2, 0);
     this.scene.add(floor);
     this.balls = {};
 
@@ -77,7 +81,7 @@ export default React.createClass({
   },
 
   createBall: function () {
-    var geometry = new THREE.SphereGeometry(0.5, 32, 32);
+    var geometry = new THREE.SphereGeometry(0.5, 16, 16);
     var specular = THREE.ImageUtils.loadTexture('/textures/ball/specular.jpg');
     var diffuse = THREE.ImageUtils.loadTexture('/textures/ball/diffuse.jpg');
     var bump = THREE.ImageUtils.loadTexture('/textures/ball/bump.jpg');
@@ -96,7 +100,6 @@ export default React.createClass({
     var ball = new THREE.Mesh(geometry, material);
     ball.position.z = 0.5;
     ball.castShadow = true;
-    ball.receiveShadow = true;
     this.scene.add(ball);
     // var customMaterial = new THREE.ShaderMaterial({
     //   uniforms: {

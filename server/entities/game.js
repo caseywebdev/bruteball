@@ -9,9 +9,11 @@ var SPS = 1 / 30;
 var VELOCITY_DAMPING = 0.5;
 
 // meters / second^2
-var MS2 = 100;
+var MS2 = 150;
 
 var UP = new THREE.Vector3(0, 0, 1);
+
+var MAP_SIZE = 16;
 
 var applyAcceleration = function (dt, user) {
   var ball = user.ball;
@@ -40,7 +42,18 @@ var createBall = function () {
   ball.addShape(new p2.Circle(0.5));
   ball.damping = VELOCITY_DAMPING;
   ball.fixedRotation = true;
+  ball.position[0] = MAP_SIZE / 2;
+  ball.position[1] = MAP_SIZE / 2;
   return ball;
+};
+
+var createWall = function (position, angle) {
+  var wall = new p2.Body();
+  wall.addShape(new p2.Plane());
+  wall.position[0] = position[0];
+  wall.position[1] = position[1];
+  wall.angle = angle;
+  return wall;
 };
 
 exports.setAcceleration = function (game, user, x, y) {
@@ -73,6 +86,10 @@ exports.create = function () {
     world: new p2.World({gravity: [0, 0]}),
     lastStep: Date.now()
   };
+  game.world.addBody(createWall([0, 0], 0));
+  game.world.addBody(createWall([0, 0], -Math.PI / 2));
+  game.world.addBody(createWall([MAP_SIZE, 0], Math.PI / 2));
+  game.world.addBody(createWall([0, MAP_SIZE], Math.PI));
   step(game);
   return game;
 };
