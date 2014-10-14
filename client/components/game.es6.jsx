@@ -43,7 +43,19 @@ export default React.createClass({
 
     this.camera.position.z = 15;
 
+    this.handleResize();
     this.renderMap();
+    window.addEventListener('resize', this.handleResize);
+  },
+
+  componentWillUnmount: function () {
+    window.removeEventListener('resize', this.handleResize);
+  },
+
+  handleResize: function () {
+    this.renderer.setSize(window.innerWidth, window.innerHeight);
+    this.camera.aspect = window.innerWidth / window.innerHeight;
+    this.camera.updateProjectionMatrix();
   },
 
   renderMap: function () {
