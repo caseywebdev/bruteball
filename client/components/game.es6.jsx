@@ -64,9 +64,6 @@ export default React.createClass({
     var specular = THREE.ImageUtils.loadTexture('/textures/ball/specular.jpg');
     var diffuse = THREE.ImageUtils.loadTexture('/textures/ball/diffuse.jpg');
     var bump = THREE.ImageUtils.loadTexture('/textures/ball/bump.jpg');
-
-    bump.repeat.x = bump.repeat.y = 4;
-    bump.wrapT = bump.wrapS = THREE.RepeatWrapping;
     var color = Math.random() < 0.5 ? 0xff0000 : 0x0000ff;
     var material = new THREE.MeshPhongMaterial({
       color: color,
