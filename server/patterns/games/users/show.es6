@@ -1,6 +1,6 @@
-var THREE = require('three');
+import THREE from 'three';
 
-module.exports = function (user) {
+export default function (user) {
   var rotation = (new THREE.Euler()).setFromRotationMatrix(user.matrix);
   return {
     id: user.info.id,
@@ -14,4 +14,4 @@ module.exports = function (user) {
     ry: rotation.y,
     rz: rotation.z
   };
-};
+}

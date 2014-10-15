@@ -2,7 +2,7 @@
 
 import _ from 'underscore';
 import Cursors from 'cursors';
-import Game from 'components/game';
+import Game from 'client/components/game';
 import React from 'react';
 
 var keys = {

@@ -1,19 +1,18 @@
-var _ = require('underscore');
-var app = require('..');
-var Game = require('../entities/game');
-var getListeners = require('../interactions/get-listeners');
-var signSocketOut = require('../interactions/sign-socket-out');
-var User = require('../entities/user');
-var ws = require('ws');
-var wss = exports.server = new ws.Server({server: app.express.server});
+import _ from 'underscore';
+import app from 'index';
+import getListeners from 'interactions/get-listeners';
+import signSocketOut from 'interactions/sign-socket-out';
+import ws from 'ws';
+
+export var server = new ws.Server({server: app.express.server});
 
 var listeners = getListeners(__dirname + '/../listeners/ws');
 
-wss.broadcast = function (name, data) {
-  _.invoke(wss.clients, 'send', name, data);
+server.broadcast = function (name, data) {
+  _.invoke(server.clients, 'send', name, data);
 };
 
-wss.on('connection', function (socket) {
+server.on('connection', function (socket) {
   socket.callbacks = [];
 
   socket._send = socket.send;

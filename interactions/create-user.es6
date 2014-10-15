@@ -1,9 +1,9 @@
-var app = require('..');
-var User = require('../entities/user');
+import app from 'index';
+import User from 'entities/user';
 
 var db = app.knex.db;
 
-module.exports = function (cb) {
+export default function (cb) {
   db.insert({rand: User.createRand()})
     .into('users')
     .returning('*')
@@ -11,4 +11,4 @@ module.exports = function (cb) {
       if (er) return cb(er);
       cb(null, users[0]);
     });
-};
+}

@@ -3,7 +3,7 @@ COGS=$(BIN)cogs
 WATCHY=$(BIN)watchy
 
 dev:
-	$(MAKE) -j nginx postgres cogs-w server-w
+	$(MAKE) -j nginx postgres cogs-client-w cogs-server-w server-w
 
 nginx:
 	mkdir -p log && sudo nginx >> log/nginx.log 2>&1
@@ -11,11 +11,14 @@ nginx:
 postgres:
 	mkdir -p log && postgres -D /usr/local/var/postgres >> log/postgres.log 2>&1
 
-cogs-w:
-	$(COGS) -w client,styles
+cogs-client-w:
+	$(COGS) -C cogs-client.json -w client,config.es6,interactions,entities,styles
+
+cogs-server-w:
+	$(COGS) -C cogs-server.json -w server,config.es6,entities,interactions
 
 server-w:
-	. .env.sh && $(WATCHY) -w server -- node server
+	. .env.sh && $(WATCHY) -w build -- node build/node_modules
 
 deploy:
 	git push heroku master

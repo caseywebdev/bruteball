@@ -1,15 +1,14 @@
-var _ = require('underscore');
-var app = require('..');
-var dump = require('../interactions/dump');
-var p2 = require('p2');
-var THREE = require('three');
-
-var SPS = 1 / 30;
+import _ from 'underscore';
+import app from 'index';
+import config from 'config';
+import gamePattern from 'patterns/games/show';
+import p2 from 'p2';
+import THREE from 'three';
 
 var VELOCITY_DAMPING = 0.5;
 
 // meters / second^2
-var MS2 = 150;
+var MS2 = 200;
 
 var UP = new THREE.Vector3(0, 0, 1);
 
@@ -33,8 +32,8 @@ var step = function (game) {
   _.each(game.users, _.partial(applyAcceleration, dt));
   game.world.step(dt);
   game.lastStep = now;
-  app.ws.server.broadcast('game', dump('games/show', game));
-  game.stepIntervalId = setTimeout(_.partial(step, game), SPS * 1000);
+  game.stepIntervalId = setTimeout(_.partial(step, game), 1000 / config.game.sps);
+  app.ws.server.broadcast('game', gamePattern(game));
 };
 
 var createBall = function () {
@@ -56,13 +55,13 @@ var createWall = function (position, angle) {
   return wall;
 };
 
-exports.setAcceleration = function (game, user, x, y) {
+export var setAcceleration = function (game, user, x, y) {
   var ref = game.users[user.id];
   if (!ref) return;
   ref.acceleration.set(x, y).normalize();
 };
 
-exports.addUser = function (game, user) {
+export var addUser = function (game, user) {
   if (game.users[user.id]) return;
   var ref = game.users[user.id] = {
     info: user,
@@ -73,14 +72,14 @@ exports.addUser = function (game, user) {
   game.world.addBody(ref.ball);
 };
 
-exports.removeUser = function (game, user) {
+export var removeUser = function (game, user) {
   var ref = game.users[user.id];
   if (!ref) return;
   game.world.removeBody(ref.ball);
   delete game.users[user.id];
 };
 
-exports.create = function () {
+export var create = function () {
   var game = {
     users: {},
     world: new p2.World({gravity: [0, 0]}),

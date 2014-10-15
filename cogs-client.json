@@ -1,12 +1,12 @@
 {
   "options": {
-    "basePath": "client",
     "concatAmd": true,
     "names": {
       "backbone": "bower_components/backbone/backbone.js",
       "cursors": "bower_components/cursors/cursors.js",
       "fastclick": "bower_components/fastclick/lib/fastclick.js",
       "herit": "bower_components/herit/herit.js",
+      "jquery": "client/jquery.es6",
       "live": "bower_components/live/live.js",
       "p2": "bower_components/p2js/build/p2.js",
       "react": "bower_components/react/react-with-addons.js",

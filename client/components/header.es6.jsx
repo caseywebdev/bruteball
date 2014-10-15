@@ -1,9 +1,8 @@
 /** @jsx React.DOM */
 
-import _ from 'underscore';
 import Cursors from 'cursors';
 import React from 'react';
-import store from 'store';
+import store from 'client/store';
 
 export default React.createClass({
   mixins: [Cursors],

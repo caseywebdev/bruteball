@@ -2,4 +2,4 @@
 // to work.
 window.React = require('react');
 
-require('index');
+require('client/index');

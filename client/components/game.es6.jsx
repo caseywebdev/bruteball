@@ -75,7 +75,7 @@ export default React.createClass({
     ball.rotation.set(user.rx, user.ry, user.rz);
     if (this.state.user && user.id === this.state.user.id) {
       this.camera.position.x = ball.position.x;
-      this.camera.position.y = ball.position.y - 15;
+      this.camera.position.y = ball.position.y - 5;
       this.camera.lookAt(ball.position);
     }
   },

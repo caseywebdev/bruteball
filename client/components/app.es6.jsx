@@ -1,7 +1,7 @@
 /** @jsx React.DOM */
 
 import Cursors from 'cursors';
-import Header from 'components/header';
+import Header from 'client/components/header';
 import Live from 'live';
 import React from 'react';
 

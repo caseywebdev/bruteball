@@ -1,8 +1,8 @@
 /** @jsx React.DOM */
 
-import App from 'components/app';
-import Index from 'components/index';
-import NotFound from 'components/not-found';
+import App from 'client/components/app';
+import Index from 'client/components/index';
+import NotFound from 'client/components/not-found';
 import React from 'react';
 import {Routes, Route, DefaultRoute, NotFoundRoute} from 'react-router';
 

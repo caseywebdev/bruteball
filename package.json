@@ -30,6 +30,6 @@
   },
   "scripts": {
     "postinstall": "scripts/postinstall.sh",
-    "start": "node server"
+    "start": "node build/node_modules"
   }
 }

@@ -1,11 +1,10 @@
 //= require bower_components/amdainty/amdainty.js
 //= require bower_components/threejs/build/three.js
 //= requireSelf
-//= require ./maps/**/*
 //= require ./init.js
 
 import FastClick from 'fastclick';
-import Router from 'components/router';
+import Router from 'client/components/router';
 import React from 'react';
 
 var handleDomReady = function () {
