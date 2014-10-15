@@ -24,7 +24,7 @@ export default {
 
   knex: {
     client: 'postgresql',
-    connection: ENV_VARS.DATABASE_URL ||
+    connection: ENV_VARS.DB_URL ||
       'postgres://localhost/bruteball_development',
 
     pool: {
