@@ -27,9 +27,5 @@
   "engines": {
     "node": "0.10.32",
     "npm": "2.1.2"
-  },
-  "scripts": {
-    "postinstall": "scripts/postinstall.sh",
-    "start": "node build/node_modules"
   }
 }
