@@ -27,7 +27,10 @@ deploy:
 	git push thursday master:master
 
 launch:
+	npm prune
+	npm rebuild
 	npm install
+	node_modules/.bin/bower prune
 	node_modules/.bin/bower install
 	$(COGS) -C cogs-client.json -c
 	$(COGS) -C cogs-server.json
