@@ -24,7 +24,7 @@ server-w:
 	. .env.sh && $(WATCHY) -w build -- node build/node_modules
 
 deploy:
-	git push thursday master
+	git push thursday master:master
 
 launch:
 	npm install
