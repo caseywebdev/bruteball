@@ -9,6 +9,7 @@
     "es6-module-transpiler": "0.4.0",
     "express": "4.9.4",
     "knex": "0.7.3",
+    "live-server-bindings": "0.6.3",
     "node-sass": "0.9.5-rc1",
     "nodemailer": "1.2.1",
     "nodemailer-ses-transport": "1.1.0",
