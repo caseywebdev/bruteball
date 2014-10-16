@@ -19,7 +19,9 @@ export default {
 
   game: {
     sps: 30,
-    velocityDamping: 0.5
+    linearDamping: 0.5,
+    velocityIterations: 8,
+    positionIterations: 10
   },
 
   knex: {

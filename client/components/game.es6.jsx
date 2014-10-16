@@ -81,7 +81,7 @@ export default React.createClass({
   },
 
   createBall: function () {
-    var geometry = new THREE.SphereGeometry(0.5, 16, 16);
+    var geometry = new THREE.SphereGeometry(0.5, 32, 32);
     var specular = THREE.ImageUtils.loadTexture('/textures/ball/specular.jpg');
     var diffuse = THREE.ImageUtils.loadTexture('/textures/ball/diffuse.jpg');
     var bump = THREE.ImageUtils.loadTexture('/textures/ball/bump.jpg');

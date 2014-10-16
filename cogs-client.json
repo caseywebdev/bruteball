@@ -3,12 +3,12 @@
     "concatAmd": true,
     "names": {
       "backbone": "bower_components/backbone/backbone.js",
+      "box2d": "bower_components/box2s/box2d.umd.js",
       "cursors": "bower_components/cursors/cursors.js",
       "fastclick": "bower_components/fastclick/lib/fastclick.js",
       "herit": "bower_components/herit/herit.js",
       "jquery": "client/jquery.es6",
       "live": "bower_components/live/live.js",
-      "p2": "bower_components/p2js/build/p2.js",
       "react": "bower_components/react/react-with-addons.js",
       "react-router": "bower_components/react-router/dist/react-router.js",
       "superagent": "bower_components/superagent/superagent.js",

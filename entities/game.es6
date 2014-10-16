@@ -2,13 +2,11 @@ import _ from 'underscore';
 import app from 'index';
 import config from 'config';
 import gamePattern from 'patterns/games/show';
-import p2 from 'p2';
+import b2 from 'box2d';
 import THREE from 'three';
 
-var VELOCITY_DAMPING = 0.5;
-
 // meters / second^2
-var MS2 = 200;
+var MS2 = 100;
 
 var UP = new THREE.Vector3(0, 0, 1);
 
@@ -17,11 +15,13 @@ var MAP_SIZE = 16;
 var applyAcceleration = function (dt, user) {
   var ball = user.ball;
   var a = user.acceleration;
-  var force = a.clone().multiplyScalar(MS2 * dt);
-  ball.applyForce([force.x, force.y], ball.position);
-  var v = new THREE.Vector3(-ball.velocity[0], ball.velocity[1], 0);
-  var theta = v.length() * Math.PI * dt;
-  var axis = v.cross(UP).normalize();
+  var force = new b2.b2Vec2(a.x * MS2 * dt, a.y * MS2 * dt);
+  ball.ApplyForceToCenter(force);
+  b2.destroy(force);
+  var v2 = ball.GetLinearVelocity();
+  var v3 = new THREE.Vector3(-v2.get_x(), v2.get_y(), 0);
+  var theta = v3.length() * Math.PI * dt;
+  var axis = v3.cross(UP).normalize();
   user.matrix =
     (new THREE.Matrix4()).makeRotationAxis(axis, theta).multiply(user.matrix);
 };
@@ -30,29 +30,32 @@ var step = function (game) {
   var now = Date.now();
   var dt = (now - game.lastStep) / 1000;
   _.each(game.users, _.partial(applyAcceleration, dt));
-  game.world.step(dt);
+  game.world.Step(
+    dt,
+    config.game.velocityIterations,
+    config.game.positionIterations
+  );
   game.lastStep = now;
   game.stepIntervalId = setTimeout(_.partial(step, game), 1000 / config.game.sps);
   app.ws.server.broadcast('game', gamePattern(game));
 };
 
-var createBall = function () {
-  var ball = new p2.Body({mass: 1});
-  ball.addShape(new p2.Circle(0.5));
-  ball.damping = VELOCITY_DAMPING;
-  ball.fixedRotation = true;
-  ball.position[0] = MAP_SIZE / 2;
-  ball.position[1] = MAP_SIZE / 2;
-  return ball;
-};
+var createBall = function (game) {
+  var bodyDef = new b2.b2BodyDef();
+  bodyDef.set_type(b2.b2_dynamicBody);
+  bodyDef.get_position().set_x(MAP_SIZE / 2);
+  bodyDef.get_position().set_y(MAP_SIZE / 2);
+  bodyDef.set_fixedRotation(true);
+  bodyDef.set_linearDamping(config.game.linearDamping);
+  var body = game.world.CreateBody(bodyDef);
+  b2.destroy(bodyDef);
 
-var createWall = function (position, angle) {
-  var wall = new p2.Body();
-  wall.addShape(new p2.Plane());
-  wall.position[0] = position[0];
-  wall.position[1] = position[1];
-  wall.angle = angle;
-  return wall;
+  var shape = new b2.b2CircleShape();
+  shape.set_m_radius(0.5);
+  body.CreateFixture(shape, 1);
+  b2.destroy(shape);
+
+  return body;
 };
 
 export var setAcceleration = function (game, user, x, y) {
@@ -63,32 +66,42 @@ export var setAcceleration = function (game, user, x, y) {
 
 export var addUser = function (game, user) {
   if (game.users[user.id]) return;
-  var ref = game.users[user.id] = {
+  game.users[user.id] = {
     info: user,
-    ball: createBall(),
+    ball: createBall(game),
     acceleration: new THREE.Vector2(),
     matrix: new THREE.Matrix4()
   };
-  game.world.addBody(ref.ball);
 };
 
 export var removeUser = function (game, user) {
   var ref = game.users[user.id];
   if (!ref) return;
-  game.world.removeBody(ref.ball);
+  game.world.DestroyBody(ref.ball);
   delete game.users[user.id];
 };
 
 export var create = function () {
   var game = {
     users: {},
-    world: new p2.World({gravity: [0, 0]}),
+    world: new b2.b2World(),
     lastStep: Date.now()
   };
-  game.world.addBody(createWall([0, 0], 0));
-  game.world.addBody(createWall([0, 0], -Math.PI / 2));
-  game.world.addBody(createWall([MAP_SIZE, 0], Math.PI / 2));
-  game.world.addBody(createWall([0, MAP_SIZE], Math.PI));
+  var bodyDef = new b2.b2BodyDef();
+  var body = game.world.CreateBody(bodyDef);
+  b2.destroy(bodyDef);
+  var fixtureDef = new b2.b2FixtureDef();
+  fixtureDef.set_restitution(0.25);
+  var shape = b2.CreateLoopShape([
+    {x: 0, y: 0},
+    {x: MAP_SIZE, y: 0},
+    {x: MAP_SIZE, y: MAP_SIZE},
+    {x: 0, y: MAP_SIZE}
+  ]);
+  fixtureDef.set_shape(shape);
+  body.CreateFixture(fixtureDef);
+  b2.destroy(fixtureDef);
+  b2.destroy(shape);
   step(game);
   return game;
 };
