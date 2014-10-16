@@ -6,7 +6,7 @@ import b2 from 'box2d';
 import THREE from 'three';
 
 // meters / second^2
-var MS2 = 100;
+var MS2 = 200;
 
 var UP = new THREE.Vector3(0, 0, 1);
 
