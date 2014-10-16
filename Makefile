@@ -34,3 +34,4 @@ launch:
 	node_modules/.bin/bower install
 	$(COGS) -C cogs-client.json -c
 	$(COGS) -C cogs-server.json
+	-kill `ps ax | grep -P '\d [n]ode build/node_modules' | grep -oP '^\s*\d+'`
