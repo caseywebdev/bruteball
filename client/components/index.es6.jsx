@@ -6,7 +6,7 @@ import Game from 'entities/game';
 import GameComponent from 'client/components/game';
 import React from 'react';
 
-var keys = {
+var KEYS = {
   '38': {down: false, x: 0, y: -1},
   '40': {down: false, x: 0, y: 1},
   '37': {down: false, x: -1, y: 0},
@@ -35,7 +35,7 @@ export default React.createClass({
   },
 
   handleKey: function (ev) {
-    var key = keys[ev.which];
+    var key = KEYS[ev.which];
     var state = ev.type === 'keydown';
     if (!key || key.down === state) return;
     key.down = state;
@@ -48,13 +48,14 @@ export default React.createClass({
   },
 
   getAv: function () {
-    return _.reduce(_.filter(keys, {down: true}), function (av, key) {
+    return _.reduce(_.filter(KEYS, {down: true}), function (av, key) {
       return {x: av.x + key.x, y: av.y + key.y};
     }, {x: 0, y: 0});
   },
 
   setGame: function (g) {
     var game = this.state.game;
+    game.lastStep = Date.now();
     _.each(g.u, function (u) {
       if (!game.users[u.id]) Game.addUser(game, {id: u.id});
       var user = game.users[u.id];
