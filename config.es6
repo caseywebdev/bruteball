@@ -18,10 +18,11 @@ export default {
   },
 
   game: {
-    sps: 30,
+    stepsPerSecond: 30,
     linearDamping: 0.5,
     velocityIterations: 8,
-    positionIterations: 10
+    positionIterations: 10,
+    broadcastsPerSecond: 10
   },
 
   knex: {

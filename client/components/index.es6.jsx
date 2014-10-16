@@ -2,7 +2,8 @@
 
 import _ from 'underscore';
 import Cursors from 'cursors';
-import Game from 'client/components/game';
+import Game from 'entities/game';
+import GameComponent from 'client/components/game';
 import React from 'react';
 
 var keys = {
@@ -17,18 +18,18 @@ export default React.createClass({
 
   getInitialState: function () {
     return {
-      game: {}
+      game: Game.create()
     };
   },
 
   componentDidMount: function () {
-    this.state.live.on('game', this.setGame);
+    this.state.live.on('g', this.setGame);
     document.addEventListener('keydown', this.handleKey);
     document.addEventListener('keyup', this.handleKey);
   },
 
   componentWillUnmount: function () {
-    this.state.live.off('game', this.setGame);
+    this.state.live.off('g', this.setGame);
     document.removeEventListener('keydown', this.handleKey);
     document.removeEventListener('keyup', this.handleKey);
   },
@@ -52,14 +53,28 @@ export default React.createClass({
     }, {x: 0, y: 0});
   },
 
-  setGame: function (game) {
-    this.update({game: {$set: game}});
+  setGame: function (g) {
+    var game = this.state.game;
+    _.each(g.u, function (u) {
+      if (!game.users[u.id]) Game.addUser(game, {id: u.id});
+      var user = game.users[u.id];
+      var position = user.ball.GetPosition();
+      position.set_x(u.x);
+      position.set_y(u.y);
+      user.ball.SetTransform(position, user.ball.GetAngle());
+      var velocity = user.ball.GetLinearVelocity();
+      velocity.set_x(u.vx);
+      velocity.set_y(u.vy);
+      user.ball.SetLinearVelocity(velocity);
+      user.acceleration.x = u.ax;
+      user.acceleration.y = u.ay;
+    });
   },
 
   render: function () {
     return (
       <div>
-        <Game cursors={{
+        <GameComponent cursors={{
           game: this.getCursor('game'),
           user: this.getCursor('user')
         }} />

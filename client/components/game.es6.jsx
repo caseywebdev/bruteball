@@ -63,17 +63,19 @@ export default React.createClass({
   },
 
   renderMap: function () {
-    _.each(this.state.game.u, this.renderUser);
+    _.each(this.state.game.users, this.renderUser);
     this.renderer.render(this.scene, this.camera);
     requestAnimationFrame(this.renderMap);
   },
 
   renderUser: function (user) {
-    var ball = this.balls[user.id];
-    if (!ball) ball = this.balls[user.id] = this.createBall();
-    ball.position.set(user.x, -user.y, ball.position.z);
-    ball.rotation.set(user.rx, user.ry, user.rz);
-    if (this.state.user && user.id === this.state.user.id) {
+    var id = user.info.id;
+    var ball = this.balls[id];
+    if (!ball) ball = this.balls[id] = this.createBall();
+    var position = user.ball.GetPosition();
+    ball.position.set(position.get_x(), -position.get_y(), ball.position.z);
+    ball.rotation.copy((new THREE.Euler()).setFromRotationMatrix(user.matrix));
+    if (this.state.user && id === this.state.user.id) {
       this.camera.position.x = ball.position.x;
       this.camera.position.y = ball.position.y - 5;
       this.camera.lookAt(ball.position);
