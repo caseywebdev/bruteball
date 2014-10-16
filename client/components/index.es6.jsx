@@ -59,15 +59,15 @@ export default React.createClass({
       if (!game.users[u.id]) Game.addUser(game, {id: u.id});
       var user = game.users[u.id];
       var position = user.ball.GetPosition();
-      position.set_x(u.x);
-      position.set_y(u.y);
+      position.set_x(u.x || 0);
+      position.set_y(u.y || 0);
       user.ball.SetTransform(position, user.ball.GetAngle());
       var velocity = user.ball.GetLinearVelocity();
-      velocity.set_x(u.vx);
-      velocity.set_y(u.vy);
+      velocity.set_x(u.vx || 0);
+      velocity.set_y(u.vy || 0);
       user.ball.SetLinearVelocity(velocity);
-      user.acceleration.x = u.ax;
-      user.acceleration.y = u.ay;
+      user.acceleration.x = u.ax || 0;
+      user.acceleration.y = u.ay || 0;
     });
     game.lastStep = Date.now();
   },

@@ -1,10 +1,11 @@
+import _ from 'underscore';
 import trim from 'patterns/numbers/trim';
 
 export default function (user) {
   var position = user.ball.GetPosition();
   var velocity = user.ball.GetLinearVelocity();
   var acceleration = user.acceleration;
-  return {
+  return _.pick({
     id: user.info.id,
     x: trim(position.get_x()),
     y: trim(position.get_y()),
@@ -12,5 +13,5 @@ export default function (user) {
     vy: trim(velocity.get_y()),
     ax: trim(acceleration.x),
     ay: trim(acceleration.y)
-  };
+  }, _.identity);
 }
