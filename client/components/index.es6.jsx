@@ -24,12 +24,14 @@ export default React.createClass({
 
   componentDidMount: function () {
     this.state.live.on('g', this.setGame);
+    this.state.live.on('u', this.updateUser);
+    this.state.live.on('r', this.removeUser);
     document.addEventListener('keydown', this.handleKey);
     document.addEventListener('keyup', this.handleKey);
   },
 
   componentWillUnmount: function () {
-    this.state.live.off('g', this.setGame);
+    this.state.live.off('r', this.removeUser);
     document.removeEventListener('keydown', this.handleKey);
     document.removeEventListener('keyup', this.handleKey);
   },
@@ -54,22 +56,28 @@ export default React.createClass({
   },
 
   setGame: function (g) {
+    _.each(g.u, this.updateUser);
+    this.state.game.lastStep = Date.now();
+  },
+
+  updateUser: function (u) {
     var game = this.state.game;
-    _.each(g.u, function (u) {
-      if (!game.users[u.id]) Game.addUser(game, {id: u.id});
-      var user = game.users[u.id];
-      var position = user.ball.GetPosition();
-      position.set_x(u.x || 0);
-      position.set_y(u.y || 0);
-      user.ball.SetTransform(position, user.ball.GetAngle());
-      var velocity = user.ball.GetLinearVelocity();
-      velocity.set_x(u.vx || 0);
-      velocity.set_y(u.vy || 0);
-      user.ball.SetLinearVelocity(velocity);
-      user.acceleration.x = u.ax || 0;
-      user.acceleration.y = u.ay || 0;
-    });
-    game.lastStep = Date.now();
+    if (!game.users[u.id]) Game.addUser(game, {id: u.id});
+    var user = game.users[u.id];
+    var position = user.ball.GetPosition();
+    position.set_x(u.x || 0);
+    position.set_y(u.y || 0);
+    user.ball.SetTransform(position, user.ball.GetAngle());
+    var velocity = user.ball.GetLinearVelocity();
+    velocity.set_x(u.vx || 0);
+    velocity.set_y(u.vy || 0);
+    user.ball.SetLinearVelocity(velocity);
+    user.acceleration.x = u.ax || 0;
+    user.acceleration.y = u.ay || 0;
+  },
+
+  removeUser: function (u) {
+    Game.removeUser(this.state.game, {id: u.id});
   },
 
   render: function () {
