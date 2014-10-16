@@ -1,3 +1,5 @@
+var PRECISION = 10000;
+
 export default function (n) {
-  return Math.round(n * 100) / 100;
+  return Math.round(n * PRECISION) / PRECISION;
 }
