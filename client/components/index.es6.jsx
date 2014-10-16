@@ -55,7 +55,6 @@ export default React.createClass({
 
   setGame: function (g) {
     var game = this.state.game;
-    game.lastStep = Date.now();
     _.each(g.u, function (u) {
       if (!game.users[u.id]) Game.addUser(game, {id: u.id});
       var user = game.users[u.id];
@@ -70,6 +69,7 @@ export default React.createClass({
       user.acceleration.x = u.ax;
       user.acceleration.y = u.ay;
     });
+    game.lastStep = Date.now();
   },
 
   render: function () {
