@@ -13,26 +13,30 @@ var KEYS = {
   '39': {down: false, x: 1, y: 0}
 };
 
+var PING_DELAY = 1000;
+
 export default React.createClass({
   mixins: [Cursors],
 
   getInitialState: function () {
     return {
-      game: Game.create()
+      game: Game.create(),
+      latency: 0
     };
   },
 
   componentDidMount: function () {
     this.state.live.on('g', this.setGame);
-    this.state.live.on('u', this.updateUser);
+    this.state.live.on('u', this.handleUserUpdate);
     this.state.live.on('r', this.removeUser);
+    this.ping();
     document.addEventListener('keydown', this.handleKey);
     document.addEventListener('keyup', this.handleKey);
   },
 
   componentWillUnmount: function () {
     this.state.live.off('g', this.setGame);
-    this.state.live.off('u', this.updateUser);
+    this.state.live.off('u', this.handleUserUpdate);
     this.state.live.off('r', this.removeUser);
     document.removeEventListener('keydown', this.handleKey);
     document.removeEventListener('keyup', this.handleKey);
@@ -51,6 +55,16 @@ export default React.createClass({
     this.state.live.send('set-av', this.getAv());
   },
 
+  ping: function () {
+    this.lastPing = Date.now();
+    this.state.live.send('ping', this.lastPing, this.handlePing);
+    this.pingTimeoutId = _.delay(this.ping, PING_DELAY);
+  },
+
+  handlePing: function () {
+    this.update({latency: {$set: Math.ceil((Date.now() - this.lastPing) / 2)}});
+  },
+
   getAv: function () {
     return _.reduce(_.filter(KEYS, {down: true}), function (av, key) {
       return {x: av.x + key.x, y: av.y + key.y};
@@ -58,8 +72,13 @@ export default React.createClass({
   },
 
   setGame: function (g) {
+    Game.step(this.state.game);
     _.each(g.u, this.updateUser);
-    this.state.game.lastStep = Date.now();
+  },
+
+  handleUserUpdate: function (u) {
+    Game.step(this.state.game);
+    this.updateUser(u);
   },
 
   updateUser: function (u) {
@@ -67,15 +86,19 @@ export default React.createClass({
     if (!game.users[u.id]) Game.addUser(game, {id: u.id});
     var user = game.users[u.id];
     var position = user.ball.GetPosition();
-    position.set_x(u.x || 0);
-    position.set_y(u.y || 0);
+    var cx = position.get_x();
+    var cy = position.get_y();
+    var dx = u.x - cx;
+    var dy = u.y - cy;
+    position.Set(
+      Math.abs(dx) > 1 ? u.x : cx + (dx * 0.1),
+      Math.abs(dy) > 1 ? u.y : cy + (dy * 0.1)
+    );
     user.ball.SetTransform(position, user.ball.GetAngle());
     var velocity = user.ball.GetLinearVelocity();
-    velocity.set_x(u.vx || 0);
-    velocity.set_y(u.vy || 0);
+    velocity.Set(u.vx || 0, u.vy || 0);
     user.ball.SetLinearVelocity(velocity);
-    user.acceleration.x = u.ax || 0;
-    user.acceleration.y = u.ay || 0;
+    user.acceleration.set(u.ax || 0, u.ay || 0);
   },
 
   removeUser: function (u) {
@@ -85,6 +108,7 @@ export default React.createClass({
   render: function () {
     return (
       <div>
+        <div className='latency'>Latency: {this.state.latency}ms</div>
         <GameComponent cursors={{
           game: this.getCursor('game'),
           user: this.getCursor('user')

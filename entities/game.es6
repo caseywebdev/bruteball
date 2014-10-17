@@ -5,6 +5,10 @@ import config from 'config';
 import b2 from 'box2d';
 import THREE from 'three';
 
+var app = node ? require('index') : null;
+var userPattern = node ? require('patterns/games/users/show').default : null;
+var gamePattern = node ? require('patterns/games/show').default : null;
+
 // meters / second^2
 var MS2 = 200;
 
@@ -15,6 +19,7 @@ var MAP_SIZE = 16;
 var SPS = 1000 / config.game.stepsPerSecond;
 var VI = config.game.velocityIterations;
 var PI = config.game.positionIterations;
+var BROADCAST_WAIT = 1000 / config.game.broadcastsPerSecond;
 
 var applyForce = function (dt, user) {
   var ball = user.ball;
@@ -33,13 +38,35 @@ var applyForce = function (dt, user) {
   }
 };
 
-var step = function (game) {
+var broadcastGame = function (game) {
+  app.ws.server.broadcast('g', gamePattern(game));
+  game.lastBroadcast = Date.now();
+};
+
+var broadcastUser = function (game, user) {
+  var lastBroadcast = Math.max(game.lastBroadcast, user.lastBroadcast);
+  if (user.needsBroadcast <= lastBroadcast) return;
+  app.ws.server.broadcast('u', userPattern(user));
+  user.lastBroadcast = Date.now();
+};
+
+export var step = function (game) {
   var now = Date.now();
   var dt = (now - game.lastStep) / 1000;
   _.each(game.users, _.partial(applyForce, dt));
   game.world.Step(dt, VI, PI);
   game.lastStep = now;
+  clearInterval(game.stepIntervalId);
   game.stepIntervalId = setTimeout(_.partial(step, game), SPS);
+  if (node) {
+    if (game.needsBroadcast > game.lastBroadcast) broadcastGame(game);
+    else _.each(game.users, _.partial(broadcastUser, game));
+  }
+};
+
+var loopBroadcast = function (game) {
+  game.needsBroadcast = Date.now();
+  setTimeout(_.partial(loopBroadcast, game), BROADCAST_WAIT);
 };
 
 var createBall = function (game) {
@@ -62,8 +89,9 @@ var createBall = function (game) {
 
 export var setAcceleration = function (game, user, x, y) {
   var ref = game.users[user.id];
-  if (!ref) return;
+  if (!ref || ref.acceleration.x === x && ref.acceleration.y === y) return;
   ref.acceleration.set(x, y).normalize();
+  ref.needsBroadcast = Date.now();
 };
 
 export var addUser = function (game, user) {
@@ -72,7 +100,8 @@ export var addUser = function (game, user) {
     info: user,
     ball: createBall(game),
     acceleration: new THREE.Vector2(),
-    matrix: new THREE.Matrix4()
+    matrix: new THREE.Matrix4(),
+    lastBroadcast: 0
   };
 };
 
@@ -87,7 +116,8 @@ export var create = function () {
   var game = {
     users: {},
     world: new b2.b2World(),
-    lastStep: Date.now()
+    lastStep: Date.now(),
+    lastBroadcast: 0
   };
   var bodyDef = new b2.b2BodyDef();
   var body = game.world.CreateBody(bodyDef);
@@ -104,6 +134,7 @@ export var create = function () {
   body.CreateFixture(fixtureDef);
   b2.destroy(fixtureDef);
   b2.destroy(shape);
+  loopBroadcast(game);
   step(game);
   return game;
 };
