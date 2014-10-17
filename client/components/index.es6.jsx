@@ -31,6 +31,8 @@ export default React.createClass({
   },
 
   componentWillUnmount: function () {
+    this.state.live.off('g', this.setGame);
+    this.state.live.off('u', this.updateUser);
     this.state.live.off('r', this.removeUser);
     document.removeEventListener('keydown', this.handleKey);
     document.removeEventListener('keyup', this.handleKey);
