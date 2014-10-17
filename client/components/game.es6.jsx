@@ -23,9 +23,17 @@ export default React.createClass({
     this.renderer.shadowMapType = THREE.PCFSoftShadowMap;
     document.body.appendChild(this.renderer.domElement);
 
-    var light = new THREE.DirectionalLight(0xffffff, 0.8);
-    light.position.set(0, 0, 100);
+    var light = new THREE.DirectionalLight(0xffffff, 0.9);
+    light.position.set(MAP_SIZE / 2, -MAP_SIZE / 2, 10);
+    light.target.position.set(MAP_SIZE / 2, -MAP_SIZE / 2, 0);
     light.castShadow = true;
+    light.shadowCameraNear = 0;
+    light.shadowCameraFar = 10;
+    light.shadowCameraTop = MAP_SIZE / 2;
+    light.shadowCameraBottom = -MAP_SIZE / 2;
+    light.shadowCameraLeft = -MAP_SIZE / 2;
+    light.shadowCameraRight = MAP_SIZE / 2;
+    // light.shadowCameraVisible = true;
     light.shadowMapWidth = light.shadowMapHeight = 2048;
 
     this.scene.add(light);
