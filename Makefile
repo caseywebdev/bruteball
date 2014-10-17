@@ -24,10 +24,10 @@ server-w:
 	. .env.sh && $(WATCHY) -w build -- node build/node_modules
 
 deploy:
-	git push heroku master:master
+	git push heroku master
 
 deploy-thursday:
-	git push thursday master:master
+	git push thursday master
 
 launch:
 	npm prune
