@@ -84,8 +84,10 @@ export default React.createClass({
     ball.position.set(position.get_x(), -position.get_y(), ball.position.z);
     ball.rotation.copy((new THREE.Euler()).setFromRotationMatrix(user.matrix));
     if (this.state.user && id === this.state.user.id) {
-      this.camera.position.x = ball.position.x;
-      this.camera.position.y = ball.position.y - 5;
+      this.camera.position.x +=
+        (ball.position.x - this.camera.position.x) * 0.1;
+      this.camera.position.y +=
+        (ball.position.y - 5 - this.camera.position.y) * 0.1;
       this.camera.lookAt(ball.position);
     }
   },
