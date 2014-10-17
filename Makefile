@@ -24,6 +24,9 @@ server-w:
 	. .env.sh && $(WATCHY) -w build -- node build/node_modules
 
 deploy:
+	git push heroku master:master
+
+deploy-thursday:
 	git push thursday master:master
 
 launch:
