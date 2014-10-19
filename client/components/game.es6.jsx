@@ -39,13 +39,9 @@ export default React.createClass({
     this.scene.add(light);
 
     var plane = new THREE.PlaneGeometry(MAP_SIZE, MAP_SIZE);
-    var diffuse = THREE.ImageUtils.loadTexture('/textures/ball/diffuse.jpg');
+    var diffuse = THREE.ImageUtils.loadTexture('/textures/ground/diffuse.jpg');
     var material = new THREE.MeshPhongMaterial({
-      map: diffuse,
-      specularMap: diffuse,
-      shininess: 30,
-      bumpMap: diffuse,
-      bumpScale: 0.05
+      map: diffuse
     });
     var floor = new THREE.Mesh(plane, material);
     floor.receiveShadow = true;
@@ -94,20 +90,12 @@ export default React.createClass({
 
   createBall: function () {
     var geometry = new THREE.SphereGeometry(0.5, 32, 32);
-    var specular = THREE.ImageUtils.loadTexture('/textures/ball/specular.jpg');
     var diffuse = THREE.ImageUtils.loadTexture('/textures/ball/diffuse.jpg');
-    var bump = THREE.ImageUtils.loadTexture('/textures/ball/bump.jpg');
-    var color = Math.random() < 0.5 ? 0xff0000 : 0x0000ff;
+    diffuse.wrapS = THREE.RepeatWrapping;
+    diffuse.repeat.set(2, 1);
+    diffuse.magFilter = THREE.NearestFilter;
     var material = new THREE.MeshPhongMaterial({
-      color: color,
-      ambient: color,
-      map: diffuse,
-      specularMap: specular,
-      specular: 0xffffff,
-      shininess: 30,
-      bumpMap: bump,
-      bumpScale: 0.01,
-      perPixel: true
+      map: diffuse
     });
     var ball = new THREE.Mesh(geometry, material);
     ball.position.z = 0.5;

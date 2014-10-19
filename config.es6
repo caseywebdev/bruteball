@@ -22,6 +22,7 @@ export default {
     linearDamping: 0.5,
     velocityIterations: 8,
     positionIterations: 10,
+    acceleration: 10,
     broadcastsPerSecond: 4
   },
 

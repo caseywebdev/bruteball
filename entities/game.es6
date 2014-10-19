@@ -9,13 +9,11 @@ var app = node ? require('index') : null;
 var userPattern = node ? require('patterns/games/users/show').default : null;
 var gamePattern = node ? require('patterns/games/show').default : null;
 
-// meters / second^2
-var MS2 = 200;
-
 var UP = new THREE.Vector3(0, 0, 1);
 
 var MAP_SIZE = 16;
 
+var ACCELERATION = config.game.acceleration;
 var SPS = 1000 / config.game.stepsPerSecond;
 var VI = config.game.velocityIterations;
 var PI = config.game.positionIterations;
@@ -24,7 +22,7 @@ var BROADCAST_WAIT = 1000 / config.game.broadcastsPerSecond;
 var applyForce = function (dt, user) {
   var ball = user.ball;
   var a = user.acceleration;
-  var force = new b2.b2Vec2(a.x * MS2 * dt, a.y * MS2 * dt);
+  var force = new b2.b2Vec2(a.x * ACCELERATION, a.y * ACCELERATION);
   ball.ApplyForceToCenter(force);
   b2.destroy(force);
   if (!node) {
