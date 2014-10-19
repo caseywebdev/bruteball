@@ -1,5 +1,5 @@
 import _ from 'underscore';
-import User from 'entities/user';
+import User from 'shared/entities/user';
 
 export default function (user, options) {
   var obj = _.pick(user, 'id');

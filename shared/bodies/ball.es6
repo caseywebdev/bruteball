@@ -1,5 +1,5 @@
 import b2 from 'box2d';
-import config from 'config';
+import config from 'shared/config';
 
 var BODY_DEF = new b2.b2BodyDef();
 BODY_DEF.set_type(b2.b2_dynamicBody);

@@ -1,4 +1,4 @@
-import config from 'config';
+import config from 'shared/config';
 import express from 'express';
 import path from 'path';
 import errorListener from 'listeners/express/error';

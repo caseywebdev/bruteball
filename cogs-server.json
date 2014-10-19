@@ -4,10 +4,7 @@
     "processors.es6.options.exporter": "toCJS"
   },
   "targets": {
-    "config.es6": "build/node_modules",
-    "bodies/**/*": "build/node_modules/bodies",
-    "entities/**/*": "build/node_modules/entities",
-    "interactions/**/*": "build/node_modules/interactions",
-    "server/**/*": "build/node_modules"
+    "server/**/*": "build/node_modules",
+    "shared/**/*": "build/node_modules/shared"
   }
 }

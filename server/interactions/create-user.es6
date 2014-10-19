@@ -1,5 +1,5 @@
 import app from 'index';
-import User from 'entities/user';
+import User from 'shared/entities/user';
 
 var db = app.knex.db;
 

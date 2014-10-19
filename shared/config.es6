@@ -4,6 +4,7 @@ var ENV_VARS = node ? process.env : {};
 
 export default {
   env: ENV_VARS.NODE_ENV || 'development',
+  node: node,
   port: ENV_VARS.PORT || 3000,
   url: ENV_VARS.URL || 'http://www.bruteball.com',
   cipherAlgorithm: 'aes256',

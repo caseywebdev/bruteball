@@ -1,5 +1,5 @@
 import app from 'index';
-import Game from 'entities/game';
+import Game from 'shared/entities/game';
 
 export default function (socket, av, cb) {
   var ax = parseInt(av.x);

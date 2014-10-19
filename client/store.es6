@@ -1,4 +1,4 @@
-import config from 'config';
+import config from 'shared/config';
 
 var prefix = config.store.prefix;
 

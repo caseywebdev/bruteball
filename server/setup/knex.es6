@@ -1,4 +1,4 @@
-import config from 'config';
+import config from 'shared/config';
 import knex from 'knex';
 
 var logQuery = function (query) { console.log(query.sql); };

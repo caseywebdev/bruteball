@@ -2,7 +2,7 @@
 
 import _ from 'underscore';
 import Cursors from 'cursors';
-import Game from 'entities/game';
+import Game from 'shared/entities/game';
 import GameComponent from 'client/components/game';
 import React from 'react';
 
@@ -86,7 +86,7 @@ export default React.createClass({
     var id = u[0];
     if (!game.users[id]) Game.addUser(game, {id: id});
     var user = game.users[id];
-    var position = user.ball.GetPosition();
+    var position = user.ball.body.GetPosition();
     var cx = position.get_x();
     var cy = position.get_y();
     var dx = u[1] - cx;
@@ -95,15 +95,15 @@ export default React.createClass({
       Math.abs(dx) > 1 ? u[1] : cx + (dx * 0.1),
       Math.abs(dy) > 1 ? u[2] : cy + (dy * 0.1)
     );
-    user.ball.SetTransform(position, user.ball.GetAngle());
-    var velocity = user.ball.GetLinearVelocity();
+    user.ball.body.SetTransform(position, user.ball.body.GetAngle());
+    var velocity = user.ball.body.GetLinearVelocity();
     velocity.Set(u[3], u[4]);
-    user.ball.SetLinearVelocity(velocity);
+    user.ball.body.SetLinearVelocity(velocity);
     user.acceleration.set(u[5], u[6]);
   },
 
   removeUser: function (u) {
-    Game.removeUser(this.state.game, {id: u.id});
+    Game.removeUser(this.state.game, {id: u[0]});
   },
 
   render: function () {

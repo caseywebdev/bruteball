@@ -1,5 +1,5 @@
 import _ from 'underscore';
-import config from 'config';
+import config from 'shared/config';
 import nodemailer from 'nodemailer';
 import nodemailerSesTransport from 'nodemailer-ses-transport';
 

@@ -4,8 +4,6 @@ import _ from 'underscore';
 import Cursors from 'cursors';
 import React from 'react';
 import THREE from 'three';
-import glowFragmentShader from 'client/shaders/fragment/glow';
-import glowVertexShader from 'client/shaders/vertex/glow';
 
 var MAP_SIZE = 16;
 
@@ -39,7 +37,7 @@ export default React.createClass({
     this.scene.add(light);
 
     var plane = new THREE.PlaneGeometry(MAP_SIZE, MAP_SIZE);
-    var diffuse = THREE.ImageUtils.loadTexture('/textures/ground/diffuse.jpg');
+    var diffuse = THREE.ImageUtils.loadTexture('/textures/ground-diffuse.jpg');
     var material = new THREE.MeshPhongMaterial({
       map: diffuse
     });
@@ -67,6 +65,11 @@ export default React.createClass({
   },
 
   renderMap: function () {
+    _.each(
+      _.omit(this.balls, _.map(_.map(this.state.game.users, 'info'), 'id')),
+      this.scene.remove,
+      this.scene
+    );
     _.each(this.state.game.users, this.renderUser);
     this.renderer.render(this.scene, this.camera);
     requestAnimationFrame(this.renderMap);
@@ -75,10 +78,7 @@ export default React.createClass({
   renderUser: function (user) {
     var id = user.info.id;
     var ball = this.balls[id];
-    if (!ball) ball = this.balls[id] = this.createBall();
-    var position = user.ball.GetPosition();
-    ball.position.set(position.get_x(), -position.get_y(), ball.position.z);
-    ball.rotation.copy((new THREE.Euler()).setFromRotationMatrix(user.matrix));
+    if (!ball) this.scene.add(ball = this.balls[id] = user.ball.mesh);
     if (this.state.user && id === this.state.user.id) {
       this.camera.position.x +=
         (ball.position.x - this.camera.position.x) * 0.1;
@@ -86,41 +86,6 @@ export default React.createClass({
         (ball.position.y - 5 - this.camera.position.y) * 0.1;
       this.camera.lookAt(ball.position);
     }
-  },
-
-  createBall: function () {
-    var geometry = new THREE.SphereGeometry(0.5, 32, 32);
-    var diffuse = THREE.ImageUtils.loadTexture('/textures/ball/diffuse.jpg');
-    diffuse.wrapS = THREE.RepeatWrapping;
-    diffuse.repeat.set(2, 1);
-    diffuse.magFilter = THREE.NearestFilter;
-    var material = new THREE.MeshPhongMaterial({
-      map: diffuse
-    });
-    var ball = new THREE.Mesh(geometry, material);
-    ball.position.z = 0.5;
-    ball.castShadow = true;
-    this.scene.add(ball);
-    // var customMaterial = new THREE.ShaderMaterial({
-    //   uniforms: {
-    //     c: {type: 'f', value: 1.0},
-    //     p: {type: 'f', value: 1.4},
-    //     glowColor: {type: 'c', value: new THREE.Color(0x00ff00)},
-    //     viewVector: {type: 'v3', value: this.camera.position}
-    //   },
-    //   vertexShader: glowVertexShader,
-    //   fragmentShader: glowFragmentShader,
-    //   side: THREE.FrontSide,
-    //   blending: THREE.AdditiveBlending,
-    //   transparent: true
-    // });
-    // var moonGlow = new THREE.Mesh(geometry.clone(), customMaterial.clone());
-    // moonGlow.position.x = ball.position.x;
-    // moonGlow.position.y = ball.position.y;
-    // moonGlow.position.z = ball.position.z;
-    // moonGlow.scale.multiplyScalar(1.2);
-    // this.scene.add(moonGlow);
-    return ball;
   },
 
   render: function () {
