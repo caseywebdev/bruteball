@@ -12,13 +12,13 @@ postgres:
 	mkdir -p log && postgres -D /usr/local/var/postgres >> log/postgres.log 2>&1
 
 cogs-client-w:
-	$(COGS) -C cogs-client.json -w client,config.es6,interactions,entities,styles
+	$(COGS) -C cogs-client.json -w bodies,client,config.es6,entities,styles
 
 cogs-server:
 	$(COGS) -C cogs-server.json
 
 cogs-server-w:
-	$(COGS) -C cogs-server.json -w server,config.es6,entities,interactions
+	$(COGS) -C cogs-server.json -w bodies,config.es6,entities,server
 
 server-w:
 	. .env.sh && $(WATCHY) -w build -- node build/node_modules

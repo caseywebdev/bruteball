@@ -4,8 +4,8 @@ import _ from 'underscore';
 import Cursors from 'cursors';
 import React from 'react';
 import THREE from 'three';
-import glowFragmentShader from 'shaders/fragment/glow';
-import glowVertexShader from 'shaders/vertex/glow';
+import glowFragmentShader from 'client/shaders/fragment/glow';
+import glowVertexShader from 'client/shaders/vertex/glow';
 
 var MAP_SIZE = 16;
 

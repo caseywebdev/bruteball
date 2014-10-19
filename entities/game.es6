@@ -4,6 +4,7 @@ import _ from 'underscore';
 import config from 'config';
 import b2 from 'box2d';
 import THREE from 'three';
+import Ball from 'bodies/ball';
 
 var app = node ? require('index') : null;
 var userPattern = node ? require('patterns/games/users/show').default : null;
@@ -68,24 +69,6 @@ var loopBroadcast = function (game) {
   setTimeout(_.partial(loopBroadcast, game), BROADCAST_WAIT);
 };
 
-var createBall = function (game) {
-  var bodyDef = new b2.b2BodyDef();
-  bodyDef.set_type(b2.b2_dynamicBody);
-  bodyDef.get_position().set_x(MAP_SIZE / 2);
-  bodyDef.get_position().set_y(MAP_SIZE / 2);
-  bodyDef.set_fixedRotation(true);
-  bodyDef.set_linearDamping(config.game.linearDamping);
-  var body = game.world.CreateBody(bodyDef);
-  b2.destroy(bodyDef);
-
-  var shape = new b2.b2CircleShape();
-  shape.set_m_radius(0.5);
-  body.CreateFixture(shape, 1);
-  b2.destroy(shape);
-
-  return body;
-};
-
 export var setAcceleration = function (game, user, x, y) {
   var ref = game.users[user.id];
   if (!ref || ref.acceleration.x === x && ref.acceleration.y === y) return;
@@ -95,9 +78,12 @@ export var setAcceleration = function (game, user, x, y) {
 
 export var addUser = function (game, user) {
   if (game.users[user.id]) return;
+  var ball = Ball.create(game.world);
+  ball.GetPosition().Set(MAP_SIZE / 2, MAP_SIZE / 2);
+  ball.SetTransform(ball.GetPosition(), ball.GetAngle());
   game.users[user.id] = {
     info: user,
-    ball: createBall(game),
+    ball: ball,
     acceleration: new THREE.Vector2(),
     matrix: new THREE.Matrix4(),
     lastBroadcast: 0
