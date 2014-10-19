@@ -51,6 +51,7 @@ var broadcastUser = function (game, user) {
 export var step = function (game) {
   var now = Date.now();
   var dt = (now - game.lastStep) / 1000;
+  if (!dt) return;
   _.each(game.users, _.partial(applyForce, dt));
   game.world.Step(dt, VI, PI);
   game.lastStep = now;

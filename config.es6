@@ -18,11 +18,11 @@ export default {
   },
 
   game: {
-    stepsPerSecond: 30,
+    stepsPerSecond: 60,
     linearDamping: 0.5,
     velocityIterations: 8,
     positionIterations: 10,
-    acceleration: 10,
+    acceleration: 5,
     broadcastsPerSecond: 4
   },
 
