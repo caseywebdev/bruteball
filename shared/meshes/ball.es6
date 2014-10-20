@@ -1,6 +1,6 @@
 import THREE from 'three';
 
-var GEOMETRY = new THREE.SphereGeometry(0.5, 32, 32);
+var GEOMETRY = new THREE.SphereGeometry(0.5, 16, 16);
 
 var TEXTURE_URL = '/textures/ball.jpg';
 var DIFFUSE_TEXTURE = THREE.ImageUtils.loadTexture(TEXTURE_URL);
