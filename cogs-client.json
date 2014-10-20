@@ -9,18 +9,25 @@
       "herit": "bower_components/herit/herit.js",
       "jquery": "client/jquery.es6",
       "live": "bower_components/live/live.js",
-      "react": "bower_components/react/react-with-addons.js",
-      "react-router": "bower_components/react-router/dist/react-router.js",
+      "react": "bower_components/react/react-with-addons.min.js",
+      "react-router": "bower_components/react-router/dist/react-router.min.js",
       "superagent": "bower_components/superagent/superagent.js",
-      "three": "bower_components/threejs/build/three.js",
-      "underscore": "bower_components/underscore/underscore.js"
+      "three": "bower_components/threejs/build/three.min.js",
+      "underscore": "bower_components/underscore/underscore-min.js"
     },
     "shims": {
       "three": {
         "global": "THREE"
       }
     },
-    "processors.es6.options.compatFix": true
+    "processors.es6.options.compatFix": true,
+    "compressors.js.ignore": [
+      "box2d",
+      "react",
+      "react-router",
+      "three",
+      "underscore"
+    ]
   },
   "targets": {
     "client/index.es6": "public",
