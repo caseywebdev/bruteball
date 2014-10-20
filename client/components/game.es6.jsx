@@ -11,7 +11,7 @@ export default React.createClass({
   mixins: [Cursors],
 
   componentDidMount: function () {
-    this.scene = new THREE.Scene();
+    this.scene = this.state.game.scene;
     this.camera = new THREE.PerspectiveCamera(45, window.innerWidth/window.innerHeight, 0.1, 1000);
 
     this.renderer = new THREE.WebGLRenderer({antialias: true});
@@ -47,8 +47,6 @@ export default React.createClass({
     this.scene.add(floor);
     this.balls = {};
 
-    this.camera.position.z = 15;
-
     this.handleResize();
     this.renderMap();
     window.addEventListener('resize', this.handleResize);
@@ -65,26 +63,25 @@ export default React.createClass({
   },
 
   renderMap: function () {
-    _.each(
-      _.omit(this.balls, _.map(_.map(this.state.game.users, 'info'), 'id')),
-      this.scene.remove,
-      this.scene
-    );
-    _.each(this.state.game.users, this.renderUser);
+    this.updateCamera();
     this.renderer.render(this.scene, this.camera);
     requestAnimationFrame(this.renderMap);
   },
 
-  renderUser: function (user) {
-    var id = user.info.id;
-    var ball = this.balls[id];
-    if (!ball) this.scene.add(ball = this.balls[id] = user.ball.mesh);
-    if (this.state.user && id === this.state.user.id) {
-      this.camera.position.x +=
-        (ball.position.x - this.camera.position.x) * 0.1;
-      this.camera.position.y +=
-        (ball.position.y - 5 - this.camera.position.y) * 0.1;
-      this.camera.lookAt(ball.position);
+  updateCamera: function () {
+    var user = this.state.user && this.state.game.users[this.state.user.id];
+    var mesh = user && user.ball.mesh;
+    var camera = this.camera;
+    if (mesh) {
+      camera.position.x += (mesh.position.x - camera.position.x) * 0.1;
+      camera.position.y += (mesh.position.y - 5 - camera.position.y) * 0.1;
+      camera.position.z = 15;
+      camera.lookAt(mesh.position);
+    } else {
+      camera.position.x = MAP_SIZE / 2;
+      camera.position.y = -MAP_SIZE / 2 - 5;
+      camera.position.z = 25;
+      camera.lookAt(new THREE.Vector3(MAP_SIZE / 2, -MAP_SIZE / 2, 0));
     }
   },
 

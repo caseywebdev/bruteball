@@ -18,3 +18,7 @@ export var create = function (world) {
   body.CreateFixture(FIXTURE_DEF);
   return body;
 };
+
+export var destroy = function (body, world) {
+  world.DestroyBody(body);
+};

@@ -1,13 +1,13 @@
-var node = typeof window === 'undefined';
-
 import _ from 'underscore';
 import config from 'shared/config';
 import b2 from 'box2d';
 import Ball from 'shared/entities/ball';
 
-var app = node ? require('index') : null;
-var userPattern = node ? require('patterns/games/users/show').default : null;
-var gamePattern = node ? require('patterns/games/show').default : null;
+var app = config.node ? require('index') : null;
+var userPattern =
+  config.node ? require('patterns/games/users/show').default : null;
+var gamePattern = config.node ? require('patterns/games/show').default : null;
+var THREE = config.node ? null : require('three');
 
 var MAP_SIZE = 16;
 
@@ -50,7 +50,7 @@ export var step = function (game) {
   game.lastStep = now;
   clearTimeout(game.stepTimeoutId);
   game.stepTimeoutId = setTimeout(_.partial(step, game), SPS);
-  if (node) {
+  if (config.node) {
     if (game.needsBroadcast > game.lastBroadcast) broadcastGame(game);
     else _.each(game.users, _.partial(broadcastUser, game));
   }
@@ -71,7 +71,7 @@ export var setAcceleration = function (game, user, x, y) {
 
 export var addUser = function (game, user) {
   if (game.users[user.id]) return;
-  var ball = Ball.create(game.world);
+  var ball = Ball.create(game);
   var position = ball.body.GetPosition();
   position.Set(MAP_SIZE / 2, MAP_SIZE / 2);
   ball.body.SetTransform(position, ball.body.GetAngle());
@@ -86,7 +86,7 @@ export var addUser = function (game, user) {
 export var removeUser = function (game, user) {
   var ref = game.users[user.id];
   if (!ref) return;
-  game.world.DestroyBody(ref.ball);
+  Ball.destroy(ref.ball, game);
   b2.destroy(ref.acceleration);
   delete game.users[user.id];
 };
@@ -95,6 +95,7 @@ export var create = function () {
   var game = {
     users: {},
     world: new b2.b2World(),
+    scene: config.node ? null : new THREE.Scene(),
     lastStep: Date.now(),
     lastBroadcast: 0
   };

@@ -6,11 +6,16 @@ var THREE = config.node ? null : require('three');
 
 var UP = config.node ? null : new THREE.Vector3(0, 0, 1);
 
-export var create = function (world) {
+export var create = function (game) {
   return {
-    body: BallBody.create(world),
-    mesh: config.node ? null : BallMesh.create()
+    body: BallBody.create(game.world),
+    mesh: config.node ? null : BallMesh.create(game.scene)
   };
+};
+
+export var destroy = function (ball, game) {
+  BallBody.destroy(ball.body, game.world);
+  if (!config.node) BallMesh.destroy(ball.mesh, game.scene);
 };
 
 export var updateMesh = function (ball, dt) {

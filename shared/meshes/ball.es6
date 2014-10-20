@@ -12,11 +12,16 @@ var MATERIAL = new THREE.MeshPhongMaterial({
   map: DIFFUSE_TEXTURE
 });
 
-export var create = function () {
-  var ball = new THREE.Mesh(GEOMETRY, MATERIAL);
-  ball.position.z = 0.5;
-  ball.castShadow = true;
-  return ball;
+export var create = function (scene) {
+  var mesh = new THREE.Mesh(GEOMETRY, MATERIAL);
+  mesh.position.z = 0.5;
+  mesh.castShadow = true;
+  scene.add(mesh);
+  return mesh;
+};
+
+export var destroy = function (mesh, scene) {
+  scene.remove(mesh);
 };
 
 // GLOWING BALL
