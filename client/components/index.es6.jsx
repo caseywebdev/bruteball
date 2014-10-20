@@ -7,8 +7,8 @@ import GameComponent from 'client/components/game';
 import React from 'react';
 
 var KEYS = {
-  '38': {down: false, x: 0, y: -1},
-  '40': {down: false, x: 0, y: 1},
+  '38': {down: false, x: 0, y: 1},
+  '40': {down: false, x: 0, y: -1},
   '37': {down: false, x: -1, y: 0},
   '39': {down: false, x: 1, y: 0}
 };

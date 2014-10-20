@@ -25,6 +25,7 @@ var applyForce = function (dt, user) {
   );
   user.ball.body.ApplyForceToCenter(force);
   b2.destroy(force);
+  if (!config.node) Ball.updateMesh(user.ball, dt);
 };
 
 var broadcastGame = function (game) {
@@ -45,9 +46,6 @@ export var step = function (game) {
   if (!dt) return;
   _.each(game.users, _.partial(applyForce, dt));
   game.world.Step(dt, VI, PI);
-  if (!config.node) {
-    _.each(_.map(game.users, 'ball'), _.partial(Ball.updateMesh, _, dt));
-  }
   game.lastStep = now;
   clearTimeout(game.stepTimeoutId);
   game.stepTimeoutId = setTimeout(_.partial(step, game), SPS);
@@ -102,14 +100,20 @@ export var create = function () {
     lastBroadcast: 0
   };
   game.walls.push(
-    Wall.create(game, 3, 3),
-    Wall.create(game, 3, 4),
-    Wall.create(game, 3, 5),
-    Wall.create(game, 3, 6),
-    Wall.create(game, 3, 7),
-    Wall.create(game, 4, 3),
-    Wall.create(game, 5, 3),
-    Wall.create(game, 6, 3)
+    Wall.create({game: game, x: 3, y: 3, points: Wall.WITHOUT_BOTTOM_LEFT}),
+    Wall.create({game: game, x: 3, y: 4}),
+    Wall.create({game: game, x: 3, y: 5}),
+    Wall.create({game: game, x: 3, y: 6}),
+    Wall.create({game: game, x: 3, y: 7}),
+    Wall.create({game: game, x: 4, y: 3}),
+    Wall.create({game: game, x: 5, y: 3}),
+    Wall.create({game: game, x: 6, y: 3}),
+    Wall.create({game: game, x: 4, y: 4, points: Wall.WITHOUT_TOP_RIGHT}),
+    Wall.create({game: game, x: 7, y: 3, points: Wall.WITHOUT_BOTTOM_RIGHT}),
+    Wall.create({game: game, x: 7, y: 4, points: Wall.WITHOUT_TOP_LEFT}),
+    Wall.create({game: game, x: 8, y: 4}),
+    Wall.create({game: game, x: 9, y: 4, points: Wall.WITHOUT_TOP_RIGHT}),
+    Wall.create({game: game, x: 9, y: 3, points: Wall.WITHOUT_BOTTOM_LEFT})
   );
   var bodyDef = new b2.b2BodyDef();
   var body = game.world.CreateBody(bodyDef);

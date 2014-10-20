@@ -21,8 +21,8 @@ export default React.createClass({
     document.body.appendChild(this.renderer.domElement);
 
     var light = new THREE.DirectionalLight(0xffffff, 0.9);
-    light.position.set(MAP_SIZE / 2, -MAP_SIZE / 2, 10);
-    light.target.position.set(MAP_SIZE / 2 + 2, -MAP_SIZE / 2 - 2, 0);
+    light.position.set(MAP_SIZE / 2, MAP_SIZE / 2, 10);
+    light.target.position.set(MAP_SIZE / 2 + 2, MAP_SIZE / 2 - 2, 0);
     light.castShadow = true;
     light.shadowCameraNear = 0;
     light.shadowCameraFar = MAP_SIZE;
@@ -36,11 +36,11 @@ export default React.createClass({
     this.scene.add(light);
 
     var plane = new THREE.PlaneGeometry(MAP_SIZE, MAP_SIZE);
-    var diffuse = THREE.ImageUtils.loadTexture('/textures/ground-diffuse.jpg');
+    var diffuse = THREE.ImageUtils.loadTexture('/textures/ground.jpg');
     var material = new THREE.MeshBasicMaterial({map: diffuse});
     var floor = new THREE.Mesh(plane, material);
     floor.receiveShadow = true;
-    floor.position.set(MAP_SIZE / 2, -MAP_SIZE / 2, 0);
+    floor.position.set(MAP_SIZE / 2, MAP_SIZE / 2, 0);
     this.scene.add(floor);
     this.balls = {};
 
@@ -76,9 +76,9 @@ export default React.createClass({
       camera.lookAt(mesh.position);
     } else {
       camera.position.x = MAP_SIZE / 2;
-      camera.position.y = -MAP_SIZE / 2 - 5;
+      camera.position.y = MAP_SIZE / 2 - 5;
       camera.position.z = 25;
-      camera.lookAt(new THREE.Vector3(MAP_SIZE / 2, -MAP_SIZE / 2, 0));
+      camera.lookAt(new THREE.Vector3(MAP_SIZE / 2, MAP_SIZE / 2, 0));
     }
   },
 
