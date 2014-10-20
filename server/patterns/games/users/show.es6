@@ -10,7 +10,7 @@ export default function (user) {
     trim(position.get_y()),
     trim(velocity.get_x()),
     trim(velocity.get_y()),
-    trim(acceleration.x),
-    trim(acceleration.y)
+    trim(acceleration.get_x()),
+    trim(acceleration.get_y())
   ];
 }

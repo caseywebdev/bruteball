@@ -99,7 +99,7 @@ export default React.createClass({
     var velocity = user.ball.body.GetLinearVelocity();
     velocity.Set(u[3], u[4]);
     user.ball.body.SetLinearVelocity(velocity);
-    user.acceleration.set(u[5], u[6]);
+    user.acceleration.Set(u[5], u[6]);
   },
 
   removeUser: function (u) {

@@ -3,14 +3,11 @@ var node = typeof window === 'undefined';
 import _ from 'underscore';
 import config from 'shared/config';
 import b2 from 'box2d';
-import THREE from 'three';
 import Ball from 'shared/entities/ball';
 
 var app = node ? require('index') : null;
 var userPattern = node ? require('patterns/games/users/show').default : null;
 var gamePattern = node ? require('patterns/games/show').default : null;
-
-var UP = new THREE.Vector3(0, 0, 1);
 
 var MAP_SIZE = 16;
 
@@ -21,10 +18,11 @@ var PI = config.game.positionIterations;
 var BROADCAST_WAIT = 1000 / config.game.broadcastsPerSecond;
 
 var applyForce = function (user) {
-  var body = user.ball.body;
-  var a = user.acceleration;
-  var force = new b2.b2Vec2(a.x * ACCELERATION, a.y * ACCELERATION);
-  body.ApplyForceToCenter(force);
+  var force = new b2.b2Vec2(
+    user.acceleration.get_x() * ACCELERATION,
+    user.acceleration.get_y() * ACCELERATION
+  );
+  user.ball.body.ApplyLinearImpulse(force);
   b2.destroy(force);
 };
 
@@ -40,31 +38,18 @@ var broadcastUser = function (game, user) {
   user.lastBroadcast = Date.now();
 };
 
-var updateMesh = function (dt, user) {
-  var body = user.ball.body;
-  var mesh = user.ball.mesh;
-  var position = body.GetPosition();
-  mesh.position.x = position.get_x();
-  mesh.position.y = -position.get_y();
-  var v2 = body.GetLinearVelocity();
-  var v3 = new THREE.Vector3(-v2.get_x(), v2.get_y(), 0);
-  var theta = v3.length() * Math.PI * dt;
-  var axis = v3.cross(UP).normalize();
-  mesh.matrix =
-    (new THREE.Matrix4()).makeRotationAxis(axis, theta).multiply(mesh.matrix);
-  mesh.rotation.copy((new THREE.Euler()).setFromRotationMatrix(mesh.matrix));
-};
-
 export var step = function (game) {
   var now = Date.now();
   var dt = (now - game.lastStep) / 1000;
   if (!dt) return;
   _.each(game.users, applyForce);
   game.world.Step(dt, VI, PI);
-  if (!config.node) _.each(game.users, _.partial(updateMesh, dt));
+  if (!config.node) {
+    _.each(_.map(game.users, 'ball'), _.partial(Ball.updateMesh, _, dt));
+  }
   game.lastStep = now;
-  clearInterval(game.stepIntervalId);
-  game.stepIntervalId = setTimeout(_.partial(step, game), SPS);
+  clearTimeout(game.stepTimeoutId);
+  game.stepTimeoutId = setTimeout(_.partial(step, game), SPS);
   if (node) {
     if (game.needsBroadcast > game.lastBroadcast) broadcastGame(game);
     else _.each(game.users, _.partial(broadcastUser, game));
@@ -79,19 +64,21 @@ var loopBroadcast = function (game) {
 export var setAcceleration = function (game, user, x, y) {
   var ref = game.users[user.id];
   if (!ref || ref.acceleration.x === x && ref.acceleration.y === y) return;
-  ref.acceleration.set(x, y).normalize();
+  ref.acceleration.Set(x, y);
+  ref.acceleration.Normalize();
   ref.needsBroadcast = Date.now();
 };
 
 export var addUser = function (game, user) {
   if (game.users[user.id]) return;
   var ball = Ball.create(game.world);
-  ball.body.GetPosition().Set(MAP_SIZE / 2, MAP_SIZE / 2);
-  ball.body.SetTransform(ball.body.GetPosition(), ball.body.GetAngle());
+  var position = ball.body.GetPosition();
+  position.Set(MAP_SIZE / 2, MAP_SIZE / 2);
+  ball.body.SetTransform(position, ball.body.GetAngle());
   game.users[user.id] = {
     info: user,
     ball: ball,
-    acceleration: new THREE.Vector2(),
+    acceleration: new b2.b2Vec2(),
     lastBroadcast: 0
   };
 };
@@ -100,6 +87,7 @@ export var removeUser = function (game, user) {
   var ref = game.users[user.id];
   if (!ref) return;
   game.world.DestroyBody(ref.ball);
+  b2.destroy(ref.acceleration);
   delete game.users[user.id];
 };
 
