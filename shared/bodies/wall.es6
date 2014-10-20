@@ -6,7 +6,8 @@ var FIXTURE_DEF = new b2.b2FixtureDef();
 FIXTURE_DEF.set_restitution(0.2);
 
 export var create = function (options) {
-  var shape = b2.CreatePolygonShape(options.points);
+  var shape = new b2.b2PolygonShape();
+  shape.Set(b2.CreateVerticesPointer(options.points), options.points.length);
   BODY_DEF.get_position().set_x(options.x - 0.5);
   BODY_DEF.get_position().set_y(options.y - 0.5);
   var body = options.game.world.CreateBody(BODY_DEF);

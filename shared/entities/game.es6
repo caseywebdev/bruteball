@@ -120,12 +120,14 @@ export var create = function () {
   b2.destroy(bodyDef);
   var fixtureDef = new b2.b2FixtureDef();
   fixtureDef.set_restitution(0.25);
-  var shape = b2.CreateLoopShape([
+  var shape = new b2.b2ChainShape();
+  var vertices = [
     {x: 0, y: 0},
     {x: MAP_SIZE, y: 0},
     {x: MAP_SIZE, y: MAP_SIZE},
     {x: 0, y: MAP_SIZE}
-  ]);
+  ];
+  shape.CreateLoop(b2.CreateVerticesPointer(vertices), vertices.length);
   fixtureDef.set_shape(shape);
   body.CreateFixture(fixtureDef);
   b2.destroy(fixtureDef);
