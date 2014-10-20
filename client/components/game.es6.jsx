@@ -45,6 +45,7 @@ export default React.createClass({
     this.balls = {};
 
     this.handleResize();
+    this.updateFps();
     this.renderMap();
     window.addEventListener('resize', this.handleResize);
   },
@@ -59,9 +60,16 @@ export default React.createClass({
     this.camera.updateProjectionMatrix();
   },
 
+  updateFps: function () {
+    this.update({fps: {$set: this.frames || 0}});
+    this.frames = 0;
+    setTimeout(this.updateFps, 1000);
+  },
+
   renderMap: function () {
     this.updateCamera();
     this.renderer.render(this.scene, this.camera);
+    ++this.frames;
     requestAnimationFrame(this.renderMap);
   },
 

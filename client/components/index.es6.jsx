@@ -21,7 +21,8 @@ export default React.createClass({
   getInitialState: function () {
     return {
       game: Game.create(),
-      latency: 0
+      latency: 0,
+      fps: 0
     };
   },
 
@@ -109,10 +110,14 @@ export default React.createClass({
   render: function () {
     return (
       <div>
-        <div className='latency'>Latency: {this.state.latency}ms</div>
+        <div className='latency'>
+          Latency: {this.state.latency}ms<br />
+          FPS: {this.state.fps}
+        </div>
         <GameComponent cursors={{
           game: this.getCursor('game'),
-          user: this.getCursor('user')
+          user: this.getCursor('user'),
+          fps: this.getCursor('fps')
         }} />
       </div>
     );
