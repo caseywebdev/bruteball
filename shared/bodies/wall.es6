@@ -7,6 +7,7 @@ SHAPE.SetAsBox(0.5, 0.5);
 
 var FIXTURE_DEF = new b2.b2FixtureDef();
 FIXTURE_DEF.set_shape(SHAPE);
+FIXTURE_DEF.set_restitution(0.2);
 
 export var create = function (world, x, y) {
   BODY_DEF.get_position().set_x(x - 0.5);
