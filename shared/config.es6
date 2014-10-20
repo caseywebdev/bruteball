@@ -20,10 +20,10 @@ export default {
 
   game: {
     stepsPerSecond: 60,
-    linearDamping: 0.5,
+    linearDamping: 0.4,
     velocityIterations: 8,
     positionIterations: 10,
-    acceleration: 0.15,
+    acceleration: 250,
     broadcastsPerSecond: 4
   },
 

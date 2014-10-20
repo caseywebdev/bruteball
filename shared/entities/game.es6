@@ -18,12 +18,12 @@ var VI = config.game.velocityIterations;
 var PI = config.game.positionIterations;
 var BROADCAST_WAIT = 1000 / config.game.broadcastsPerSecond;
 
-var applyForce = function (user) {
+var applyForce = function (dt, user) {
   var force = new b2.b2Vec2(
-    user.acceleration.get_x() * ACCELERATION,
-    user.acceleration.get_y() * ACCELERATION
+    user.acceleration.get_x() * ACCELERATION * dt,
+    user.acceleration.get_y() * ACCELERATION * dt
   );
-  user.ball.body.ApplyLinearImpulse(force);
+  user.ball.body.ApplyForceToCenter(force);
   b2.destroy(force);
 };
 
@@ -43,7 +43,7 @@ export var step = function (game) {
   var now = Date.now();
   var dt = (now - game.lastStep) / 1000;
   if (!dt) return;
-  _.each(game.users, applyForce);
+  _.each(game.users, _.partial(applyForce, dt));
   game.world.Step(dt, VI, PI);
   if (!config.node) {
     _.each(_.map(game.users, 'ball'), _.partial(Ball.updateMesh, _, dt));
