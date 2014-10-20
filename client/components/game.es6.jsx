@@ -1,6 +1,5 @@
 /** @jsx React.DOM */
 
-import _ from 'underscore';
 import Cursors from 'cursors';
 import React from 'react';
 import THREE from 'three';
@@ -23,14 +22,14 @@ export default React.createClass({
 
     var light = new THREE.DirectionalLight(0xffffff, 0.9);
     light.position.set(MAP_SIZE / 2, -MAP_SIZE / 2, 10);
-    light.target.position.set(MAP_SIZE / 2, -MAP_SIZE / 2, 0);
+    light.target.position.set(MAP_SIZE / 2 + 2, -MAP_SIZE / 2 - 2, 0);
     light.castShadow = true;
     light.shadowCameraNear = 0;
-    light.shadowCameraFar = 10;
-    light.shadowCameraTop = MAP_SIZE / 2;
-    light.shadowCameraBottom = -MAP_SIZE / 2;
-    light.shadowCameraLeft = -MAP_SIZE / 2;
-    light.shadowCameraRight = MAP_SIZE / 2;
+    light.shadowCameraFar = MAP_SIZE;
+    light.shadowCameraTop = MAP_SIZE;
+    light.shadowCameraBottom = -MAP_SIZE;
+    light.shadowCameraLeft = -MAP_SIZE;
+    light.shadowCameraRight = MAP_SIZE;
     // light.shadowCameraVisible = true;
     light.shadowMapWidth = light.shadowMapHeight = 2048;
 
@@ -38,9 +37,7 @@ export default React.createClass({
 
     var plane = new THREE.PlaneGeometry(MAP_SIZE, MAP_SIZE);
     var diffuse = THREE.ImageUtils.loadTexture('/textures/ground-diffuse.jpg');
-    var material = new THREE.MeshPhongMaterial({
-      map: diffuse
-    });
+    var material = new THREE.MeshBasicMaterial({map: diffuse});
     var floor = new THREE.Mesh(plane, material);
     floor.receiveShadow = true;
     floor.position.set(MAP_SIZE / 2, -MAP_SIZE / 2, 0);

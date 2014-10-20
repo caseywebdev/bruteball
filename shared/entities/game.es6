@@ -1,7 +1,8 @@
 import _ from 'underscore';
-import config from 'shared/config';
 import b2 from 'box2d';
 import Ball from 'shared/entities/ball';
+import config from 'shared/config';
+import Wall from 'shared/entities/wall';
 
 var app = config.node ? require('index') : null;
 var userPattern =
@@ -96,9 +97,20 @@ export var create = function () {
     users: {},
     world: new b2.b2World(),
     scene: config.node ? null : new THREE.Scene(),
+    walls: [],
     lastStep: Date.now(),
     lastBroadcast: 0
   };
+  game.walls.push(
+    Wall.create(game, 3, 3),
+    Wall.create(game, 3, 4),
+    Wall.create(game, 3, 5),
+    Wall.create(game, 3, 6),
+    Wall.create(game, 3, 7),
+    Wall.create(game, 4, 3),
+    Wall.create(game, 5, 3),
+    Wall.create(game, 6, 3)
+  );
   var bodyDef = new b2.b2BodyDef();
   var body = game.world.CreateBody(bodyDef);
   b2.destroy(bodyDef);
