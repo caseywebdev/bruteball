@@ -1,4 +1,6 @@
+import _ from 'underscore';
 import THREE from 'three';
+import CelShader from 'client/shaders/cel';
 
 var GEOMETRY = new THREE.SphereGeometry(0.5, 16, 16);
 
@@ -8,7 +10,8 @@ DIFFUSE_TEXTURE.wrapS = THREE.RepeatWrapping;
 DIFFUSE_TEXTURE.repeat.set(2, 1);
 DIFFUSE_TEXTURE.magFilter = THREE.NearestFilter;
 
-var MATERIAL = new THREE.MeshLambertMaterial({map: DIFFUSE_TEXTURE});
+// var MATERIAL = new THREE.MeshLambertMaterial({map: DIFFUSE_TEXTURE});
+var MATERIAL = new THREE.ShaderMaterial(CelShader);
 
 export var create = function (scene) {
   var mesh = new THREE.Mesh(GEOMETRY, MATERIAL);

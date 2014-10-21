@@ -1,5 +1,7 @@
 /** @jsx React.DOM */
 
+import _ from 'underscore';
+import CelShader from 'client/shaders/cel';
 import Cursors from 'cursors';
 import Game from 'shared/entities/game';
 import React from 'react';
@@ -19,7 +21,7 @@ export default React.createClass({
     this.renderer.shadowMapEnabled = true;
     this.renderer.shadowMapCullFace = THREE.CullFaceBack;
     this.renderer.shadowMapType = THREE.PCFSoftShadowMap;
-    document.body.appendChild(this.renderer.domElement);
+    this.getDOMNode().appendChild(this.renderer.domElement);
 
     var light = new THREE.DirectionalLight(0xffffff, 0.9);
     light.position.set(MAP_SIZE / 2, MAP_SIZE / 2, 10);
@@ -37,8 +39,11 @@ export default React.createClass({
     this.scene.add(light);
 
     var plane = new THREE.PlaneGeometry(MAP_SIZE, MAP_SIZE);
-    var diffuse = THREE.ImageUtils.loadTexture('/textures/ground.jpg');
-    var material = new THREE.MeshBasicMaterial({map: diffuse});
+    var uniforms = THREE.UniformsUtils.clone(CelShader.uniforms);
+    uniforms.uBaseColor.value = new THREE.Color(0x00ff00);
+    var material = new THREE.ShaderMaterial(_.extend({}, CelShader, {
+      uniforms: uniforms
+    }));
     var floor = new THREE.Mesh(plane, material);
     floor.receiveShadow = true;
     floor.position.set(MAP_SIZE / 2, MAP_SIZE / 2, 0);
@@ -68,11 +73,11 @@ export default React.createClass({
   },
 
   renderMap: function () {
+    requestAnimationFrame(this.renderMap);
     Game.step(this.state.game);
     this.updateCamera();
     this.renderer.render(this.scene, this.camera);
     ++this.frames;
-    requestAnimationFrame(this.renderMap);
   },
 
   updateCamera: function () {

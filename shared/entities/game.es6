@@ -44,14 +44,16 @@ var broadcastWaiting = function (game) {
 };
 
 export var step = function (game) {
-  var now = Date.now();
-  var dt = (now - game.lastStep) / 1000;
-  _.each(game.users, _.partial(applyForce, dt));
-  game.world.Step(dt, VI, PI);
-  game.lastStep = now;
   if (config.node) {
     clearTimeout(game.stepTimeoutId);
     game.stepTimeoutId = setTimeout(_.partial(step, game), SPS);
+  }
+  var now = Date.now();
+  var dt = (now - game.lastStep) / 1000;
+  game.lastStep = now;
+  _.each(game.users, _.partial(applyForce, dt));
+  game.world.Step(dt, VI, PI);
+  if (config.node) {
     game.needsBroadcast > game.lastBroadcast ?
     broadcastAll(game) :
     broadcastWaiting(game);

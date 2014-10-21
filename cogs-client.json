@@ -1,4 +1,8 @@
 {
+  "processors": {
+    "vert": "txt",
+    "frag": "txt"
+  },
   "options": {
     "concatAmd": true,
     "names": {

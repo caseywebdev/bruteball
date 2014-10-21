@@ -1,13 +1,20 @@
 import _ from 'underscore';
+import CelShader from 'client/shaders/cel';
 import THREE from 'three';
 
 var TEXTURE_URL = '/textures/wall.jpg';
 var DIFFUSE_TEXTURE = THREE.ImageUtils.loadTexture(TEXTURE_URL);
 
-var MATERIAL = new THREE.MeshLambertMaterial({
-  map: DIFFUSE_TEXTURE,
-  color: 0xff0000
-});
+// var MATERIAL = new THREE.MeshLambertMaterial({
+//   map: DIFFUSE_TEXTURE,
+//   color: 0xff0000
+// });
+
+var uniforms = THREE.UniformsUtils.clone(CelShader.uniforms);
+uniforms.uBaseColor.value = new THREE.Color(0x0000ff);
+var MATERIAL = new THREE.ShaderMaterial(_.extend({}, CelShader, {
+  uniforms: uniforms
+}));
 
 export var create = function (options) {
   var shape = new THREE.Shape(_.map(options.points, function (point) {

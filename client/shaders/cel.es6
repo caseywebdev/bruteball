@@ -2,7 +2,7 @@ import THREE from 'three';
 import fragmentShader from 'client/shaders/cel-fragment';
 import vertexShader from 'client/shaders/cel-vertex';
 
-export default new THREE.ShaderMaterial({
+export default {
   uniforms: {
     uDirLightPos: {type: 'v3', value: new THREE.Vector3(1, 0, 0)},
     uDirLightColor: {type: 'c', value: new THREE.Color(0xeeeeee)},
@@ -11,4 +11,4 @@ export default new THREE.ShaderMaterial({
   },
   vertexShader: vertexShader,
   fragmentShader: fragmentShader
-});
+};
