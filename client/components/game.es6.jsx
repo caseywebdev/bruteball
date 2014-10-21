@@ -39,11 +39,13 @@ export default React.createClass({
     this.scene.add(light);
 
     var plane = new THREE.PlaneGeometry(MAP_SIZE, MAP_SIZE);
-    var uniforms = THREE.UniformsUtils.clone(CelShader.uniforms);
-    uniforms.uBaseColor.value = new THREE.Color(0x00ff00);
-    var material = new THREE.ShaderMaterial(_.extend({}, CelShader, {
-      uniforms: uniforms
-    }));
+    var diffuse = THREE.ImageUtils.loadTexture('/textures/ground.jpg');
+    var material = new THREE.MeshBasicMaterial({map: diffuse});
+    // var uniforms = THREE.UniformsUtils.clone(CelShader.uniforms);
+    // uniforms.uBaseColor.value = new THREE.Color(0x00ff00);
+    // var material = new THREE.ShaderMaterial(_.extend({}, CelShader, {
+    //   uniforms: uniforms
+    // }));
     var floor = new THREE.Mesh(plane, material);
     floor.receiveShadow = true;
     floor.position.set(MAP_SIZE / 2, MAP_SIZE / 2, 0);

@@ -10,8 +10,8 @@ DIFFUSE_TEXTURE.wrapS = THREE.RepeatWrapping;
 DIFFUSE_TEXTURE.repeat.set(2, 1);
 DIFFUSE_TEXTURE.magFilter = THREE.NearestFilter;
 
-// var MATERIAL = new THREE.MeshLambertMaterial({map: DIFFUSE_TEXTURE});
-var MATERIAL = new THREE.ShaderMaterial(CelShader);
+var MATERIAL = new THREE.MeshLambertMaterial({map: DIFFUSE_TEXTURE});
+// var MATERIAL = new THREE.ShaderMaterial(CelShader);
 
 export var create = function (scene) {
   var mesh = new THREE.Mesh(GEOMETRY, MATERIAL);
