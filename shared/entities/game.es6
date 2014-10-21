@@ -28,30 +28,37 @@ var applyForce = function (dt, user) {
   if (!config.node) Ball.updateMesh(user.ball, dt);
 };
 
-var broadcastGame = function (game) {
-  app.ws.server.broadcast('g', gamePattern(game));
+var broadcastAll = function (game) {
   game.lastBroadcast = Date.now();
+  app.ws.server.broadcast('g', gamePattern(game));
 };
 
-var broadcastUser = function (game, user) {
-  var lastBroadcast = Math.max(game.lastBroadcast, user.lastBroadcast);
-  if (user.needsBroadcast <= lastBroadcast) return;
-  app.ws.server.broadcast('u', userPattern(user));
-  user.lastBroadcast = Date.now();
+var broadcastWaiting = function (game) {
+  var now = Date.now();
+  var waiting = _.filter(game.users, function (user) {
+    var lastBroadcast = Math.max(game.lastBroadcast, user.lastBroadcast);
+    if (user.needsBroadcast <= lastBroadcast) return;
+    user.lastBroadcast = now;
+    return true;
+  });
+  if (!waiting.length) return;
+  app.ws.server.broadcast('g', gamePattern(game, {users: waiting}));
 };
 
 export var step = function (game) {
   var now = Date.now();
-  var dt = (now - game.lastStep) / 1000;
-  if (!dt) return;
+  var delta = now - game.lastStep;
+  game.time += delta;
+  var dt = delta / 1000;
   _.each(game.users, _.partial(applyForce, dt));
   game.world.Step(dt, VI, PI);
   game.lastStep = now;
-  clearTimeout(game.stepTimeoutId);
-  game.stepTimeoutId = setTimeout(_.partial(step, game), SPS);
   if (config.node) {
-    if (game.needsBroadcast > game.lastBroadcast) broadcastGame(game);
-    else _.each(game.users, _.partial(broadcastUser, game));
+    clearTimeout(game.stepTimeoutId);
+    game.stepTimeoutId = setTimeout(_.partial(step, game), SPS);
+    game.needsBroadcast > game.lastBroadcast ?
+    broadcastAll(game) :
+    broadcastWaiting(game);
   }
 };
 
@@ -93,6 +100,7 @@ export var removeUser = function (game, user) {
 export var create = function () {
   var game = {
     users: {},
+    time: 0,
     world: new b2.b2World(),
     scene: config.node ? null : new THREE.Scene(),
     walls: [],

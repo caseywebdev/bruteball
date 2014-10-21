@@ -1,6 +1,7 @@
 /** @jsx React.DOM */
 
 import Cursors from 'cursors';
+import Game from 'shared/entities/game';
 import React from 'react';
 import THREE from 'three';
 
@@ -67,6 +68,7 @@ export default React.createClass({
   },
 
   renderMap: function () {
+    Game.step(this.state.game);
     this.updateCamera();
     this.renderer.render(this.scene, this.camera);
     ++this.frames;

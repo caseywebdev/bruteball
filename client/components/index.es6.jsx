@@ -27,8 +27,7 @@ export default React.createClass({
   },
 
   componentDidMount: function () {
-    this.state.live.on('g', this.setGame);
-    this.state.live.on('u', this.handleUserUpdate);
+    this.state.live.on('g', this.handleGame);
     this.state.live.on('r', this.removeUser);
     this.ping();
     document.addEventListener('keydown', this.handleKey);
@@ -36,8 +35,7 @@ export default React.createClass({
   },
 
   componentWillUnmount: function () {
-    this.state.live.off('g', this.setGame);
-    this.state.live.off('u', this.handleUserUpdate);
+    this.state.live.off('g', this.handleGame);
     this.state.live.off('r', this.removeUser);
     document.removeEventListener('keydown', this.handleKey);
     document.removeEventListener('keyup', this.handleKey);
@@ -63,7 +61,8 @@ export default React.createClass({
   },
 
   handlePing: function () {
-    this.update({latency: {$set: Math.ceil((Date.now() - this.lastPing) / 2)}});
+    var last = (Date.now() - this.lastPing) / 2;
+    this.update({latency: {$set: Math.ceil((this.state.latency + last) / 2)}});
   },
 
   getAv: function () {
@@ -72,14 +71,17 @@ export default React.createClass({
     }, {x: 0, y: 0});
   },
 
-  setGame: function (g) {
-    Game.step(this.state.game);
-    _.each(g.u, this.updateUser);
+  handleGame: function (g) {
+    if (!this.first) this.state.game.time = g.t;
+    this.first = true;
+    var wait = this.state.game.time - g.t + this.state.latency;
+    _.delay(_.partial(this.updateGame, g), wait);
   },
 
-  handleUserUpdate: function (u) {
+  updateGame: function (g) {
     Game.step(this.state.game);
-    this.updateUser(u);
+    this.state.game.time = g.t;
+    _.each(g.u, this.updateUser);
   },
 
   updateUser: function (u) {
