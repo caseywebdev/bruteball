@@ -15,18 +15,25 @@ var KEYS = {
 
 var PING_DELAY = 1000;
 
+var getMedian = function (array) {
+  return _.sortBy(array)[Math.floor(array.length / 2)];
+};
+
 export default React.createClass({
   mixins: [Cursors],
 
   getInitialState: function () {
     return {
       game: Game.create(),
+      offset: 0,
       latency: 0,
       fps: 0
     };
   },
 
   componentDidMount: function () {
+    this.offsets = [];
+    this.latencies = [];
     this.state.live.on('g', this.handleGame);
     this.state.live.on('r', this.removeUser);
     this.ping();
@@ -55,14 +62,20 @@ export default React.createClass({
   },
 
   ping: function () {
-    this.lastPing = Date.now();
-    this.state.live.send('ping', this.lastPing, this.handlePing);
+    this.state.live.send('ping', Date.now(), this.handlePing);
     this.pingTimeoutId = _.delay(this.ping, PING_DELAY);
   },
 
-  handlePing: function () {
-    var last = (Date.now() - this.lastPing) / 2;
-    this.update({latency: {$set: Math.ceil((this.state.latency + last) / 2)}});
+  handlePing: function (er, res) {
+    var start = res.then;
+    var then = res.now;
+    var now = Date.now();
+    this.offsets = [now - then].concat(this.offsets.slice(0, 4));
+    this.latencies = [(now - start) / 2].concat(this.latencies.slice(0, 4));
+    this.update({
+      offset: {$set: getMedian(this.offsets)},
+      latency: {$set: getMedian(this.latencies)}
+    });
   },
 
   getAv: function () {
@@ -72,9 +85,12 @@ export default React.createClass({
   },
 
   handleGame: function (g) {
-    if (!this.first) this.state.game.time = g.t;
-    this.first = true;
-    var wait = this.state.game.time - g.t + this.state.latency;
+    var normalized = g.s + this.state.offset - this.state.latency;
+    if (!this.first) {
+      this.state.game.lastStep = normalized;
+      this.first = true;
+    }
+    var wait = normalized - this.state.game.lastStep;
     _.delay(_.partial(this.updateGame, g), wait);
   },
 

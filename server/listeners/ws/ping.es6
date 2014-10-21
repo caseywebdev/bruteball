@@ -1,1 +1,3 @@
-export default function (__, ___, cb) { cb(null, Date.now()); }
+export default function (__, then, cb) {
+  cb(null, {then: then, now: Date.now()});
+}

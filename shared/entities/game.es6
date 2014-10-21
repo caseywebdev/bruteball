@@ -5,8 +5,6 @@ import config from 'shared/config';
 import Wall from 'shared/entities/wall';
 
 var app = config.node ? require('index') : null;
-var userPattern =
-  config.node ? require('patterns/games/users/show').default : null;
 var gamePattern = config.node ? require('patterns/games/show').default : null;
 var THREE = config.node ? null : require('three');
 
@@ -47,9 +45,7 @@ var broadcastWaiting = function (game) {
 
 export var step = function (game) {
   var now = Date.now();
-  var delta = now - game.lastStep;
-  game.time += delta;
-  var dt = delta / 1000;
+  var dt = (now - game.lastStep) / 1000;
   _.each(game.users, _.partial(applyForce, dt));
   game.world.Step(dt, VI, PI);
   game.lastStep = now;
@@ -85,7 +81,8 @@ export var addUser = function (game, user) {
     info: user,
     ball: ball,
     acceleration: new b2.b2Vec2(),
-    lastBroadcast: 0
+    lastBroadcast: 0,
+    needsBroadcast: 0
   };
 };
 
@@ -98,13 +95,13 @@ export var removeUser = function (game, user) {
 };
 
 export var create = function () {
+  var now = Date.now();
   var game = {
     users: {},
-    time: 0,
     world: new b2.b2World(),
     scene: config.node ? null : new THREE.Scene(),
     walls: [],
-    lastStep: Date.now(),
+    lastStep: now,
     lastBroadcast: 0
   };
   game.walls.push(
