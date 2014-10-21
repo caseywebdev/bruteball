@@ -7,5 +7,5 @@ then
   $BIN/cogs -C cogs-client.json -c
   $BIN/cogs -C cogs-server.json
   node_modules/.bin/knex migrate:latest
-  rm -fr bower_components client entities interactions server shaders styles
+  rm -fr bower_components client server shared styles
 fi
