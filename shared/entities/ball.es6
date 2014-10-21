@@ -1,7 +1,7 @@
 import BallBody from 'shared/bodies/ball';
 import config from 'shared/config';
 
-var BallMesh = config.node ? null : require('shared/meshes/ball');
+var BallMesh = config.node ? null : require('client/meshes/ball');
 var THREE = config.node ? null : require('three');
 
 var UP = config.node ? null : new THREE.Vector3(0, 0, 1);

@@ -2,7 +2,7 @@ import _ from 'underscore';
 import config from 'shared/config';
 import WallBody from 'shared/bodies/wall';
 
-var WallMesh = config.node ? null : require('shared/meshes/wall');
+var WallMesh = config.node ? null : require('client/meshes/wall');
 
 var BOTTOM_LEFT = {x: 0, y: 0};
 var BOTTOM_RIGHT = {x: 1, y: 0};

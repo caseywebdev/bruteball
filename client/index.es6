@@ -1,5 +1,5 @@
 //= require bower_components/amdainty/amdainty.js
-//= require shared/meshes/**/*
+//= require ./meshes/**/*
 //= requireSelf
 //= require ./init.js
 
