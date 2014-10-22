@@ -72,6 +72,7 @@ export default React.createClass({
     if (this.game) Game.stop(this.game);
     this.game = Game.create();
     this.game.id = _.uniqueId();
+    this.game.time = g.t;
     Game.start(this.game);
     this.updateGame(g);
     this.forceUpdate();
@@ -86,9 +87,8 @@ export default React.createClass({
   },
 
   updateGame: function (g) {
-    _.each(g.u, this.updateUser);
     Game.step(this.game);
-    this.game.time = g.t;
+    _.each(g.u, this.updateUser);
   },
 
   updateUser: function (u) {
