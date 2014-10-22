@@ -101,10 +101,8 @@ export default React.createClass({
     var cy = position.get_y();
     var dx = u[1] - cx;
     var dy = u[2] - cy;
-    position.Set(
-      Math.abs(dx) > 1 ? u[1] : cx + (dx * 0.1),
-      Math.abs(dy) > 1 ? u[2] : cy + (dy * 0.1)
-    );
+    var far = Math.sqrt((dx * dx) + (dy * dy)) > 1;
+    position.Set(far ? u[1] : cx + (dx * 0.1), far ? u[2] : cy + (dy * 0.1));
     user.ball.body.SetTransform(position, user.ball.body.GetAngle());
     var velocity = user.ball.body.GetLinearVelocity();
     velocity.Set(u[3], u[4]);
