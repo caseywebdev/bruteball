@@ -80,9 +80,8 @@ export default React.createClass({
   handleGame: function (g) {
     var buffer = this.state.buffer;
     var delta = g.t - this.game.time;
-    buffer = Math.max(buffer * 0.9, -delta);
+    buffer = Math.max(buffer * 0.99, -delta);
     this.update({buffer: {$set: buffer}});
-    console.log(delta, buffer);
     _.delay(_.partial(this.updateGame, g), buffer - delta);
   },
 
