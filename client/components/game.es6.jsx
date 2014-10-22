@@ -9,19 +9,25 @@ import THREE from 'three';
 
 var MAP_SIZE = 16;
 
+var RENDERER = new THREE.WebGLRenderer();
+RENDERER.setSize(window.innerWidth, window.innerHeight);
+RENDERER.shadowMapEnabled = true;
+RENDERER.shadowMapCullFace = THREE.CullFaceBack;
+RENDERER.shadowMapType = THREE.PCFSoftShadowMap;
+
+var CAMERA = new THREE.PerspectiveCamera(45, 1, 0.1, 1000);
+
+var getMedian = function (array) {
+  return _.sortBy(array)[Math.floor(array.length / 2)];
+};
+
 export default React.createClass({
   mixins: [Cursors],
 
   componentDidMount: function () {
-    this.scene = this.state.game.scene;
-    this.camera = new THREE.PerspectiveCamera(45, window.innerWidth/window.innerHeight, 0.1, 1000);
+    this.scene = this.props.game.scene;
 
-    this.renderer = new THREE.WebGLRenderer({antialias: true});
-    this.renderer.setSize(window.innerWidth, window.innerHeight);
-    this.renderer.shadowMapEnabled = true;
-    this.renderer.shadowMapCullFace = THREE.CullFaceBack;
-    this.renderer.shadowMapType = THREE.PCFSoftShadowMap;
-    this.getDOMNode().appendChild(this.renderer.domElement);
+    this.getDOMNode().appendChild(RENDERER.domElement);
 
     var light = new THREE.DirectionalLight(0xffffff, 0.9);
     light.position.set(MAP_SIZE / 2, MAP_SIZE / 2, 10);
@@ -53,50 +59,43 @@ export default React.createClass({
     this.balls = {};
 
     this.handleResize();
-    this.updateFps();
+    this.frames = [];
+    this.lastFrame = Date.now();
     this.renderMap();
     window.addEventListener('resize', this.handleResize);
   },
 
   componentWillUnmount: function () {
     window.removeEventListener('resize', this.handleResize);
+    cancelAnimationFrame(this.rafId);
+    RENDERER.domElement.remove();
   },
 
   handleResize: function () {
-    this.renderer.setSize(window.innerWidth, window.innerHeight);
-    this.camera.aspect = window.innerWidth / window.innerHeight;
-    this.camera.updateProjectionMatrix();
-  },
-
-  updateFps: function () {
-    this.update({fps: {$set: this.frames || 0}});
-    this.frames = 0;
-    setTimeout(this.updateFps, 1000);
+    RENDERER.setSize(window.innerWidth, window.innerHeight);
+    CAMERA.aspect = window.innerWidth / window.innerHeight;
+    CAMERA.updateProjectionMatrix();
   },
 
   renderMap: function () {
-    requestAnimationFrame(this.renderMap);
-    Game.step(this.state.game);
+    var now = Date.now();
+    this.frames = [now - this.lastFrame].concat(this.frames.slice(0, 59));
+    this.lastFrame = now;
+    this.update({fps: {$set: Math.ceil(1000 / getMedian(this.frames))}});
+    this.rafId = requestAnimationFrame(this.renderMap);
+    Game.step(this.props.game);
     this.updateCamera();
-    this.renderer.render(this.scene, this.camera);
-    ++this.frames;
+    RENDERER.render(this.scene, CAMERA);
   },
 
   updateCamera: function () {
-    var user = this.state.user && this.state.game.users[this.state.user.id];
+    var user = this.state.user && this.props.game.users[this.state.user.id];
     var mesh = user && user.ball.mesh;
-    var camera = this.camera;
-    if (mesh) {
-      camera.position.x += (mesh.position.x - camera.position.x) * 0.1;
-      camera.position.y += (mesh.position.y - 5 - camera.position.y) * 0.1;
-      camera.position.z = 15;
-      camera.lookAt(mesh.position);
-    } else {
-      camera.position.x = MAP_SIZE / 2;
-      camera.position.y = MAP_SIZE / 2 - 5;
-      camera.position.z = 25;
-      camera.lookAt(new THREE.Vector3(MAP_SIZE / 2, MAP_SIZE / 2, 0));
-    }
+    if (!mesh) return;
+    CAMERA.position.x += (mesh.position.x - CAMERA.position.x) * 0.1;
+    CAMERA.position.y += (mesh.position.y - 5 - CAMERA.position.y) * 0.1;
+    CAMERA.position.z = 15;
+    CAMERA.lookAt(mesh.position);
   },
 
   render: function () {

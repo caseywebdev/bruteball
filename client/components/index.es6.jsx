@@ -24,7 +24,6 @@ export default React.createClass({
 
   getInitialState: function () {
     return {
-      game: Game.create(),
       offset: 0,
       latency: 0,
       fps: 0
@@ -34,16 +33,22 @@ export default React.createClass({
   componentDidMount: function () {
     this.offsets = [];
     this.latencies = [];
-    this.state.live.on('g', this.handleGame);
-    this.state.live.on('r', this.removeUser);
+    this.state.live.on({
+      'new-game': this.handleNewGame,
+      g: this.handleGame,
+      'remove-user': this.removeUser
+    });
     this.ping();
     document.addEventListener('keydown', this.handleKey);
     document.addEventListener('keyup', this.handleKey);
   },
 
   componentWillUnmount: function () {
-    this.state.live.off('g', this.handleGame);
-    this.state.live.off('r', this.removeUser);
+    this.state.live.off({
+      'new-game': this.handleNewGame,
+      g: this.handleGame,
+      'remove-user': this.removeUser
+    });
     document.removeEventListener('keydown', this.handleKey);
     document.removeEventListener('keyup', this.handleKey);
   },
@@ -70,8 +75,8 @@ export default React.createClass({
     var start = res.then;
     var then = res.now;
     var now = Date.now();
-    this.offsets = [now - then].concat(this.offsets.slice(0, 4));
-    this.latencies = [(now - start) / 2].concat(this.latencies.slice(0, 4));
+    this.offsets = [now - then].concat(this.offsets.slice(0, 9));
+    this.latencies = [(now - start) / 2].concat(this.latencies.slice(0, 9));
     this.update({
       offset: {$set: getMedian(this.offsets)},
       latency: {$set: getMedian(this.latencies)}
@@ -84,24 +89,32 @@ export default React.createClass({
     }, {x: 0, y: 0});
   },
 
+  normalizeTime: function (t) {
+    return t + this.state.offset - this.state.latency;
+  },
+
+  handleNewGame: function (g) {
+    if (this.game) Game.stop(this.game);
+    this.game = Game.create();
+    this.game.id = _.uniqueId();
+    Game.start(this.game);
+    this.updateGame(g);
+    this.forceUpdate();
+  },
+
   handleGame: function (g) {
-    var normalized = g.s + this.state.offset - this.state.latency;
-    if (!this.first) {
-      this.state.game.lastStep = normalized;
-      this.first = true;
-    }
-    var wait = normalized - this.state.game.lastStep;
+    var wait = this.normalizeTime(g.s) - this.game.lastStep;
     _.delay(_.partial(this.updateGame, g), wait);
   },
 
   updateGame: function (g) {
-    Game.step(this.state.game);
-    this.state.game.time = g.t;
     _.each(g.u, this.updateUser);
+    Game.step(this.game);
+    g.lastStep = this.normalizeTime(g.s);
   },
 
   updateUser: function (u) {
-    var game = this.state.game;
+    var game = this.game;
     var id = u[0];
     if (!game.users[id]) Game.addUser(game, {id: id});
     var user = game.users[id];
@@ -122,21 +135,32 @@ export default React.createClass({
   },
 
   removeUser: function (u) {
-    Game.removeUser(this.state.game, {id: u[0]});
+    Game.removeUser(this.game, {id: u[0]});
+  },
+
+  renderGame: function () {
+    if (!this.game) return;
+    return (
+      <GameComponent
+        key={this.game.id}
+        game={this.game}
+        cursors={{
+          user: this.getCursor('user'),
+          fps: this.getCursor('fps')
+        }}
+      />
+    );
   },
 
   render: function () {
     return (
       <div>
-        <div className='latency'>
-          Latency: {this.state.latency}ms<br />
-          FPS: {this.state.fps}
+        <div className='stats'>
+          <div>Latency: {this.state.latency}ms</div>
+          <div>FPS: {this.state.fps}</div>
+          {this.game ? null : <div>Loading...</div>}
         </div>
-        <GameComponent cursors={{
-          game: this.getCursor('game'),
-          user: this.getCursor('user'),
-          fps: this.getCursor('fps')
-        }} />
+        {this.renderGame()}
       </div>
     );
   }

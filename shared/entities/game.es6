@@ -17,13 +17,15 @@ var PI = config.game.positionIterations;
 var BROADCAST_WAIT = 1000 / config.game.broadcastsPerSecond;
 
 var applyForce = function (dt, user) {
+  var speed = user.ball.body.GetLinearVelocity().Length();
+  var delta = Math.min(config.game.maxSpeed - speed, ACCELERATION) / dt;
+  if (delta <= 0) return;
   var force = new b2.b2Vec2(
-    user.acceleration.get_x() * ACCELERATION * dt,
-    user.acceleration.get_y() * ACCELERATION * dt
+    user.acceleration.get_x() * delta,
+    user.acceleration.get_y() * delta
   );
   user.ball.body.ApplyForceToCenter(force);
   b2.destroy(force);
-  if (!config.node) Ball.updateMesh(user.ball, dt);
 };
 
 var broadcastAll = function (game) {
@@ -53,6 +55,9 @@ export var step = function (game) {
   game.lastStep = now;
   _.each(game.users, _.partial(applyForce, dt));
   game.world.Step(dt, VI, PI);
+  if (!config.node) {
+    _.each(_.map(game.users, 'ball'), _.partial(Ball.updateMesh, _, dt));
+  }
   if (config.node) {
     game.needsBroadcast > game.lastBroadcast ?
     broadcastAll(game) :
@@ -62,7 +67,8 @@ export var step = function (game) {
 
 var loopBroadcast = function (game) {
   game.needsBroadcast = Date.now();
-  setTimeout(_.partial(loopBroadcast, game), BROADCAST_WAIT);
+  game.broadcastTimeoutId =
+    setTimeout(_.partial(loopBroadcast, game), BROADCAST_WAIT);
 };
 
 export var setAcceleration = function (game, user, x, y) {
@@ -139,7 +145,15 @@ export var create = function () {
   body.CreateFixture(fixtureDef);
   b2.destroy(fixtureDef);
   b2.destroy(shape);
+  return game;
+};
+
+export var start = function (game) {
   loopBroadcast(game);
   step(game);
-  return game;
+};
+
+export var stop = function (game) {
+  clearTimeout(game.broadcastTimeoutId);
+  clearTimeout(game.stepTimeoutId);
 };

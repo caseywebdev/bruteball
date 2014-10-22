@@ -1,35 +1,15 @@
-precision mediump float;
-
 uniform vec3 uBaseColor;
+uniform vec2 resolution;
+varying vec3 fPosition;
+varying vec3 fNormal;
 
-uniform vec3 uDirLightPos;
-uniform vec3 uDirLightColor;
-
-uniform vec3 uAmbientLightColor;
-
-varying vec3 vNormal;
-
-varying vec3 vRefract;
+vec3 rim(vec3 color, float start, float end, float coef) {
+  vec3 normal = normalize(fNormal);
+  vec3 eye = normalize(-fPosition.xyz);
+  float rim = smoothstep(start, end, 1.0 - dot(normal, eye));
+  return clamp(rim, 0.0, 1.0) * coef * color;
+}
 
 void main() {
-
-  float directionalLightWeighting = max( dot( normalize( vNormal ), uDirLightPos ), 0.0);
-  vec3 lightWeighting = uAmbientLightColor + uDirLightColor * directionalLightWeighting;
-
-  float intensity = smoothstep( - 0.5, 1.0, pow( length(lightWeighting), 20.0 ) );
-  intensity += length(lightWeighting) * 0.2;
-
-  float cameraWeighting = dot( normalize( vNormal ), vRefract );
-  intensity += pow( 1.0 - length( cameraWeighting ), 6.0 );
-  intensity = intensity * 0.2 + 0.3;
-
-  if ( intensity < 0.50 ) {
-
-    gl_FragColor = vec4( 2.0 * intensity * uBaseColor, 1.0 );
-
-  } else {
-
-    gl_FragColor = vec4( 1.0 - 2.0 * ( 1.0 - intensity ) * ( 1.0 - uBaseColor ), 1.0 );
-
-  }
+  gl_FragColor = vec4(rim(uBaseColor, 0.6, 0.3, 4.0), 1.0);
 }

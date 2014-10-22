@@ -3,6 +3,7 @@ import app from 'index';
 import async from 'async';
 import createUser from 'interactions/create-user';
 import Game from 'shared/entities/game';
+import gamePattern from 'patterns/games/show';
 import User from 'shared/entities/user';
 import usersShowPattern from 'patterns/users/show';
 
@@ -13,6 +14,7 @@ export default function (socket, key, cb) {
     if (er) return cb(er);
     socket.user = user;
     Game.addUser(app.games.test, user);
+    socket.send('new-game', gamePattern(app.games.test));
     cb(null, usersShowPattern(user, {withPrivate: true}));
   };
   if (!key || !_.isString(key)) return createUser(done);
