@@ -24,21 +24,17 @@ export default React.createClass({
 
   getInitialState: function () {
     return {
-      offset: 0,
-      latency: 0,
+      buffer: 0,
       fps: 0
     };
   },
 
   componentDidMount: function () {
-    this.offsets = [];
-    this.latencies = [];
     this.state.live.on({
       'new-game': this.handleNewGame,
       g: this.handleGame,
       'remove-user': this.removeUser
     });
-    this.ping();
     document.addEventListener('keydown', this.handleKey);
     document.addEventListener('keyup', this.handleKey);
   },
@@ -66,31 +62,10 @@ export default React.createClass({
     this.state.live.send('set-av', this.getAv());
   },
 
-  ping: function () {
-    this.state.live.send('ping', Date.now(), this.handlePing);
-    this.pingTimeoutId = _.delay(this.ping, PING_DELAY);
-  },
-
-  handlePing: function (er, res) {
-    var start = res.then;
-    var then = res.now;
-    var now = Date.now();
-    this.offsets = [now - then].concat(this.offsets.slice(0, 9));
-    this.latencies = [(now - start) / 2].concat(this.latencies.slice(0, 9));
-    this.update({
-      offset: {$set: getMedian(this.offsets)},
-      latency: {$set: getMedian(this.latencies)}
-    });
-  },
-
   getAv: function () {
     return _.reduce(_.filter(KEYS, {down: true}), function (av, key) {
       return {x: av.x + key.x, y: av.y + key.y};
     }, {x: 0, y: 0});
-  },
-
-  normalizeTime: function (t) {
-    return t + this.state.offset - this.state.latency;
   },
 
   handleNewGame: function (g) {
@@ -103,14 +78,18 @@ export default React.createClass({
   },
 
   handleGame: function (g) {
-    var wait = this.normalizeTime(g.s) - this.game.lastStep;
-    _.delay(_.partial(this.updateGame, g), wait);
+    var buffer = this.state.buffer;
+    var delta = g.t - this.game.time;
+    buffer = Math.max(buffer * 0.9, -delta);
+    this.update({buffer: {$set: buffer}});
+    console.log(delta, buffer);
+    _.delay(_.partial(this.updateGame, g), buffer - delta);
   },
 
   updateGame: function (g) {
     _.each(g.u, this.updateUser);
     Game.step(this.game);
-    g.lastStep = this.normalizeTime(g.s);
+    this.game.time = g.t;
   },
 
   updateUser: function (u) {
@@ -156,7 +135,7 @@ export default React.createClass({
     return (
       <div>
         <div className='stats'>
-          <div>Latency: {this.state.latency}ms</div>
+          <div>Buffer: {Math.ceil(this.state.buffer)}ms</div>
           <div>FPS: {this.state.fps}</div>
           {this.game ? null : <div>Loading...</div>}
         </div>

@@ -48,11 +48,13 @@ var broadcastWaiting = function (game) {
 export var step = function (game) {
   if (config.node) {
     clearTimeout(game.stepTimeoutId);
-    game.stepTimeoutId = setTimeout(_.partial(step, game), SPS);
+    game.stepTimeoutId = _.delay(_.partial(step, game), SPS);
   }
   var now = Date.now();
-  var dt = (now - game.lastStep) / 1000;
+  var delta = now - game.lastStep;
+  game.time += delta;
   game.lastStep = now;
+  var dt = delta / 1000;
   _.each(game.users, _.partial(applyForce, dt));
   game.world.Step(dt, VI, PI);
   if (!config.node) {
@@ -68,7 +70,7 @@ export var step = function (game) {
 var loopBroadcast = function (game) {
   game.needsBroadcast = Date.now();
   game.broadcastTimeoutId =
-    setTimeout(_.partial(loopBroadcast, game), BROADCAST_WAIT);
+    _.delay(_.partial(loopBroadcast, game), BROADCAST_WAIT);
 };
 
 export var setAcceleration = function (game, user, x, y) {
@@ -103,13 +105,13 @@ export var removeUser = function (game, user) {
 };
 
 export var create = function () {
-  var now = Date.now();
   var game = {
     users: {},
     world: new b2.b2World(),
     scene: config.node ? null : new THREE.Scene(),
     walls: [],
-    lastStep: now,
+    time: 0,
+    lastStep: Date.now(),
     lastBroadcast: 0
   };
   game.walls.push(

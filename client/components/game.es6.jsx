@@ -78,11 +78,11 @@ export default React.createClass({
   },
 
   renderMap: function () {
+    this.rafId = requestAnimationFrame(this.renderMap);
     var now = Date.now();
     this.frames = [now - this.lastFrame].concat(this.frames.slice(0, 59));
     this.lastFrame = now;
     this.update({fps: {$set: Math.ceil(1000 / getMedian(this.frames))}});
-    this.rafId = requestAnimationFrame(this.renderMap);
     Game.step(this.props.game);
     this.updateCamera();
     RENDERER.render(this.scene, CAMERA);
