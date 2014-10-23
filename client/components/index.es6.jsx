@@ -13,16 +13,21 @@ var KEYS = {
   '39': {down: false, x: 1, y: 0}
 };
 
+var PING_WAIT = 1000;
+var LAGS_TO_HOLD = 10;
+
 export default React.createClass({
   mixins: [Cursors],
 
   getInitialState: function () {
     return {
-      fps: 0
+      fps: 0,
+      lags: []
     };
   },
 
   componentDidMount: function () {
+    this.ping();
     this.state.live.on({
       'new-game': this.handleNewGame,
       g: this.handleGame,
@@ -40,6 +45,23 @@ export default React.createClass({
     });
     document.removeEventListener('keydown', this.handleKey);
     document.removeEventListener('keyup', this.handleKey);
+  },
+
+  ping: function () {
+    this.state.live.send('ping', Date.now(), this.handlePing);
+    clearTimeout(this.pingTimeoutId);
+    this.pingTimeoutId = _.delay(this.ping, PING_WAIT);
+  },
+
+  handlePing: function (er, then) {
+    if (er) return;
+    var lag = (Date.now() - then) / 2;
+    this.update({lags: {$splice: [[0, 0, lag], [LAGS_TO_HOLD, 1]]}});
+  },
+
+  getLag: function () {
+    var lags = this.state.lags;
+    return _.sortBy(lags)[Math.ceil(lags.length / 2)] || 0;
   },
 
   handleKey: function (ev) {
@@ -65,20 +87,19 @@ export default React.createClass({
     if (this.game) Game.stop(this.game);
     this.game = Game.create();
     this.game.id = _.uniqueId();
-    this.game.time = g.t;
     Game.start(this.game);
     this.updateGame(g);
     this.forceUpdate();
   },
 
   handleGame: function (g) {
-    var dt = Date.now() - this.game.lastStep;
-    var delta = g.t - (this.game.time + dt);
-    this.game.time += delta * (delta < 0 ? 0.1 : 0.01);
-    if (delta >= 0) _.delay(_.partial(this.updateGame, g), delta);
+    this.game.start = Date.now() - g.t + this.getLag();
+    console.log(g.t - Game.getTime(this.game));
+    _.delay(_.partial(this.updateGame, g), g.t - Game.getTime(this.game));
   },
 
   updateGame: function (g) {
+    Game.step(this.game);
     _.each(g.u, this.updateUser);
   },
 
@@ -124,6 +145,7 @@ export default React.createClass({
       <div>
         <div className='stats'>
           <div>FPS: {this.state.fps}</div>
+          <div>Lag: {this.getLag()}ms</div>
           {this.game ? null : <div>Loading...</div>}
         </div>
         {this.renderGame()}

@@ -46,10 +46,10 @@ var broadcastWaiting = function (game) {
 };
 
 export var step = function (game) {
+  clearTimeout(game.stepTimeoutId);
   game.stepTimeoutId = _.delay(_.partial(step, game), SPS);
   var now = Date.now();
   var delta = now - game.lastStep;
-  game.time += delta;
   game.lastStep = now;
   var dt = delta / 1000;
   _.each(game.users, _.partial(applyForce, dt));
@@ -101,14 +101,19 @@ export var removeUser = function (game, user) {
   delete game.users[user.id];
 };
 
+export var getTime = function (game) {
+  return Date.now() - game.start;
+};
+
 export var create = function () {
+  var now = Date.now();
   var game = {
     users: {},
     world: new b2.b2World(),
     scene: config.node ? null : new THREE.Scene(),
     walls: [],
-    time: 0,
-    lastStep: Date.now(),
+    start: now,
+    lastStep: now,
     lastBroadcast: 0
   };
   game.walls.push(
