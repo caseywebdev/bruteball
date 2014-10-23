@@ -74,9 +74,8 @@ export default React.createClass({
   handleGame: function (g) {
     var dt = Date.now() - this.game.lastStep;
     var delta = g.t - (this.game.time + dt);
-    this.game.time += delta * 0.1;
+    this.game.time += delta * (delta < 0 ? 1 : 0.1);
     console.log(delta);
-    if (delta < 0) return;
     _.delay(_.partial(this.updateGame, g), delta);
   },
 
