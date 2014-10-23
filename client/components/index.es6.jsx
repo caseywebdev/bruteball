@@ -48,13 +48,13 @@ export default React.createClass({
   },
 
   ping: function () {
-    this.state.live.send('ping', Date.now(), this.handlePing);
+    this.state.live.send('echo', Date.now(), this.handlePing);
     clearTimeout(this.pingTimeoutId);
     this.pingTimeoutId = _.delay(this.ping, PING_WAIT);
   },
 
   handlePing: function (er, then) {
-    if (er) return;
+    if (er) throw new Error('Echo failed!');
     var lag = (Date.now() - then) / 2;
     this.update({lags: {$splice: [[0, 0, lag], [LAGS_TO_HOLD, 1]]}});
   },
@@ -94,7 +94,6 @@ export default React.createClass({
 
   handleGame: function (g) {
     this.game.start = Date.now() - g.t + this.getLag();
-    console.log(g.t - Game.getTime(this.game));
     _.delay(_.partial(this.updateGame, g), g.t - Game.getTime(this.game));
   },
 
