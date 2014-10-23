@@ -27,6 +27,7 @@ export default React.createClass({
   },
 
   componentDidMount: function () {
+    this.pendingFrames = [];
     this.ping();
     this.state.live.on({
       'new-game': this.handleNewGame,
@@ -94,14 +95,23 @@ export default React.createClass({
 
   handleGame: function (g) {
     if (!this.game) return;
-    this.game.start = Date.now() - g.t + this.getLag();
-    console.log(g.t - Game.getTime(this.game));
-    _.delay(_.partial(this.updateGame, g), g.t - Game.getTime(this.game));
+    this.game.start = Date.now() - g.t - this.getLag();
+    this.pendingFrames.unshift(g);
+    if (this.pendingFrames.length === 1) this.popFrame();
+  },
+
+  popFrame: function () {
+    var g = this.pendingFrames.pop();
+    if (!g) return;
+    var delta = g.t - Game.getTime(this.game);
+    var update = _.partial(this.updateGame, g);
+    delta > 0 ? _.delay(update, delta) : update();
   },
 
   updateGame: function (g) {
     Game.step(this.game);
     _.each(g.u, this.updateUser);
+    this.popFrame();
   },
 
   updateUser: function (u) {
