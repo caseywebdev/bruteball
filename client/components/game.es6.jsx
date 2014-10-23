@@ -83,7 +83,6 @@ export default React.createClass({
     this.frames = [now - this.lastFrame].concat(this.frames.slice(0, 59));
     this.lastFrame = now;
     this.update({fps: {$set: Math.ceil(1000 / getMedian(this.frames))}});
-    Game.step(this.props.game);
     this.updateCamera();
     RENDERER.render(this.scene, CAMERA);
   },

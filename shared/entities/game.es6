@@ -46,7 +46,7 @@ var broadcastWaiting = function (game) {
 };
 
 export var step = function (game) {
-  if (config.node) game.stepTimeoutId = _.delay(_.partial(step, game), SPS);
+  game.stepTimeoutId = _.delay(_.partial(step, game), SPS);
   var now = Date.now();
   var delta = now - game.lastStep;
   game.time += delta;

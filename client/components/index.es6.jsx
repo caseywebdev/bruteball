@@ -13,12 +13,6 @@ var KEYS = {
   '39': {down: false, x: 1, y: 0}
 };
 
-var PING_DELAY = 1000;
-
-var getMedian = function (array) {
-  return _.sortBy(array)[Math.floor(array.length / 2)];
-};
-
 export default React.createClass({
   mixins: [Cursors],
 
@@ -29,7 +23,6 @@ export default React.createClass({
   },
 
   componentDidMount: function () {
-    this.buffer = 0;
     this.state.live.on({
       'new-game': this.handleNewGame,
       g: this.handleGame,
@@ -81,9 +74,7 @@ export default React.createClass({
   handleGame: function (g) {
     var dt = Date.now() - this.game.lastStep;
     var delta = g.t - (this.game.time + dt);
-    this.buffer = Math.max(this.buffer * 0.99, -delta);
-    _.delay(_.partial(this.updateGame, g), this.buffer - delta);
-    this.forceUpdate();
+    _.delay(_.partial(this.updateGame, g), delta);
   },
 
   updateGame: function (g) {
@@ -131,7 +122,6 @@ export default React.createClass({
     return (
       <div>
         <div className='stats'>
-          <div>Buffer: {Math.ceil(this.buffer)}ms</div>
           <div>FPS: {this.state.fps}</div>
           {this.game ? null : <div>Loading...</div>}
         </div>
