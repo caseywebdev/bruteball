@@ -24,7 +24,7 @@ export default {
     velocityIterations: 8,
     positionIterations: 10,
     acceleration: 0.1,
-    maxSpeed: 5,
+    maxSpeed: 6,
     broadcastsPerSecond: 4
   },
 
