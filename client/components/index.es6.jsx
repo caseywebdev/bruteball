@@ -79,7 +79,8 @@ export default React.createClass({
   },
 
   handleGame: function (g) {
-    var delta = g.t - this.game.time;
+    var dt = Date.now() - this.game.lastStep;
+    var delta = g.t - (this.game.time + dt);
     this.buffer = Math.max(this.buffer * 0.99, -delta);
     _.delay(_.partial(this.updateGame, g), this.buffer - delta);
     this.forceUpdate();
