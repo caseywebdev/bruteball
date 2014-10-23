@@ -93,7 +93,9 @@ export default React.createClass({
   },
 
   handleGame: function (g) {
+    if (!this.game) return;
     this.game.start = Date.now() - g.t + this.getLag();
+    console.log(g.t - Game.getTime(this.game));
     _.delay(_.partial(this.updateGame, g), g.t - Game.getTime(this.game));
   },
 
