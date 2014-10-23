@@ -19,7 +19,6 @@ var BROADCAST_WAIT = 1000 / config.game.broadcastsPerSecond;
 var applyForce = function (dt, user) {
   var speed = user.ball.body.GetLinearVelocity().Length();
   var delta = Math.min(config.game.maxSpeed - speed, ACCELERATION) / dt;
-  if (delta <= 0) return;
   var force = new b2.b2Vec2(
     user.acceleration.get_x() * delta,
     user.acceleration.get_y() * delta
@@ -50,6 +49,7 @@ export var step = function (game) {
   game.stepTimeoutId = _.delay(_.partial(step, game), SPS);
   var now = Date.now();
   var delta = now - game.lastStep;
+  if (delta <= 0) return;
   game.lastStep = now;
   var dt = delta / 1000;
   _.each(game.users, _.partial(applyForce, dt));
