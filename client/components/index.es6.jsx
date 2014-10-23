@@ -87,7 +87,6 @@ export default React.createClass({
   },
 
   updateGame: function (g) {
-    Game.step(this.game);
     _.each(g.u, this.updateUser);
   },
 
