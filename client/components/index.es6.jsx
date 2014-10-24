@@ -14,7 +14,7 @@ var KEYS = {
 };
 
 var PING_WAIT = 1000;
-var LAGS_TO_HOLD = 10;
+var PINGS_TO_HOLD = 10;
 
 export default React.createClass({
   mixins: [Cursors],
@@ -22,7 +22,7 @@ export default React.createClass({
   getInitialState: function () {
     return {
       fps: 0,
-      lags: []
+      pings: []
     };
   },
 
@@ -48,20 +48,30 @@ export default React.createClass({
   },
 
   ping: function () {
-    this.state.live.send('echo', Date.now(), this.handlePing);
+    this.state.live.send('ping', Date.now(), this.handlePing);
     clearTimeout(this.pingTimeoutId);
     this.pingTimeoutId = _.delay(this.ping, PING_WAIT);
   },
 
-  handlePing: function (er, then) {
+  handlePing: function (er, data) {
     if (er) throw new Error('Echo failed!');
-    var lag = (Date.now() - then) / 2;
-    this.update({lags: {$splice: [[0, 0, lag], [LAGS_TO_HOLD, 1]]}});
+    var start = data.then;
+    var then = data.now;
+    var now = Date.now();
+    var lag = (now - start) / 2;
+    var offset = now - then;
+    this.update({pings: {$splice: [
+      [0, 0, {lag: lag, offset: offset}],
+      [PINGS_TO_HOLD, 1]
+    ]}});
   },
 
-  getLag: function () {
-    var lags = this.state.lags;
-    return _.sortBy(lags)[Math.ceil(lags.length / 2)] || 0;
+  getPing: function () {
+    var pings = this.state.pings;
+    return _.sortBy(pings, 'lag')[Math.ceil(pings.length / 2)] || {
+      lag: 0,
+      offset: 0
+    };
   },
 
   handleKey: function (ev) {
@@ -95,6 +105,8 @@ export default React.createClass({
   },
 
   handleGame: function (g) {
+    var delay = g.t + this.getPing().offset - Date.now();
+    console.log(delay);
     this.updateGame(g);
   },
 
@@ -141,11 +153,13 @@ export default React.createClass({
   },
 
   render: function () {
+    var ping = this.getPing();
     return (
       <div>
         <div className='stats'>
           <div>FPS: {this.state.fps}</div>
-          <div>Lag: {this.getLag()}ms</div>
+          <div>Lag: {ping.lag}ms</div>
+          <div>Offset: {ping.offset}ms</div>
           {this.game ? null : <div>Loading...</div>}
         </div>
         {this.renderGame()}
