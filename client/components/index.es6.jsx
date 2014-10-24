@@ -1,6 +1,7 @@
 /** @jsx React.DOM */
 
 import _ from 'underscore';
+import config from 'shared/config';
 import Cursors from 'cursors';
 import Game from 'shared/entities/game';
 import GameComponent from 'client/components/game';
@@ -15,6 +16,7 @@ var KEYS = {
 
 var PING_WAIT = 1000;
 var PINGS_TO_HOLD = 10;
+var MAX_DELAY = 1000 / config.broadcastsPerSecond;
 
 export default React.createClass({
   mixins: [Cursors],
@@ -106,8 +108,7 @@ export default React.createClass({
 
   handleGame: function (g) {
     var delay = Date.now() - g.t - this.getPing().offset;
-    console.log(delay);
-    this.updateGame(g);
+    if (delay < MAX_DELAY) this.updateGame(g);
   },
 
   updateGame: function (g) {
