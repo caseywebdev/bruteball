@@ -74,7 +74,9 @@ export default React.createClass({
   },
 
   sendAv: function () {
-    this.state.live.send('set-av', this.getAv());
+    var av = this.getAv();
+    this.state.live.send('set-av', av);
+    Game.setAcceleration(this.game, this.state.user, av.x, av.y);
   },
 
   getAv: function () {
