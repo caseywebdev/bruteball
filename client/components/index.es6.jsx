@@ -105,7 +105,7 @@ export default React.createClass({
   },
 
   handleGame: function (g) {
-    var delay = g.t + this.getPing().offset - Date.now();
+    var delay = Date.now() - g.t + this.getPing().offset;
     console.log(delay);
     this.updateGame(g);
   },
