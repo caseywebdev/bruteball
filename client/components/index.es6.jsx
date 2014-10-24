@@ -16,7 +16,7 @@ var KEYS = {
 
 var PING_WAIT = 1000;
 var PINGS_TO_HOLD = 10;
-var MAX_DELAY = 1000 / config.broadcastsPerSecond;
+var MAX_DELAY = 1000 / config.game.broadcastsPerSecond;
 
 export default React.createClass({
   mixins: [Cursors],
