@@ -1,6 +1,7 @@
 /** @jsx React.DOM */
 
 import _ from 'underscore';
+import config from 'shared/config';
 import Cursors from 'cursors';
 import Game from 'shared/entities/game';
 import GameComponent from 'client/components/game';
@@ -15,7 +16,8 @@ var KEYS = {
 
 var PING_WAIT = 1000;
 var PINGS_TO_HOLD = 10;
-var MAX_TARDINESS = 100;
+var LOSSES_TO_HOLD = 100;
+var MAX_TARDINESS = 1000 / config.game.broadcastsPerSecond / 2;
 
 export default React.createClass({
   mixins: [Cursors],
@@ -23,7 +25,8 @@ export default React.createClass({
   getInitialState: function () {
     return {
       fps: 0,
-      pings: []
+      pings: [],
+      losses: []
     };
   },
 
@@ -75,6 +78,13 @@ export default React.createClass({
     };
   },
 
+  getLoss: function () {
+    var losses = this.state.losses;
+    if (!losses.length) return 0;
+    var loss = _.filter(losses, _.constant(1));
+    return Math.round(10000 * loss.length / losses.length) / 100;
+  },
+
   handleKey: function (ev) {
     var key = KEYS[ev.which];
     var state = ev.type === 'keydown';
@@ -108,8 +118,12 @@ export default React.createClass({
   handleGame: function (g) {
     var ping = this.getPing();
     var tardiness = Date.now() - g.t - ping.offset - ping.lag;
-    if (tardiness > 0) console.log(tardiness);
-    if (tardiness < MAX_TARDINESS) this.updateGame(g);
+    var tardy = tardiness > MAX_TARDINESS;
+    if (!tardy) this.updateGame(g);
+    this.update({losses: {$splice: [
+      [0, 0, tardy ? 1 : 0],
+      [LOSSES_TO_HOLD, 1]
+    ]}});
   },
 
   updateGame: function (g) {
@@ -162,6 +176,7 @@ export default React.createClass({
           <div>FPS: {this.state.fps}</div>
           <div>Lag: {ping.lag}ms</div>
           <div>Offset: {ping.offset}ms</div>
+          <div>Loss: {this.getLoss()}%</div>
           {this.game ? null : <div>Loading...</div>}
         </div>
         {this.renderGame()}
