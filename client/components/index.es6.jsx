@@ -59,7 +59,7 @@ export default React.createClass({
     var then = data.now;
     var now = Date.now();
     var lag = (now - start) / 2;
-    var offset = now - then;
+    var offset = now - then - lag;
     this.update({pings: {$splice: [
       [0, 0, {lag: lag, offset: offset}],
       [PINGS_TO_HOLD, 1]
