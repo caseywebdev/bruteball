@@ -81,7 +81,7 @@ export default React.createClass({
   getLoss: function () {
     var losses = this.state.losses;
     if (!losses.length) return 0;
-    var loss = _.filter(losses, _.constant(1));
+    var loss = _.filter(losses);
     return Math.round(10000 * loss.length / losses.length) / 100;
   },
 
