@@ -100,6 +100,10 @@ export var removeUser = function (game, user) {
   delete game.users[user.id];
 };
 
+var handleCollision = function (game, a, b) {
+  console.log('wat');
+};
+
 export var create = function () {
   var game = {
     users: {},
@@ -125,6 +129,19 @@ export var create = function () {
     Wall.create({game: game, x: 9, y: 4, points: Wall.WITHOUT_TOP_RIGHT}),
     Wall.create({game: game, x: 9, y: 3, points: Wall.WITHOUT_BOTTOM_LEFT})
   );
+
+  var listener = new b2.JSContactListener();
+  listener.BeginContact = function (contactPtr) {
+    var contact = b2.wrapPointer(contactPtr, b2.b2Contact);
+    handleCollision(
+      game,
+      _.find(game.entities, {body: contact.GetFixtureA().GetBody()}),
+      _.find(game.entities, {body: contact.GetFixtureB().GetBody()})
+    );
+  };
+  listener.EndContact = listener.PreSolve = listener.PostSolve = _.noop;
+
+  game.world.SetContactListener(listener);
   var bodyDef = new b2.b2BodyDef();
   var body = game.world.CreateBody(bodyDef);
   b2.destroy(bodyDef);
