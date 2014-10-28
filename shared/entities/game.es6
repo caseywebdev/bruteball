@@ -114,11 +114,36 @@ export var create = function () {
     lastBroadcast: 0
   };
   game.walls.push(
+    Wall.create({game: game, x: 0, y: 0, points: [
+      {x: 0, y: 0},
+      {x: 1, y: 0},
+      {x: 1, y: MAP_SIZE},
+      {x: 0, y: MAP_SIZE}
+    ]}),
+    Wall.create({game: game, x: MAP_SIZE - 1, y: 0, points: [
+      {x: 0, y: 0},
+      {x: 1, y: 0},
+      {x: 1, y: MAP_SIZE},
+      {x: 0, y: MAP_SIZE}
+    ]}),
+    Wall.create({game: game, x: 1, y: 0, points: [
+      {x: 0, y: 0},
+      {x: MAP_SIZE - 2, y: 0},
+      {x: MAP_SIZE - 2, y: 1},
+      {x: 0, y: 1}
+    ]}),
+    Wall.create({game: game, x: 1, y: MAP_SIZE - 1, points: [
+      {x: 0, y: 0},
+      {x: MAP_SIZE - 2, y: 0},
+      {x: MAP_SIZE - 2, y: 1},
+      {x: 0, y: 1}
+    ]}),
     Wall.create({game: game, x: 3, y: 3, points: Wall.WITHOUT_BOTTOM_LEFT}),
     Wall.create({game: game, x: 3, y: 4}),
     Wall.create({game: game, x: 3, y: 5}),
     Wall.create({game: game, x: 3, y: 6}),
     Wall.create({game: game, x: 3, y: 7}),
+    Wall.create({game: game, x: 4, y: 7}),
     Wall.create({game: game, x: 4, y: 3}),
     Wall.create({game: game, x: 5, y: 3}),
     Wall.create({game: game, x: 6, y: 3}),
@@ -142,23 +167,7 @@ export var create = function () {
   listener.EndContact = listener.PreSolve = listener.PostSolve = _.noop;
 
   game.world.SetContactListener(listener);
-  var bodyDef = new b2.b2BodyDef();
-  var body = game.world.CreateBody(bodyDef);
-  b2.destroy(bodyDef);
-  var fixtureDef = new b2.b2FixtureDef();
-  fixtureDef.set_restitution(0.25);
-  var shape = new b2.b2ChainShape();
-  var vertices = [
-    {x: 0, y: 0},
-    {x: MAP_SIZE, y: 0},
-    {x: MAP_SIZE, y: MAP_SIZE},
-    {x: 0, y: MAP_SIZE}
-  ];
-  shape.CreateLoop(b2.CreateVerticesPointer(vertices), vertices.length);
-  fixtureDef.set_shape(shape);
-  body.CreateFixture(fixtureDef);
-  b2.destroy(fixtureDef);
-  b2.destroy(shape);
+
   return game;
 };
 

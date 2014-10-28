@@ -12,6 +12,8 @@ SHAPE.set_m_radius(0.5);
 var FIXTURE_DEF = new b2.b2FixtureDef();
 FIXTURE_DEF.set_shape(SHAPE);
 FIXTURE_DEF.set_density(1);
+FIXTURE_DEF.set_restitution(0.2);
+FIXTURE_DEF.set_friction(0);
 
 export var create = function (world) {
   var body = world.CreateBody(BODY_DEF);
