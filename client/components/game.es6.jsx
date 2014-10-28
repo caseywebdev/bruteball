@@ -5,7 +5,7 @@ import Cursors from 'cursors';
 import React from 'react';
 import THREE from 'three';
 
-var MAP_SIZE = 16;
+var MAP_SIZE = 32;
 
 var RENDERER = new THREE.WebGLRenderer();
 RENDERER.setSize(window.innerWidth, window.innerHeight);

@@ -8,7 +8,7 @@ var app = config.node ? require('index') : null;
 var gamePattern = config.node ? require('patterns/games/show').default : null;
 var THREE = config.node ? null : require('three');
 
-var MAP_SIZE = 16;
+var MAP_SIZE = 32;
 
 var SPS = 1000 / config.game.stepsPerSecond;
 var VI = config.game.velocityIterations;
@@ -69,13 +69,14 @@ export var addUser = function (game, user) {
   var position = ball.body.GetPosition();
   position.Set(MAP_SIZE / 2, MAP_SIZE / 2);
   ball.body.SetTransform(position, ball.body.GetAngle());
-  game.users[user.id] = {
+  game.objects.push(game.users[user.id] = {
     info: user,
     ball: ball,
+    body: ball.body,
     acceleration: new b2.b2Vec2(0, 0),
     lastBroadcast: 0,
     needsBroadcast: 0
-  };
+  });
 };
 
 export var removeUser = function (game, user) {
@@ -84,21 +85,28 @@ export var removeUser = function (game, user) {
   Ball.destroy(ref.ball, game);
   b2.destroy(ref.acceleration);
   delete game.users[user.id];
+  game.objects = _.without(game.objects, ref);
 };
 
 var handleCollision = function (game, a, b) {
+  // var user = a.info ? a : b;
+  // var velocity = user.body.GetLinearVelocity();
+  // var force = new b2.b2Vec2(velocity.get_x(), velocity.get_y());
+  // force.Normalize();
+  // force.Set(force.get_x() * 10, force.get_y() * 10);
+  // user.body.ApplyLinearImpulse(force);
 };
 
 export var create = function () {
   var game = {
     users: {},
+    objects: [],
     world: new b2.b2World(),
     scene: config.node ? null : new THREE.Scene(),
-    walls: [],
     lastStep: Date.now(),
     lastBroadcast: 0
   };
-  game.walls.push(
+  game.objects.push(
     Wall.create({game: game, x: 0, y: 0, points: [
       {x: 0, y: 0},
       {x: 1, y: 0},

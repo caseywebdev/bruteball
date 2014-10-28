@@ -12,11 +12,20 @@ export var preStep = function (user) {
   var position = user.ball.body.GetPosition();
   user.prevX = position.get_x();
   user.prevY = position.get_y();
-  var speed = user.ball.body.GetLinearVelocity().Length();
-  var delta = Math.min(config.game.maxSpeed - speed, config.game.acceleration);
+  var acceleration = user.acceleration;
+  var velocity = user.ball.body.GetLinearVelocity();
+  var speed = velocity.Length();
+  var nextVelocity = new b2.b2Vec2(
+    velocity.get_x() + (acceleration.get_x() * config.game.acceleration),
+    velocity.get_y() + (acceleration.get_y() * config.game.acceleration)
+  );
+  var nextSpeed = nextVelocity.Length();
+  b2.destroy(nextVelocity);
+  var maxSpeed = Math.max(config.game.maxSpeed, speed);
+  var power = Math.min(maxSpeed - nextSpeed, config.game.acceleration);
   var force = new b2.b2Vec2(
-    user.acceleration.get_x() * delta,
-    user.acceleration.get_y() * delta
+    acceleration.get_x() * power,
+    acceleration.get_y() * power
   );
   user.ball.body.ApplyLinearImpulse(force);
   b2.destroy(force);
