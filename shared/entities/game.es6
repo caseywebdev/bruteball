@@ -101,7 +101,6 @@ export var removeUser = function (game, user) {
 };
 
 var handleCollision = function (game, a, b) {
-  console.log('wat');
 };
 
 export var create = function () {
@@ -138,11 +137,15 @@ export var create = function () {
       {x: MAP_SIZE - 2, y: 1},
       {x: 0, y: 1}
     ]}),
-    Wall.create({game: game, x: 1, y: 4, points: Wall.WITHOUT_TOP_RIGHT}),
+    Wall.create({game: game, x: 4, y: 6, points: Wall.WITHOUT_TOP_RIGHT}),
+    Wall.create({game: game, x: 5, y: 6}),
+    Wall.create({game: game, x: 4, y: 5, points: Wall.WITHOUT_BOTTOM_LEFT}),
+    Wall.create({game: game, x: 6, y: 6, points: Wall.WITHOUT_TOP_LEFT}),
+    Wall.create({game: game, x: 6, y: 5, points: Wall.WITHOUT_BOTTOM_RIGHT}),
     Wall.create({game: game, x: 4, y: 3, points: Wall.WITHOUT_BOTTOM_RIGHT}),
     Wall.create({game: game, x: 4, y: 4, points: Wall.WITHOUT_TOP_LEFT}),
     Wall.create({game: game, x: 6, y: 4, points: Wall.WITHOUT_TOP_RIGHT}),
-    Wall.create({game: game, x: 7, y: 3, points: Wall.WITHOUT_BOTTOM_LEFT})
+    Wall.create({game: game, x: 6, y: 3, points: Wall.WITHOUT_BOTTOM_LEFT})
   );
 
   var listener = new b2.JSContactListener();
