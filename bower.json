@@ -2,13 +2,13 @@
   "name": "bruteball",
   "private": true,
   "dependencies": {
-    "amdainty": "0.1.0",
+    "amdainty": "0.2.0",
     "box2d": "caseywebdev/box2d.js#umd",
     "cursors": "0.4.0",
     "fastclick": "1.0.3",
     "live": "0.6.3",
     "react": "0.11.2",
-    "react-router": "0.9.3",
+    "react-router": "0.9.4",
     "superagent": "0.20.0",
     "threejs": "r68",
     "underscore": "1.7.0"
