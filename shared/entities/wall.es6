@@ -17,13 +17,8 @@ export var WITHOUT_TOP_LEFT = _.without(SQUARE, TOP_LEFT);
 
 export var create = function (options) {
   options = _.extend({}, {points: SQUARE}, options);
-  var wall = {};
-  var body = wall.body = WallBody.create(options);
-  if (options.game.scene) {
-    var mesh = wall.mesh = WallMesh.create(options);
-    var position = body.GetPosition();
-    mesh.position.x = position.get_x();
-    mesh.position.y = position.get_y();
-  }
-  return wall;
+  return {
+    body: WallBody.create(options),
+    mesh: config.node ? null : WallMesh.create(options)
+  };
 };

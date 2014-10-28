@@ -9,7 +9,6 @@ DIFFUSE_TEXTURE.repeat.set(2, 1);
 DIFFUSE_TEXTURE.magFilter = THREE.NearestFilter;
 
 var MATERIAL = new THREE.MeshLambertMaterial({map: DIFFUSE_TEXTURE});
-// var MATERIAL = new THREE.ShaderMaterial(CelShader);
 
 export var create = function (scene) {
   var mesh = new THREE.Mesh(GEOMETRY, MATERIAL);
@@ -22,24 +21,3 @@ export var create = function (scene) {
 export var destroy = function (mesh, scene) {
   scene.remove(mesh);
 };
-
-// GLOWING BALL
-// var customMaterial = new THREE.ShaderMaterial({
-//   uniforms: {
-//     c: {type: 'f', value: 1.0},
-//     p: {type: 'f', value: 1.4},
-//     glowColor: {type: 'c', value: new THREE.Color(0x00ff00)},
-//     viewVector: {type: 'v3', value: this.camera.position}
-//   },
-//   vertexShader: glowVertexShader,
-//   fragmentShader: glowFragmentShader,
-//   side: THREE.FrontSide,
-//   blending: THREE.AdditiveBlending,
-//   transparent: true
-// });
-// var moonGlow = new THREE.Mesh(geometry.clone(), customMaterial.clone());
-// moonGlow.position.x = ball.position.x;
-// moonGlow.position.y = ball.position.y;
-// moonGlow.position.z = ball.position.z;
-// moonGlow.scale.multiplyScalar(1.2);
-// this.scene.add(moonGlow);
