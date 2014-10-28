@@ -1,9 +1,7 @@
 /** @jsx React.DOM */
 
 import _ from 'underscore';
-import CelShader from 'client/shaders/cel';
 import Cursors from 'cursors';
-import Game from 'shared/entities/game';
 import React from 'react';
 import THREE from 'three';
 
@@ -45,13 +43,7 @@ export default React.createClass({
     this.scene.add(light);
 
     var plane = new THREE.PlaneGeometry(MAP_SIZE, MAP_SIZE);
-    var diffuse = THREE.ImageUtils.loadTexture('/textures/ground.jpg');
-    var material = new THREE.MeshBasicMaterial({map: diffuse});
-    // var uniforms = THREE.UniformsUtils.clone(CelShader.uniforms);
-    // uniforms.uBaseColor.value = new THREE.Color(0x00ff00);
-    // var material = new THREE.ShaderMaterial(_.extend({}, CelShader, {
-    //   uniforms: uniforms
-    // }));
+    var material = new THREE.MeshLambertMaterial();
     var floor = new THREE.Mesh(plane, material);
     floor.receiveShadow = true;
     floor.position.set(MAP_SIZE / 2, MAP_SIZE / 2, 0);
@@ -93,7 +85,7 @@ export default React.createClass({
     if (!mesh) return;
     CAMERA.position.x += (mesh.position.x - CAMERA.position.x) * 0.1;
     CAMERA.position.y += (mesh.position.y - 5 - CAMERA.position.y) * 0.1;
-    CAMERA.position.z = 15;
+    CAMERA.position.z = 20;
     CAMERA.lookAt(mesh.position);
   },
 
