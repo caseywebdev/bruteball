@@ -1,3 +1,3 @@
-# [Bruteball](https://bruteball.herokuapp.com)
+# [Bruteball](http://www.bruteball.com)
 
-Because we love TagPro.
+Roll into stuff.
