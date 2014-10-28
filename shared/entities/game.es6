@@ -86,7 +86,7 @@ export var addUser = function (game, user) {
   game.users[user.id] = {
     info: user,
     ball: ball,
-    acceleration: new b2.b2Vec2(),
+    acceleration: new b2.b2Vec2(0, 0),
     lastBroadcast: 0,
     needsBroadcast: 0
   };
@@ -151,14 +151,11 @@ export var create = function () {
   var listener = new b2.JSContactListener();
   listener.BeginContact = function (contactPtr) {
     var contact = b2.wrapPointer(contactPtr, b2.b2Contact);
-    handleCollision(
-      game,
-      _.find(game.entities, {body: contact.GetFixtureA().GetBody()}),
-      _.find(game.entities, {body: contact.GetFixtureB().GetBody()})
-    );
+    var objA = _.find(game.objects, {body: contact.GetFixtureA().GetBody()});
+    var objB = _.find(game.objects, {body: contact.GetFixtureB().GetBody()});
+    handleCollision(game, objA, objB);
   };
   listener.EndContact = listener.PreSolve = listener.PostSolve = _.noop;
-
   game.world.SetContactListener(listener);
 
   return game;
