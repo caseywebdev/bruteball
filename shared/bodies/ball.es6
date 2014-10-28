@@ -7,7 +7,7 @@ BODY_DEF.set_fixedRotation(true);
 BODY_DEF.set_linearDamping(config.game.linearDamping);
 
 var SHAPE = new b2.b2CircleShape();
-SHAPE.set_m_radius(0.49);
+SHAPE.set_m_radius(config.game.ballRadius);
 
 var FIXTURE_DEF = new b2.b2FixtureDef();
 FIXTURE_DEF.set_shape(SHAPE);

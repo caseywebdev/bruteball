@@ -1,6 +1,7 @@
+import config from 'shared/config';
 import THREE from 'three';
 
-var GEOMETRY = new THREE.SphereGeometry(0.49, 16, 16);
+var GEOMETRY = new THREE.SphereGeometry(config.game.ballRadius, 16, 16);
 
 var TEXTURE_URL = '/textures/ball.jpg';
 var DIFFUSE_TEXTURE = THREE.ImageUtils.loadTexture(TEXTURE_URL);
@@ -12,7 +13,7 @@ var MATERIAL = new THREE.MeshLambertMaterial({map: DIFFUSE_TEXTURE});
 
 export var create = function (scene) {
   var mesh = new THREE.Mesh(GEOMETRY, MATERIAL);
-  mesh.position.z = 0.49;
+  mesh.position.z = config.game.ballRadius;
   mesh.castShadow = true;
   scene.add(mesh);
   return mesh;

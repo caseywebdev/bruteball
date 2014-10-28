@@ -10,22 +10,10 @@ var THREE = config.node ? null : require('three');
 
 var MAP_SIZE = 16;
 
-var ACCELERATION = config.game.acceleration;
 var SPS = 1000 / config.game.stepsPerSecond;
 var VI = config.game.velocityIterations;
 var PI = config.game.positionIterations;
 var BROADCAST_WAIT = 1000 / config.game.broadcastsPerSecond;
-
-var applyForce = function (dt, user) {
-  var speed = user.ball.body.GetLinearVelocity().Length();
-  var delta = Math.min(config.game.maxSpeed - speed, ACCELERATION) / dt;
-  var force = new b2.b2Vec2(
-    user.acceleration.get_x() * delta,
-    user.acceleration.get_y() * delta
-  );
-  user.ball.body.ApplyForceToCenter(force);
-  b2.destroy(force);
-};
 
 var broadcastAll = function (game) {
   game.lastBroadcast = Date.now();
@@ -51,11 +39,9 @@ export var step = function (game) {
   var delta = now - game.lastStep;
   game.lastStep = now;
   var dt = delta / 1000;
-  _.each(game.users, _.partial(applyForce, dt));
+  _.each(game.users, Ball.preStep);
   game.world.Step(dt, VI, PI);
-  if (!config.node) {
-    _.each(_.map(game.users, 'ball'), _.partial(Ball.updateMesh, _, dt));
-  }
+  if (!config.node) _.each(game.users, Ball.postStep);
   if (config.node) {
     game.needsBroadcast > game.lastBroadcast ?
     broadcastAll(game) :
