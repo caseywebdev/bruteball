@@ -8,7 +8,9 @@ export default function (socket) {
   if (!user) return;
   if (!_.any(_.map(app.ws.server.clients, 'user'), {id: user.id})) {
     var game = app.games.test;
-    app.ws.server.broadcast('remove-user', userPattern(game.users[user.id]));
-    Game.removeUser(game, user);
+    var obj = Game.findObject({type: 'user', id: user.id});
+    if (!obj) return;
+    app.ws.server.broadcast('remove-user', userPattern(obj));
+    Game.removeObject(game, obj);
   }
 }

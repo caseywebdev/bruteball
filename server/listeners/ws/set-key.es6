@@ -13,7 +13,7 @@ export default function (socket, key, cb) {
   var done = function (er, user) {
     if (er) return cb(er);
     socket.user = user;
-    Game.addUser(app.games.test, user);
+    Game.createObject(app.games.test, {type: 'user', id: user.id});
     socket.send('new-game', gamePattern(app.games.test));
     cb(null, usersShowPattern(user, {withPrivate: true}));
   };

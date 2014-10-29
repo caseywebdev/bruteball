@@ -2,6 +2,7 @@
 
 import _ from 'underscore';
 import Cursors from 'cursors';
+import Game from 'shared/entities/game';
 import React from 'react';
 import THREE from 'three';
 
@@ -80,13 +81,14 @@ export default React.createClass({
   },
 
   updateCamera: function () {
-    var user = this.state.user && this.props.game.users[this.state.user.id];
-    var mesh = user && user.ball.mesh;
-    if (!mesh) return;
-    CAMERA.position.x += (mesh.position.x - CAMERA.position.x) * 0.1;
-    CAMERA.position.y += (mesh.position.y - 5 - CAMERA.position.y) * 0.1;
+    var user = this.state.user;
+    if (!user) return;
+    user = Game.findObject(this.props.game, {type: 'user', id: user.id});
+    if (!user) return;
+    CAMERA.position.x += (user.mesh.position.x - CAMERA.position.x) * 0.1;
+    CAMERA.position.y += (user.mesh.position.y - 5 - CAMERA.position.y) * 0.1;
     CAMERA.position.z = 20;
-    CAMERA.lookAt(mesh.position);
+    CAMERA.lookAt(user.mesh.position);
   },
 
   render: function () {

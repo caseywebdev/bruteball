@@ -132,19 +132,18 @@ export default React.createClass({
   updateUser: function (u) {
     var game = this.game;
     var id = u[0];
-    if (!game.users[id]) Game.addUser(game, {id: id});
-    var user = game.users[id];
-    var position = user.ball.body.GetPosition();
+    var user = Game.createObject(game, {type: 'user', id: id});
+    var position = user.body.GetPosition();
     var cx = position.get_x();
     var cy = position.get_y();
     var dx = u[1] - cx;
     var dy = u[2] - cy;
     var far = Math.sqrt((dx * dx) + (dy * dy)) > 1;
     position.Set(far ? u[1] : cx + (dx * 0.1), far ? u[2] : cy + (dy * 0.1));
-    user.ball.body.SetTransform(position, user.ball.body.GetAngle());
-    var velocity = user.ball.body.GetLinearVelocity();
+    user.body.SetTransform(position, user.body.GetAngle());
+    var velocity = user.body.GetLinearVelocity();
     velocity.Set(u[3], u[4]);
-    user.ball.body.SetLinearVelocity(velocity);
+    user.body.SetLinearVelocity(velocity);
     user.acceleration.Set(u[5], u[6]);
   },
 

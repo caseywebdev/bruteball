@@ -1,3 +1,4 @@
+import _ from 'underscore';
 import b2 from 'box2d';
 import BallBody from 'shared/bodies/ball';
 import config from 'shared/config';
@@ -9,11 +10,11 @@ var UP = config.node ? null : new THREE.Vector3(0, 0, 1);
 var DIAMETER = 2 * Math.PI * config.game.ballRadius;
 
 export var preStep = function (user) {
-  var position = user.ball.body.GetPosition();
+  var position = user.body.GetPosition();
   user.prevX = position.get_x();
   user.prevY = position.get_y();
   var acceleration = user.acceleration;
-  var velocity = user.ball.body.GetLinearVelocity();
+  var velocity = user.body.GetLinearVelocity();
   var speed = velocity.Length();
   var nextVelocity = new b2.b2Vec2(
     velocity.get_x() + (acceleration.get_x() * config.game.acceleration),
@@ -27,13 +28,14 @@ export var preStep = function (user) {
     acceleration.get_x() * power,
     acceleration.get_y() * power
   );
-  user.ball.body.ApplyLinearImpulse(force);
+  user.body.ApplyLinearImpulse(force);
   b2.destroy(force);
 };
 
 export var postStep = function (user) {
-  var body = user.ball.body;
-  var mesh = user.ball.mesh;
+  if (config.node) return;
+  var body = user.body;
+  var mesh = user.mesh;
   var position = body.GetPosition();
   var x = position.get_x();
   var y = position.get_y();
@@ -47,16 +49,22 @@ export var postStep = function (user) {
   mesh.rotation.copy((new THREE.Euler()).setFromRotationMatrix(mesh.matrix));
 };
 
-export var create = function (game) {
+export var create = function (options) {
+  options = _.extend({x: 8, y: 8}, options);
   return {
-    body: BallBody.create(game.world),
-    mesh: config.node ? null : BallMesh.create(game.scene),
-    preStep: preStep,
-    postStep: postStep
+    type: 'user',
+    id: options.id,
+    game: options.game,
+    body: BallBody.create(options),
+    mesh: config.node ? null : BallMesh.create(options),
+    acceleration: new b2.b2Vec2(0, 0),
+    lastBroadcast: 0,
+    needsBroadcast: 0
   };
 };
 
-export var destroy = function (ball, game) {
-  BallBody.destroy(ball.body, game.world);
-  if (!config.node) BallMesh.destroy(ball.mesh, game.scene);
+export var destroy = function (user) {
+  b2.destroy(user.acceleration);
+  user.game.world.destroy(user.body);
+  if (!config.node) user.game.scene.remove(ball.mesh);
 };

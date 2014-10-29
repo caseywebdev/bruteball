@@ -15,12 +15,9 @@ FIXTURE_DEF.set_density(1);
 FIXTURE_DEF.set_restitution(0.2);
 FIXTURE_DEF.set_friction(0);
 
-export var create = function (world) {
-  var body = world.CreateBody(BODY_DEF);
+export var create = function (options) {
+  BODY_DEF.get_position().Set(options.x, options.y);
+  var body = options.game.world.CreateBody(BODY_DEF);
   body.CreateFixture(FIXTURE_DEF);
   return body;
-};
-
-export var destroy = function (body, world) {
-  world.DestroyBody(body);
 };

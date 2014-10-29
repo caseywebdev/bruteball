@@ -15,9 +15,11 @@ export var WITHOUT_BOTTOM_RIGHT = _.without(SQUARE, BOTTOM_RIGHT);
 export var WITHOUT_TOP_RIGHT = _.without(SQUARE, TOP_RIGHT);
 export var WITHOUT_TOP_LEFT = _.without(SQUARE, TOP_LEFT);
 
-export var create = function (options) {}
+export var create = function (options) {
   options = _.extend({}, {points: SQUARE}, options);
   return {
+    id: ++options.game.incr,
+    type: 'wall',
     body: WallBody.create(options),
     mesh: config.node ? null : WallMesh.create(options)
   };

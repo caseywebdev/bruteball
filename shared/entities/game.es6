@@ -1,8 +1,6 @@
 import _ from 'underscore';
 import b2 from 'box2d';
-import Ball from 'shared/entities/ball';
 import config from 'shared/config';
-import Wall from 'shared/objects/wall';
 
 var app = config.node ? require('index') : null;
 var gamePattern = config.node ? require('patterns/games/show').default : null;
@@ -32,6 +30,13 @@ var broadcastWaiting = function (game) {
   app.ws.server.broadcast('g', gamePattern(game, {users: waiting}));
 };
 
+var invoke = function (game, key) {
+  _.each(game.objects, function (object) {
+    var Type = require('shared/objects/' + object.type);
+    if (Type[key]) Type[key](object);
+  });
+};
+
 export var step = function (game) {
   clearTimeout(game.stepTimeoutId);
   game.stepTimeoutId = _.delay(_.partial(step, game), SPS);
@@ -39,9 +44,9 @@ export var step = function (game) {
   var delta = now - game.lastStep;
   game.lastStep = now;
   var dt = delta / 1000;
-  _.each(game.users, Ball.preStep);
+  invoke(game, 'preStep');
   game.world.Step(dt, VI, PI);
-  if (!config.node) _.each(game.users, Ball.postStep);
+  invoke(game, 'postStep');
   if (config.node) {
     game.needsBroadcast > game.lastBroadcast ?
     broadcastAll(game) :
@@ -56,36 +61,32 @@ var loopBroadcast = function (game) {
 };
 
 export var setAcceleration = function (game, user, x, y) {
-  var ref = game.users[user.id];
+  var ref = findObject(game, {type: 'user', id: user.id});
   if (!ref || ref.acceleration.x === x && ref.acceleration.y === y) return;
   ref.acceleration.Set(x, y);
   ref.acceleration.Normalize();
   ref.needsBroadcast = Date.now();
 };
 
-export var addUser = function (game, user) {
-  if (game.users[user.id]) return;
-  var ball = Ball.create(game);
-  var position = ball.body.GetPosition();
-  position.Set(MAP_SIZE / 2, MAP_SIZE / 2);
-  ball.body.SetTransform(position, ball.body.GetAngle());
-  game.objects.push(game.users[user.id] = {
-    info: user,
-    ball: ball,
-    body: ball.body,
-    acceleration: new b2.b2Vec2(0, 0),
-    lastBroadcast: 0,
-    needsBroadcast: 0
-  });
+export var findObject = function (game, object) {
+  return _.find(game.objects, _.pick(object, 'type', 'id'));
 };
 
-export var removeUser = function (game, user) {
-  var ref = game.users[user.id];
-  if (!ref) return;
-  Ball.destroy(ref.ball, game);
-  b2.destroy(ref.acceleration);
-  delete game.users[user.id];
-  game.objects = _.without(game.objects, ref);
+export var createObject = function (game, options) {
+  var existing = findObject(game, options);
+  if (existing) return existing;
+  var Type = require('shared/objects/' + options.type);
+  var object = Type.create(_.extend({game: game}, options), game);
+  game.objects = game.objects.concat(object);
+  return object;
+};
+
+export var destroyObject = function (game, options) {
+  var existing = _.find(game, options);
+  if (!existing) return;
+  require('shared/objects/' + options.type).destroy(existing);
+  game.objects = _.without(game.objects, existing);
+  return existing;
 };
 
 var handleCollision = function (game, a, b) {
@@ -99,48 +100,53 @@ var handleCollision = function (game, a, b) {
 
 export var create = function () {
   var game = {
-    users: {},
+    incr: 0,
     objects: [],
     world: new b2.b2World(),
     scene: config.node ? null : new THREE.Scene(),
     lastStep: Date.now(),
     lastBroadcast: 0
   };
-  game.objects.push(
-    Wall.create({game: game, x: 0, y: 0, points: [
+  createObject(game, {
+    type: 'wall',
+    x: 0,
+    y: 0,
+    points: [
       {x: 0, y: 0},
       {x: 1, y: 0},
       {x: 1, y: MAP_SIZE},
       {x: 0, y: MAP_SIZE}
-    ]}),
-    Wall.create({game: game, x: MAP_SIZE - 1, y: 0, points: [
-      {x: 0, y: 0},
-      {x: 1, y: 0},
-      {x: 1, y: MAP_SIZE},
-      {x: 0, y: MAP_SIZE}
-    ]}),
-    Wall.create({game: game, x: 1, y: 0, points: [
-      {x: 0, y: 0},
-      {x: MAP_SIZE - 2, y: 0},
-      {x: MAP_SIZE - 2, y: 1},
-      {x: 0, y: 1}
-    ]}),
-    Wall.create({game: game, x: 1, y: MAP_SIZE - 1, points: [
-      {x: 0, y: 0},
-      {x: MAP_SIZE - 2, y: 0},
-      {x: MAP_SIZE - 2, y: 1},
-      {x: 0, y: 1}
-    ]}),
-    Wall.create({game: game, x: 4, y: 6, points: Wall.WITHOUT_TOP_RIGHT}),
-    Wall.create({game: game, x: 5, y: 6}),
-    Wall.create({game: game, x: 4, y: 5, points: Wall.WITHOUT_BOTTOM_LEFT}),
-    Wall.create({game: game, x: 6, y: 6, points: Wall.WITHOUT_TOP_LEFT}),
-    Wall.create({game: game, x: 6, y: 5, points: Wall.WITHOUT_BOTTOM_RIGHT}),
-    Wall.create({game: game, x: 4, y: 3, points: Wall.WITHOUT_BOTTOM_RIGHT}),
-    Wall.create({game: game, x: 4, y: 4, points: Wall.WITHOUT_TOP_LEFT}),
-    Wall.create({game: game, x: 6, y: 4, points: Wall.WITHOUT_TOP_RIGHT}),
-    Wall.create({game: game, x: 6, y: 3, points: Wall.WITHOUT_BOTTOM_LEFT})
-  );
+    ]
+  });
+
+  //   Wall.create({game: game, x: MAP_SIZE - 1, y: 0, points: [
+  //     {x: 0, y: 0},
+  //     {x: 1, y: 0},
+  //     {x: 1, y: MAP_SIZE},
+  //     {x: 0, y: MAP_SIZE}
+  //   ]}),
+  //   Wall.create({game: game, x: 1, y: 0, points: [
+  //     {x: 0, y: 0},
+  //     {x: MAP_SIZE - 2, y: 0},
+  //     {x: MAP_SIZE - 2, y: 1},
+  //     {x: 0, y: 1}
+  //   ]}),
+  //   Wall.create({game: game, x: 1, y: MAP_SIZE - 1, points: [
+  //     {x: 0, y: 0},
+  //     {x: MAP_SIZE - 2, y: 0},
+  //     {x: MAP_SIZE - 2, y: 1},
+  //     {x: 0, y: 1}
+  //   ]}),
+  //   Wall.create({game: game, x: 4, y: 6, points: Wall.WITHOUT_TOP_RIGHT}),
+  //   Wall.create({game: game, x: 5, y: 6}),
+  //   Wall.create({game: game, x: 4, y: 5, points: Wall.WITHOUT_BOTTOM_LEFT}),
+  //   Wall.create({game: game, x: 6, y: 6, points: Wall.WITHOUT_TOP_LEFT}),
+  //   Wall.create({game: game, x: 6, y: 5, points: Wall.WITHOUT_BOTTOM_RIGHT}),
+  //   Wall.create({game: game, x: 4, y: 3, points: Wall.WITHOUT_BOTTOM_RIGHT}),
+  //   Wall.create({game: game, x: 4, y: 4, points: Wall.WITHOUT_TOP_LEFT}),
+  //   Wall.create({game: game, x: 6, y: 4, points: Wall.WITHOUT_TOP_RIGHT}),
+  //   Wall.create({game: game, x: 6, y: 3, points: Wall.WITHOUT_BOTTOM_LEFT})
+  // );
 
   var listener = new b2.JSContactListener();
   listener.BeginContact = function (contactPtr) {

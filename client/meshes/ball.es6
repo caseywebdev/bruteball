@@ -11,14 +11,10 @@ DIFFUSE_TEXTURE.magFilter = THREE.NearestFilter;
 
 var MATERIAL = new THREE.MeshLambertMaterial({map: DIFFUSE_TEXTURE});
 
-export var create = function (scene) {
+export var create = function (options) {
   var mesh = new THREE.Mesh(GEOMETRY, MATERIAL);
   mesh.position.z = config.game.ballRadius;
   mesh.castShadow = true;
-  scene.add(mesh);
+  options.game.scene.add(mesh);
   return mesh;
-};
-
-export var destroy = function (mesh, scene) {
-  scene.remove(mesh);
 };
