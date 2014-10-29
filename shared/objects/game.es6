@@ -91,12 +91,14 @@ export var destroyObject = function (game, options) {
 };
 
 var handleCollision = function (game, a, b) {
-  // var user = a.info ? a : b;
-  // var velocity = user.body.GetLinearVelocity();
-  // var force = new b2.b2Vec2(velocity.get_x(), velocity.get_y());
-  // force.Normalize();
-  // force.Set(force.get_x() * 10, force.get_y() * 10);
-  // user.body.ApplyLinearImpulse(force);
+  if (a.type === 'boost' && b.type === 'user') {
+    var velocity = b.body.GetLinearVelocity();
+    var force = new b2.b2Vec2(velocity.get_x(), velocity.get_y());
+    force.Normalize();
+    force.Set(force.get_x() * 15, force.get_y() * 15);
+    b.body.ApplyLinearImpulse(force);
+    b2.destroy(force);
+  }
 };
 
 export var create = function () {
@@ -157,15 +159,18 @@ export var create = function () {
     {type: 'wall', x: 4, y: 3, points: Wall.WITHOUT_BOTTOM_RIGHT},
     {type: 'wall', x: 4, y: 4, points: Wall.WITHOUT_TOP_LEFT},
     {type: 'wall', x: 6, y: 4, points: Wall.WITHOUT_TOP_RIGHT},
-    {type: 'wall', x: 6, y: 3, points: Wall.WITHOUT_BOTTOM_LEFT}
+    {type: 'wall', x: 6, y: 3, points: Wall.WITHOUT_BOTTOM_LEFT},
+    {type: 'boost', x: 10, y: 10}
   ], _.partial(createObject, game));
 
   var listener = new b2.JSContactListener();
   listener.BeginContact = function (contactPtr) {
     var contact = b2.wrapPointer(contactPtr, b2.b2Contact);
-    var objA = _.find(game.objects, {body: contact.GetFixtureA().GetBody()});
-    var objB = _.find(game.objects, {body: contact.GetFixtureB().GetBody()});
-    handleCollision(game, objA, objB);
+    var objects = _.sortBy([
+      _.find(game.objects, {body: contact.GetFixtureA().GetBody()}),
+      _.find(game.objects, {body: contact.GetFixtureB().GetBody()})
+    ], 'type');
+    handleCollision(game, objects[0], objects[1]);
   };
   listener.EndContact = listener.PreSolve = listener.PostSolve = _.noop;
   game.world.SetContactListener(listener);
