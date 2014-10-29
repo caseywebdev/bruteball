@@ -7,7 +7,6 @@ var BallMesh = config.node ? null : require('client/meshes/ball');
 var THREE = config.node ? null : require('three');
 
 var UP = config.node ? null : new THREE.Vector3(0, 0, 1);
-var DIAMETER = 2 * Math.PI * config.game.ballRadius;
 
 export var preStep = function (user) {
   var position = user.body.GetPosition();
@@ -42,7 +41,7 @@ export var postStep = function (user) {
   mesh.position.x = x;
   mesh.position.y = y;
   var v3 = new THREE.Vector3(user.prevX - x, user.prevY - y, 0);
-  var theta = v3.length() * DIAMETER;
+  var theta = v3.length() / config.game.ballRadius;
   var axis = v3.cross(UP).normalize();
   mesh.matrix =
     (new THREE.Matrix4()).makeRotationAxis(axis, theta).multiply(mesh.matrix);
