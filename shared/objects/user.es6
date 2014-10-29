@@ -29,16 +29,14 @@ export var preStep = function (user) {
 };
 
 export var updateMesh = function (user) {
-  var body = user.body;
-  var position = body.GetPosition();
+  var position = user.body.GetPosition();
   var x = position.get_x();
   var y = position.get_y();
   var mesh = user.mesh;
-  mesh.position.x = x;
-  mesh.position.y = y;
-  var v3 = new THREE.Vector3(user.prevX - x, user.prevY - y, 0);
-  user.prevX = x;
-  user.prevY = y;
+  if (!mesh.prev) mesh.prev = new THREE.Vector3();
+  mesh.prev.copy(mesh.position);
+  mesh.position.set(x, y, mesh.position.z);
+  var v3 = new THREE.Vector3(mesh.prev.x - x, mesh.prev.y - y, 0);
   var theta = v3.length() / config.game.ballRadius;
   var axis = v3.cross(UP).normalize();
   mesh.matrix =
@@ -56,9 +54,7 @@ export var create = function (options) {
     mesh: config.node ? null : BallMesh.create(options),
     acceleration: new b2.b2Vec2(0, 0),
     lastBroadcast: 0,
-    needsBroadcast: 0,
-    prevX: options.x,
-    prevY: options.y
+    needsBroadcast: 0
   };
 };
 
