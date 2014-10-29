@@ -1,6 +1,6 @@
 import _ from 'underscore';
 import app from 'index';
-import Game from 'shared/entities/game';
+import Game from 'shared/objects/game';
 import userPattern from 'patterns/games/users/show';
 
 export default function (socket) {

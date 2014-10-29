@@ -1,3 +1,5 @@
+import crypto from 'crypto';
+
 var KEY_DELIM = '-';
 
 var DEFAULT_MD5 = 'e916863a6d94694aee15adb363333feb';
@@ -21,7 +23,7 @@ export var getRandFromKey = function (key) {
 };
 
 export var createRand = function () {
-  return require('crypto').randomBytes(32).toString('hex');
+  return crypto.randomBytes(32).toString('hex');
 };
 
 export var getName = function (user) {
@@ -30,7 +32,7 @@ export var getName = function (user) {
 
 export var getAvatarUrl = function (user) {
   if (!user.email) return DEFAULT_AVATAR_URL;
-  var hash = require('crypto').createHash('md5');
+  var hash = crypto.createHash('md5');
   hash.update(user.email);
   return GRAVATAR(hash.digest('hex'));
 };

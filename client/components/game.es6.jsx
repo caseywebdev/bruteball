@@ -2,7 +2,7 @@
 
 import _ from 'underscore';
 import Cursors from 'cursors';
-import Game from 'shared/entities/game';
+import Game from 'shared/objects/game';
 import React from 'react';
 import THREE from 'three';
 

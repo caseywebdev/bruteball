@@ -2,9 +2,9 @@ import _ from 'underscore';
 import app from 'index';
 import async from 'async';
 import createUser from 'interactions/create-user';
-import Game from 'shared/entities/game';
+import Game from 'shared/objects/game';
 import gamePattern from 'patterns/games/show';
-import User from 'shared/entities/user';
+import User from 'entities/user';
 import usersShowPattern from 'patterns/users/show';
 
 var db = app.knex.db;
