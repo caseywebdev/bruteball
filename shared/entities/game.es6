@@ -2,7 +2,7 @@ import _ from 'underscore';
 import b2 from 'box2d';
 import Ball from 'shared/entities/ball';
 import config from 'shared/config';
-import Wall from 'shared/entities/wall';
+import Wall from 'shared/objects/wall';
 
 var app = config.node ? require('index') : null;
 var gamePattern = config.node ? require('patterns/games/show').default : null;
