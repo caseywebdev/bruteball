@@ -28,8 +28,7 @@ export var preStep = function (user) {
   b2.destroy(force);
 };
 
-export var postStep = function (user) {
-  if (config.node) return;
+export var updateMesh = function (user) {
   var body = user.body;
   var position = body.GetPosition();
   var x = position.get_x();

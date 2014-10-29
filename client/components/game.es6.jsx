@@ -76,6 +76,10 @@ export default React.createClass({
     this.frames = [now - this.lastFrame].concat(this.frames.slice(0, 59));
     this.lastFrame = now;
     this.update({fps: {$set: Math.ceil(1000 / getMedian(this.frames))}});
+    _.each(this.props.game.objects, function (object) {
+      var Type = require('shared/objects/' + object.type);
+      if (Type.updateMesh) Type.updateMesh(object);
+    });
     this.updateCamera();
     RENDERER.render(this.scene, CAMERA);
   },
