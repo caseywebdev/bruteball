@@ -9,9 +9,6 @@ var THREE = config.node ? null : require('three');
 var UP = config.node ? null : new THREE.Vector3(0, 0, 1);
 
 export var preStep = function (user) {
-  var position = user.body.GetPosition();
-  user.prevX = position.get_x();
-  user.prevY = position.get_y();
   var acceleration = user.acceleration;
   var velocity = user.body.GetLinearVelocity();
   var speed = velocity.Length();
@@ -34,13 +31,15 @@ export var preStep = function (user) {
 export var postStep = function (user) {
   if (config.node) return;
   var body = user.body;
-  var mesh = user.mesh;
   var position = body.GetPosition();
   var x = position.get_x();
   var y = position.get_y();
+  var mesh = user.mesh;
   mesh.position.x = x;
   mesh.position.y = y;
   var v3 = new THREE.Vector3(user.prevX - x, user.prevY - y, 0);
+  user.prevX = x;
+  user.prevY = y;
   var theta = v3.length() / config.game.ballRadius;
   var axis = v3.cross(UP).normalize();
   mesh.matrix =
@@ -58,7 +57,9 @@ export var create = function (options) {
     mesh: config.node ? null : BallMesh.create(options),
     acceleration: new b2.b2Vec2(0, 0),
     lastBroadcast: 0,
-    needsBroadcast: 0
+    needsBroadcast: 0,
+    prevX: options.x,
+    prevY: options.y
   };
 };
 

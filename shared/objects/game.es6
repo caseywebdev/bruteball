@@ -1,5 +1,6 @@
 import _ from 'underscore';
 import b2 from 'box2d';
+import Bomb from 'shared/objects/bomb';
 import config from 'shared/config';
 import Wall from 'shared/objects/wall';
 
@@ -98,6 +99,8 @@ var handleCollision = function (game, a, b) {
     force.Set(force.get_x() * 15, force.get_y() * 15);
     b.body.ApplyLinearImpulse(force);
     b2.destroy(force);
+  } else if (a.type === 'bomb') {
+    Bomb.explode(a);
   }
 };
 
@@ -160,7 +163,8 @@ export var create = function () {
     {type: 'wall', x: 4, y: 4, points: Wall.WITHOUT_TOP_LEFT},
     {type: 'wall', x: 6, y: 4, points: Wall.WITHOUT_TOP_RIGHT},
     {type: 'wall', x: 6, y: 3, points: Wall.WITHOUT_BOTTOM_LEFT},
-    {type: 'boost', x: 10, y: 10}
+    {type: 'boost', x: 10, y: 10},
+    {type: 'bomb', x: 8, y: 5},
   ], _.partial(createObject, game));
 
   var listener = new b2.JSContactListener();
