@@ -1,6 +1,7 @@
 import _ from 'underscore';
 import b2 from 'box2d';
 import config from 'shared/config';
+import Wall from 'shared/objects/wall';
 
 var app = config.node ? require('index') : null;
 var gamePattern = config.node ? require('patterns/games/show').default : null;
@@ -74,7 +75,7 @@ export var findObject = function (game, object) {
 
 export var createObject = function (game, options) {
   var existing = findObject(game, options);
-  if (existing) return existing;
+  if (options.id && existing) return existing;
   var Type = require('shared/objects/' + options.type);
   var object = Type.create(_.extend({game: game}, options), game);
   game.objects = game.objects.concat(object);
@@ -107,7 +108,7 @@ export var create = function () {
     lastStep: Date.now(),
     lastBroadcast: 0
   };
-  createObject(game, {
+  _.each([{
     type: 'wall',
     x: 0,
     y: 0,
@@ -117,36 +118,47 @@ export var create = function () {
       {x: 1, y: MAP_SIZE},
       {x: 0, y: MAP_SIZE}
     ]
-  });
-
-  //   Wall.create({game: game, x: MAP_SIZE - 1, y: 0, points: [
-  //     {x: 0, y: 0},
-  //     {x: 1, y: 0},
-  //     {x: 1, y: MAP_SIZE},
-  //     {x: 0, y: MAP_SIZE}
-  //   ]}),
-  //   Wall.create({game: game, x: 1, y: 0, points: [
-  //     {x: 0, y: 0},
-  //     {x: MAP_SIZE - 2, y: 0},
-  //     {x: MAP_SIZE - 2, y: 1},
-  //     {x: 0, y: 1}
-  //   ]}),
-  //   Wall.create({game: game, x: 1, y: MAP_SIZE - 1, points: [
-  //     {x: 0, y: 0},
-  //     {x: MAP_SIZE - 2, y: 0},
-  //     {x: MAP_SIZE - 2, y: 1},
-  //     {x: 0, y: 1}
-  //   ]}),
-  //   Wall.create({game: game, x: 4, y: 6, points: Wall.WITHOUT_TOP_RIGHT}),
-  //   Wall.create({game: game, x: 5, y: 6}),
-  //   Wall.create({game: game, x: 4, y: 5, points: Wall.WITHOUT_BOTTOM_LEFT}),
-  //   Wall.create({game: game, x: 6, y: 6, points: Wall.WITHOUT_TOP_LEFT}),
-  //   Wall.create({game: game, x: 6, y: 5, points: Wall.WITHOUT_BOTTOM_RIGHT}),
-  //   Wall.create({game: game, x: 4, y: 3, points: Wall.WITHOUT_BOTTOM_RIGHT}),
-  //   Wall.create({game: game, x: 4, y: 4, points: Wall.WITHOUT_TOP_LEFT}),
-  //   Wall.create({game: game, x: 6, y: 4, points: Wall.WITHOUT_TOP_RIGHT}),
-  //   Wall.create({game: game, x: 6, y: 3, points: Wall.WITHOUT_BOTTOM_LEFT})
-  // );
+  }, {
+    type: 'wall',
+    x: MAP_SIZE - 1,
+    y: 0,
+    points: [
+      {x: 0, y: 0},
+      {x: 1, y: 0},
+      {x: 1, y: MAP_SIZE},
+      {x: 0, y: MAP_SIZE}
+    ]
+  }, {
+    type: 'wall',
+    x: 1,
+    y: 0,
+    points: [
+      {x: 0, y: 0},
+      {x: MAP_SIZE - 2, y: 0},
+      {x: MAP_SIZE - 2, y: 1},
+      {x: 0, y: 1}
+    ]
+  }, {
+    type: 'wall',
+    x: 1,
+    y: MAP_SIZE - 1,
+    points: [
+      {x: 0, y: 0},
+      {x: MAP_SIZE - 2, y: 0},
+      {x: MAP_SIZE - 2, y: 1},
+      {x: 0, y: 1}
+    ]
+  },
+    {type: 'wall', x: 4, y: 6, points: Wall.WITHOUT_TOP_RIGHT},
+    {type: 'wall', x: 5, y: 6},
+    {type: 'wall', x: 4, y: 5, points: Wall.WITHOUT_BOTTOM_LEFT},
+    {type: 'wall', x: 6, y: 6, points: Wall.WITHOUT_TOP_LEFT},
+    {type: 'wall', x: 6, y: 5, points: Wall.WITHOUT_BOTTOM_RIGHT},
+    {type: 'wall', x: 4, y: 3, points: Wall.WITHOUT_BOTTOM_RIGHT},
+    {type: 'wall', x: 4, y: 4, points: Wall.WITHOUT_TOP_LEFT},
+    {type: 'wall', x: 6, y: 4, points: Wall.WITHOUT_TOP_RIGHT},
+    {type: 'wall', x: 6, y: 3, points: Wall.WITHOUT_BOTTOM_LEFT}
+  ], _.partial(createObject, game));
 
   var listener = new b2.JSContactListener();
   listener.BeginContact = function (contactPtr) {
