@@ -33,12 +33,11 @@ export var updateMesh = function (user) {
   var x = position.get_x();
   var y = position.get_y();
   var mesh = user.mesh;
-  if (!mesh.prev) mesh.prev = new THREE.Vector3();
-  mesh.prev.copy(mesh.position);
+  var delta = mesh.position.clone();
   mesh.position.set(x, y, mesh.position.z);
-  var v3 = new THREE.Vector3(mesh.prev.x - x, mesh.prev.y - y, 0);
-  var theta = v3.length() / config.game.ballRadius;
-  var axis = v3.cross(UP).normalize();
+  delta.sub(mesh.position);
+  var theta = delta.length() / config.game.ballRadius;
+  var axis = delta.cross(UP).normalize();
   mesh.matrix =
     (new THREE.Matrix4()).makeRotationAxis(axis, theta).multiply(mesh.matrix);
   mesh.rotation.copy((new THREE.Euler()).setFromRotationMatrix(mesh.matrix));
