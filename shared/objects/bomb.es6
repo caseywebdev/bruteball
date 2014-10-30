@@ -10,10 +10,7 @@ var BLAST_RADIUS = 5;
 var POWER = 5;
 
 export var create = function (options) {
-  options = _.extend({}, options, {
-    x: options.x + 0.5,
-    y: options.y + 0.5
-  });
+  options = _.extend({x: 8, y: 8}, options);
   return {
     type: 'bomb',
     id: ++options.game.incr,
