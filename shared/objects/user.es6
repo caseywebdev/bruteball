@@ -28,11 +28,13 @@ export var preStep = function (user) {
   b2.destroy(force);
 };
 
-export var updateMesh = function (user, dt) {
+export var updateMesh = function (user) {
+  var position = user.body.GetPosition();
+  var x = position.get_x();
+  var y = position.get_y();
   var mesh = user.mesh;
   var delta = mesh.position.clone();
-  mesh.position.x += user.vx * dt;
-  mesh.position.y += user.vy * dt;
+  mesh.position.set(x, y, mesh.position.z);
   delta.sub(mesh.position);
   var theta = delta.length() / config.game.ballRadius;
   var axis = delta.cross(UP).normalize();
@@ -50,8 +52,8 @@ export var create = function (options) {
     body: BallBody.create(options),
     mesh: config.node ? null : BallMesh.create(options),
     acceleration: new b2.b2Vec2(0, 0),
-    vx: 0,
-    vy: 0
+    lastBroadcast: 0,
+    needsBroadcast: 0
   };
 };
 

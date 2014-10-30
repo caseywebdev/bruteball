@@ -125,17 +125,26 @@ export default React.createClass({
   },
 
   updateGame: function (g) {
-    var dt = g.t - this.game.time;
-    this.game.time = g.t;
-    if (dt) _.each(g.u, _.partial(this.updateUser, _, dt));
+    Game.step(this.game);
+    _.each(g.u, this.updateUser);
   },
 
-  updateUser: function (u, dt) {
+  updateUser: function (u) {
     var game = this.game;
     var id = u[0];
     var user = Game.createObject(game, {type: 'user', id: id});
-    user.vx = (u[1] - user.mesh.position.x) / dt;
-    user.vy = (u[2] - user.mesh.position.y) / dt;
+    var position = user.body.GetPosition();
+    var cx = position.get_x();
+    var cy = position.get_y();
+    var dx = u[1] - cx;
+    var dy = u[2] - cy;
+    var far = Math.sqrt((dx * dx) + (dy * dy)) > 1;
+    position.Set(far ? u[1] : cx + (dx * 0.1), far ? u[2] : cy + (dy * 0.1));
+    user.body.SetTransform(position, user.body.GetAngle());
+    var velocity = user.body.GetLinearVelocity();
+    velocity.Set(u[3], u[4]);
+    user.body.SetLinearVelocity(velocity);
+    user.acceleration.Set(u[5], u[6]);
   },
 
   removeUser: function (u) {
