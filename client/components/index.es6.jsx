@@ -18,6 +18,7 @@ var PING_WAIT = 1000;
 var PINGS_TO_HOLD = 10;
 var LOSSES_TO_HOLD = 100;
 var MAX_TARDINESS = 1000 / config.game.broadcastsPerSecond / 2;
+var LERP = MAX_TARDINESS * 2;
 
 export default React.createClass({
   mixins: [Cursors],
@@ -108,7 +109,6 @@ export default React.createClass({
     if (this.game) Game.stop(this.game);
     this.game = Game.create();
     this.game.id = _.uniqueId();
-    Game.start(this.game);
     this.updateGame(g);
     this.forceUpdate();
   },
@@ -117,7 +117,7 @@ export default React.createClass({
     var ping = this.getPing();
     var tardiness = Date.now() - g.t - ping.offset - ping.lag;
     var tardy = tardiness > MAX_TARDINESS;
-    if (!tardy) this.updateGame(g);
+    if (!tardy) _.delay(_.partial(this.updateGame, g), LERP - tardiness);
     this.update({losses: {$splice: [
       [0, 0, tardy ? 1 : 0],
       [LOSSES_TO_HOLD, 1]
@@ -125,9 +125,9 @@ export default React.createClass({
   },
 
   updateGame: function (g) {
-    var dt = g.t - this.game.time;
+    var dt = g.t - (this.game.time || g.t);
     this.game.time = g.t;
-    if (dt) _.each(g.u, _.partial(this.updateUser, _, dt));
+    if (dt > 0) _.each(g.u, _.partial(this.updateUser, _, dt));
   },
 
   updateUser: function (u, dt) {

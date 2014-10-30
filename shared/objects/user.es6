@@ -42,7 +42,10 @@ export var updateMesh = function (user, dt) {
 };
 
 export var create = function (options) {
-  options = _.extend({x: 8, y: 8}, options);
+  options = _.extend({}, options, {
+    x: (options.x || 8) + 0.5,
+    y: (options.y || 8) + 0.5
+  });
   return {
     type: 'user',
     id: options.id,
