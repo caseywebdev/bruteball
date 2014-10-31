@@ -50,7 +50,10 @@ export var updateMesh = function (user) {
 };
 
 export var create = function (options) {
-  options = _.extend({x: 8, y: 8}, options);
+    options = _.extend({}, options, {
+    x: (options.x || 8) + 0.5,
+    y: (options.y || 8) + 0.5
+  });
   return {
     type: 'user',
     id: options.id,
@@ -65,6 +68,6 @@ export var create = function (options) {
 
 export var destroy = function (user) {
   b2.destroy(user.acceleration);
-  user.game.world.destroy(user.body);
+  user.game.world.DestroyBody(user.body);
   if (!config.node) user.game.scene.remove(user.mesh);
 };

@@ -69,10 +69,10 @@ export var createObject = function (game, options) {
   return object;
 };
 
-export var destroyObject = function (game, options) {
-  var existing = _.find(game, options);
+export var destroyObject = function (game, object) {
+  var existing = findObject(game, object);
   if (!existing) return;
-  require('shared/objects/' + options.type).destroy(existing);
+  require('shared/objects/' + object.type).destroy(existing);
   game.objects = _.without(game.objects, existing);
   return existing;
 };

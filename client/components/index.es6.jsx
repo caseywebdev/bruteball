@@ -18,7 +18,7 @@ var PING_WAIT = 1000;
 var PINGS_TO_HOLD = 10;
 var LOSSES_TO_HOLD = 100;
 var MAX_TARDINESS = 1000 / config.game.broadcastsPerSecond / 2;
-var CORRECTION_ITERATIONS = config.game.correctionIterations;
+var CORRECTION_DURATION = config.game.correctionDuration;
 
 export default React.createClass({
   mixins: [Cursors],
@@ -134,10 +134,11 @@ export default React.createClass({
     var id = u[0];
     var user = Game.createObject(game, {type: 'user', id: id});
     var position = user.body.GetPosition();
+    var iterations = Math.ceil(this.state.fps * CORRECTION_DURATION);
     user.sync = {
-      x: (u[1] - position.get_x()) / CORRECTION_ITERATIONS,
-      y: (u[2] - position.get_y()) / CORRECTION_ITERATIONS,
-      iterations: CORRECTION_ITERATIONS
+      x: (u[1] - position.get_x()) / iterations,
+      y: (u[2] - position.get_y()) / iterations,
+      iterations: iterations
     };
     var velocity = user.body.GetLinearVelocity();
     velocity.Set(u[3], u[4]);
@@ -146,7 +147,7 @@ export default React.createClass({
   },
 
   removeUser: function (u) {
-    Game.removeUser(this.game, {id: u[0]});
+    Game.destroyObject(this.game, {type: 'user', id: u[0]});
   },
 
   renderGame: function () {

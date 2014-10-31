@@ -27,7 +27,7 @@ export default {
     maxSpeed: 7.5,
     broadcastsPerSecond: 4,
     ballRadius: 0.49,
-    correctionIterations: 10
+    correctionDuration: 0.1
   },
 
   knex: {
