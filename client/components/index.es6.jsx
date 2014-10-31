@@ -132,7 +132,7 @@ export default React.createClass({
     var id = u[0];
     var user = Game.createObject(game, {type: 'user', id: id});
     var position = user.body.GetPosition();
-    var iterations = Math.ceil(this.state.fps * CORRECTION_DURATION);
+    var iterations = Math.ceil((this.state.fps || 60) * CORRECTION_DURATION);
     user.sync = {
       x: (u[1] - position.get_x()) / iterations,
       y: (u[2] - position.get_y()) / iterations,
