@@ -10,7 +10,7 @@ import React from 'react';
 
 var handleDomReady = function () {
   FastClick.attach(document.body);
-  React.renderComponent(Router(), document.body);
+  React.render(<Router />, document.body);
 };
 
 if (document.readyState !== 'loading') handleDomReady();

@@ -34,7 +34,7 @@
     ]
   },
   "targets": {
-    "client/index.es6": "public",
+    "client/index.es6.jsx": "public",
     "styles/index.scss": "public"
   }
 }

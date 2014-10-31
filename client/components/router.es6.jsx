@@ -1,5 +1,3 @@
-/** @jsx React.DOM */
-
 import App from 'client/components/app';
 import Index from 'client/components/index';
 import NotFound from 'client/components/not-found';

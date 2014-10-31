@@ -1,5 +1,3 @@
-/** @jsx React.DOM */
-
 import _ from 'underscore';
 import config from 'shared/config';
 import Cursors from 'cursors';

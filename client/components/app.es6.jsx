@@ -1,5 +1,3 @@
-/** @jsx React.DOM */
-
 import Cursors from 'cursors';
 import Header from 'client/components/header';
 import Live from 'live';

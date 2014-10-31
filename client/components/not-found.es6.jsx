@@ -1,5 +1,3 @@
-/** @jsx React.DOM */
-
 import Cursors from 'cursors';
 import {Link} from 'react-router';
 import React from 'react';
