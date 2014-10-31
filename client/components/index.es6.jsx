@@ -118,7 +118,7 @@ export default React.createClass({
     var ping = this.getPing();
     var tardiness = Date.now() - g.t - ping.offset - ping.lag;
     var tardy = tardiness > MAX_TARDINESS;
-    if (!tardy) this.updateGame(g);
+    if (true) this.updateGame(g);
     this.update({losses: {$splice: [
       [0, 0, tardy ? 1 : 0],
       [LOSSES_TO_HOLD, 1]
