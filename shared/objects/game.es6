@@ -149,8 +149,13 @@ export var create = function () {
     {type: 'wall', x: 4, y: 4, points: Wall.WITHOUT_TOP_LEFT},
     {type: 'wall', x: 6, y: 4, points: Wall.WITHOUT_TOP_RIGHT},
     {type: 'wall', x: 6, y: 3, points: Wall.WITHOUT_BOTTOM_LEFT},
-    {type: 'boost', x: 10, y: 10},
-    {type: 'bomb', x: 8, y: 5},
+    {type: 'boost', x: 12, y: 10},
+    {type: 'boost', x: 16, y: 6},
+    {type: 'bomb', x: 10, y: 4},
+    {type: 'bomb', x: 10, y: 8},
+    {type: 'bomb', x: 14, y: 4},
+    {type: 'bomb', x: 14, y: 8},
+    {type: 'bomb', x: 5, y: 5}
   ], _.partial(createObject, game));
 
   var listener = new b2.JSContactListener();
