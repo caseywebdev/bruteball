@@ -18,6 +18,7 @@ var PING_WAIT = 1000;
 var PINGS_TO_HOLD = 10;
 var LOSSES_TO_HOLD = 100;
 var MAX_TARDINESS = 1000 / config.game.broadcastsPerSecond / 2;
+var CORRECTION_ITERATIONS = config.game.correctionIterations;
 
 export default React.createClass({
   mixins: [Cursors],
@@ -125,7 +126,6 @@ export default React.createClass({
   },
 
   updateGame: function (g) {
-    Game.step(this.game);
     _.each(g.u, this.updateUser);
   },
 
@@ -134,13 +134,11 @@ export default React.createClass({
     var id = u[0];
     var user = Game.createObject(game, {type: 'user', id: id});
     var position = user.body.GetPosition();
-    var cx = position.get_x();
-    var cy = position.get_y();
-    var dx = u[1] - cx;
-    var dy = u[2] - cy;
-    var far = Math.sqrt((dx * dx) + (dy * dy)) > 1;
-    position.Set(far ? u[1] : cx + (dx * 0.1), far ? u[2] : cy + (dy * 0.1));
-    user.body.SetTransform(position, user.body.GetAngle());
+    user.sync = {
+      x: (u[1] - position.get_x()) / CORRECTION_ITERATIONS,
+      y: (u[2] - position.get_y()) / CORRECTION_ITERATIONS,
+      iterations: CORRECTION_ITERATIONS
+    };
     var velocity = user.body.GetLinearVelocity();
     velocity.Set(u[3], u[4]);
     user.body.SetLinearVelocity(velocity);

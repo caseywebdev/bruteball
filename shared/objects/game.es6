@@ -20,18 +20,6 @@ var broadcastAll = function (game) {
   app.ws.server.broadcast('g', gamePattern(game));
 };
 
-var broadcastWaiting = function (game) {
-  var now = Date.now();
-  var waiting = _.filter(game.users, function (user) {
-    var lastBroadcast = Math.max(game.lastBroadcast, user.lastBroadcast);
-    if (user.needsBroadcast <= lastBroadcast) return;
-    user.lastBroadcast = now;
-    return true;
-  });
-  if (!waiting.length) return;
-  app.ws.server.broadcast('g', gamePattern(game, {users: waiting}));
-};
-
 var invoke = function (game, key) {
   _.each(game.objects, function (object) {
     var Type = require('shared/objects/' + object.type);
@@ -49,10 +37,8 @@ export var step = function (game) {
   invoke(game, 'preStep');
   game.world.Step(dt, VI, PI);
   invoke(game, 'postStep');
-  if (config.node) {
-    game.needsBroadcast > game.lastBroadcast ?
-    broadcastAll(game) :
-    broadcastWaiting(game);
+  if (config.node && game.needsBroadcast > game.lastBroadcast) {
+    broadcastAll(game);
   }
 };
 
@@ -67,7 +53,7 @@ export var setAcceleration = function (game, user, x, y) {
   if (!ref || ref.acceleration.x === x && ref.acceleration.y === y) return;
   ref.acceleration.Set(x, y);
   ref.acceleration.Normalize();
-  ref.needsBroadcast = Date.now();
+  app.ws.server.broadcast('g', gamePattern(game, {users: [ref]}));
 };
 
 export var findObject = function (game, object) {

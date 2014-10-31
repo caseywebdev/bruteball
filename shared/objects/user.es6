@@ -32,6 +32,12 @@ export var updateMesh = function (user) {
   var position = user.body.GetPosition();
   var x = position.get_x();
   var y = position.get_y();
+  var sync = user.sync;
+  if (sync && sync.iterations > 0) {
+    position.Set(x += sync.x, y += sync.y);
+    user.body.SetTransform(position, user.body.GetAngle());
+    --sync.iterations;
+  }
   var mesh = user.mesh;
   var delta = mesh.position.clone();
   mesh.position.set(x, y, mesh.position.z);
@@ -60,5 +66,5 @@ export var create = function (options) {
 export var destroy = function (user) {
   b2.destroy(user.acceleration);
   user.game.world.destroy(user.body);
-  if (!config.node) user.game.scene.remove(ball.mesh);
+  if (!config.node) user.game.scene.remove(user.mesh);
 };
