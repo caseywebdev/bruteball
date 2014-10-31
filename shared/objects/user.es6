@@ -33,8 +33,18 @@ export var updateMesh = function (user) {
   var x = position.get_x();
   var y = position.get_y();
   var sync = user.sync;
-  if (sync && sync.iterations > 0) {
-    position.Set(x += sync.x, y += sync.y);
+  if (sync && sync.iterations > 0 && (sync.dx || sync.dy)) {
+    if ((sync.dx < 0 && sync.tx > x) || (sync.dx > 0 && sync.tx < x)) {
+      x += sync.dx;
+    } else {
+      sync.dx = 0;
+    }
+    if ((sync.dy < 0 && sync.ty > y) || (sync.dy > 0 && sync.ty < y)) {
+      y += sync.dy;
+    } else {
+      sync.dy = 0;
+    }
+    position.Set(x, y);
     user.body.SetTransform(position, user.body.GetAngle());
     --sync.iterations;
   }

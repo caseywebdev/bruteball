@@ -116,7 +116,9 @@ export default React.createClass({
     var ping = this.getPing();
     var tardiness = Date.now() - g.t - ping.offset - ping.lag;
     var tardy = tardiness > MAX_TARDINESS;
-    if (!tardy) this.updateGame(g);
+    if (!tardy) {
+      _.delay(_.partial(this.updateGame, g), MAX_TARDINESS - tardiness);
+    }
     this.update({losses: {$splice: [
       [0, 0, tardy ? 1 : 0],
       [LOSSES_TO_HOLD, 1]
@@ -134,8 +136,10 @@ export default React.createClass({
     var position = user.body.GetPosition();
     var iterations = Math.ceil((this.state.fps || 60) * CORRECTION_DURATION);
     user.sync = {
-      x: (u[1] - position.get_x()) / iterations,
-      y: (u[2] - position.get_y()) / iterations,
+      tx: u[1],
+      ty: u[2],
+      dx: (u[1] - position.get_x()) / iterations,
+      dy: (u[2] - position.get_y()) / iterations,
       iterations: iterations
     };
     var velocity = user.body.GetLinearVelocity();
