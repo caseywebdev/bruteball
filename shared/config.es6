@@ -25,9 +25,10 @@ export default {
     positionIterations: 10,
     acceleration: 0.075,
     maxSpeed: 7.5,
-    broadcastsPerSecond: 4,
+    stepsPerBroadcast: 15,
     ballRadius: 0.49,
-    correctionDuration: 0.1
+    correctionIterations: 5,
+    stepBuffer: 30
   },
 
   knex: {

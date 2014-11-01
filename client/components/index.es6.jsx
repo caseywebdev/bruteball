@@ -107,43 +107,20 @@ export default React.createClass({
     if (this.game) Game.stop(this.game);
     this.game = Game.create();
     this.game.id = _.uniqueId();
+    Game.applyFrame(this.game, g);
     Game.start(this.game);
-    this.updateGame(g);
     this.forceUpdate();
   },
 
   handleGame: function (g) {
-    var ping = this.getPing();
-    var tardiness = Date.now() - g.t - ping.offset - ping.lag;
-    var tardy = tardiness > MAX_TARDINESS;
-    this.updateGame(g);
-    this.update({losses: {$splice: [
-      [0, 0, tardy ? 1 : 0],
-      [LOSSES_TO_HOLD, 1]
-    ]}});
-  },
-
-  updateGame: function (g) {
-    _.each(g.u, this.updateUser);
-  },
-
-  updateUser: function (u) {
-    var game = this.game;
-    var id = u[0];
-    var user = Game.createObject(game, {type: 'user', id: id});
-    var position = user.body.GetPosition();
-    var iterations = Math.ceil((this.state.fps || 60) * CORRECTION_DURATION);
-    user.sync = {
-      tx: u[1],
-      ty: u[2],
-      dx: (u[1] - position.get_x()) / iterations,
-      dy: (u[2] - position.get_y()) / iterations,
-      iterations: iterations
-    };
-    var velocity = user.body.GetLinearVelocity();
-    velocity.Set(u[3], u[4]);
-    user.body.SetLinearVelocity(velocity);
-    user.acceleration.Set(u[5], u[6]);
+    // var ping = this.getPing();
+    // var tardiness = Date.now() - g.t - ping.offset - ping.lag;
+    // var tardy = tardiness > MAX_TARDINESS;
+    this.game.frames.push(g);
+  //   this.update({losses: {$splice: [
+  //     [0, 0, tardy ? 1 : 0],
+  //     [LOSSES_TO_HOLD, 1]
+  //   ]}});
   },
 
   removeUser: function (u) {

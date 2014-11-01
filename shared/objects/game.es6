@@ -1,7 +1,6 @@
 import _ from 'underscore';
 import b2 from 'box2d';
 import Bomb from 'shared/objects/bomb';
-import clamp from 'shared/utils/clamp';
 import config from 'shared/config';
 import Wall from 'shared/objects/wall';
 
@@ -11,15 +10,17 @@ var THREE = config.node ? null : require('three');
 
 var MAP_SIZE = 32;
 
+var BROADCAST_WAIT = 1000 / config.game.broadcastsPerSecond;
+var CORRECTION_ITERATIONS = config.game.correctionIterations;
 var DT = config.game.dt;
 var DT_MS = DT * 1000;
-var VI = config.game.velocityIterations;
 var PI = config.game.positionIterations;
-var BROADCAST_WAIT = 1000 / config.game.broadcastsPerSecond;
+var STEP_BUFFER = config.game.stepBuffer;
+var STEPS_PER_BROADCAST = config.game.stepsPerBroadcast;
+var VI = config.game.velocityIterations;
 
 var broadcastAll = function (game) {
-  game.lastBroadcast = Date.now();
-  app.ws.server.broadcast('g', gamePattern(game));
+  if (config.node) app.ws.server.broadcast('g', gamePattern(game));
 };
 
 var invoke = function (game, key) {
@@ -29,15 +30,46 @@ var invoke = function (game, key) {
   });
 };
 
+var updateUser = function (game, u) {
+  var id = u[0];
+  var user = createObject(game, {type: 'user', id: id});
+  var position = user.body.GetPosition();
+  // user.sync = {
+  //   tx: u[1],
+  //   ty: u[2],
+  //   dx: (u[1] - position.get_x()) / CORRECTION_ITERATIONS,
+  //   dy: (u[2] - position.get_y()) / CORRECTION_ITERATIONS,
+  //   iterations: CORRECTION_ITERATIONS
+  // };
+  position.Set(u[1], u[2]);
+  user.body.SetTransform(position, user.body.GetAngle());
+  var velocity = user.body.GetLinearVelocity();
+  velocity.Set(u[3], u[4]);
+  user.body.SetLinearVelocity(velocity);
+  user.acceleration.Set(u[5], u[6]);
+};
+
+export var applyFrame = function (game, g) {
+  game.step = g.s;
+  _.each(g.u, _.partial(updateUser, game));
+};
+
+var needsFrame = function (game) {
+  var frames = game.frames;
+  if (!frames.length) return false;
+  var first = _.first(frames);
+  var last = _.last(frames);
+  return first.s <= game.step || game.step < last.s + STEP_BUFFER;
+};
+
 export var step = function (game) {
   var start = Date.now();
+  ++game.step;
+  if (game.step % STEPS_PER_BROADCAST === 0) broadcastAll(game);
+  while (needsFrame(game)) applyFrame(game, game.frames.shift());
   invoke(game, 'preStep');
   game.world.Step(DT, VI, PI);
   invoke(game, 'postStep');
-  game.time += DT_MS;
-  if (config.node && game.needsBroadcast > game.lastBroadcast) {
-    broadcastAll(game);
-  }
   var wait = DT_MS - (Date.now() - start);
   game.stepTimeoutId = _.delay(_.partial(step, game), wait);
 };
@@ -86,20 +118,21 @@ var handleCollision = function (game, a, b) {
     force.Set(force.get_x() * 15, force.get_y() * 15);
     b.body.ApplyLinearImpulse(force);
     b2.destroy(force);
+    broadcastAll(game);
   } else if (a.type === 'bomb') {
     Bomb.explode(a);
+    broadcastAll(game);
   }
 };
 
 export var create = function () {
   var game = {
     incr: 0,
+    step: 0,
+    frames: [],
     objects: [],
-    time: Date.now(),
     world: new b2.b2World(),
-    scene: config.node ? null : new THREE.Scene(),
-    lastStep: Date.now(),
-    lastBroadcast: 0
+    scene: config.node ? null : new THREE.Scene()
   };
   _.each([{
     type: 'wall',
