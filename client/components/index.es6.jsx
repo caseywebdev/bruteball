@@ -103,7 +103,7 @@ export default React.createClass({
 
   handleGame: function (g) {
     var lost = g.s < this.game.step;
-    if (!lost) this.game.frames.push(g);
+    lost ? --this.game.step : this.game.frames.push(g);
     this.update({losses: {$splice: [
       [0, 0, lost ? 1 : 0],
       [LOSSES_TO_HOLD, 1]
