@@ -19,7 +19,7 @@ export default {
   },
 
   game: {
-    stepsPerSecond: 60,
+    dt: 1 / 60,
     linearDamping: 0.5,
     velocityIterations: 8,
     positionIterations: 10,
@@ -27,7 +27,7 @@ export default {
     maxSpeed: 7.5,
     broadcastsPerSecond: 4,
     ballRadius: 0.49,
-    correctionDuration: 0.2
+    correctionDuration: 0.1
   },
 
   knex: {

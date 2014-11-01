@@ -1,6 +1,7 @@
 import _ from 'underscore';
 import b2 from 'box2d';
 import Bomb from 'shared/objects/bomb';
+import clamp from 'shared/utils/clamp';
 import config from 'shared/config';
 import Wall from 'shared/objects/wall';
 
@@ -10,7 +11,8 @@ var THREE = config.node ? null : require('three');
 
 var MAP_SIZE = 32;
 
-var SPS = 1000 / config.game.stepsPerSecond;
+var DT = config.game.dt;
+var DT_MS = DT * 1000;
 var VI = config.game.velocityIterations;
 var PI = config.game.positionIterations;
 var BROADCAST_WAIT = 1000 / config.game.broadcastsPerSecond;
@@ -28,18 +30,16 @@ var invoke = function (game, key) {
 };
 
 export var step = function (game) {
-  clearTimeout(game.stepTimeoutId);
-  game.stepTimeoutId = _.delay(_.partial(step, game), SPS);
-  var now = Date.now();
-  var delta = now - game.lastStep;
-  game.lastStep = now;
-  var dt = delta / 1000;
+  var start = Date.now();
   invoke(game, 'preStep');
-  game.world.Step(dt, VI, PI);
+  game.world.Step(DT, VI, PI);
   invoke(game, 'postStep');
+  game.time += DT_MS;
   if (config.node && game.needsBroadcast > game.lastBroadcast) {
     broadcastAll(game);
   }
+  var wait = DT_MS - (Date.now() - start);
+  game.stepTimeoutId = _.delay(_.partial(step, game), wait);
 };
 
 var loopBroadcast = function (game) {
@@ -50,9 +50,10 @@ var loopBroadcast = function (game) {
 
 export var setAcceleration = function (game, user, x, y) {
   var ref = findObject(game, {type: 'user', id: user.id});
-  if (!ref || ref.acceleration.x === x && ref.acceleration.y === y) return;
-  ref.acceleration.Set(x, y);
-  ref.acceleration.Normalize();
+  var acceleration = ref && ref.acceleration;
+  if (!acceleration || acceleration.x === x && acceleration.y === y) return;
+  acceleration.Set(x, y);
+  acceleration.Normalize();
   app.ws.server.broadcast('g', gamePattern(game, {users: [ref]}));
 };
 
@@ -94,6 +95,7 @@ export var create = function () {
   var game = {
     incr: 0,
     objects: [],
+    time: Date.now(),
     world: new b2.b2World(),
     scene: config.node ? null : new THREE.Scene(),
     lastStep: Date.now(),
@@ -168,7 +170,7 @@ export var create = function () {
     handleCollision(game, objects[0], objects[1]);
   };
   listener.EndContact = listener.PreSolve = listener.PostSolve = _.noop;
-  game.world.SetContactListener(listener);
+  if (config.node) game.world.SetContactListener(listener);
 
   return game;
 };

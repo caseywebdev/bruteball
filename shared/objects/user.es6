@@ -9,6 +9,25 @@ var THREE = config.node ? null : require('three');
 var UP = config.node ? null : new THREE.Vector3(0, 0, 1);
 
 export var preStep = function (user) {
+  var position = user.body.GetPosition();
+  var x = position.get_x();
+  var y = position.get_y();
+  var sync = user.sync;
+  if (sync && sync.iterations > 0 && (sync.dx || sync.dy)) {
+    if ((sync.dx < 0 && sync.tx < x) || (sync.dx > 0 && sync.tx > x)) {
+      x += sync.dx;
+    } else {
+      sync.dx = 0;
+    }
+    if ((sync.dy < 0 && sync.ty < y) || (sync.dy > 0 && sync.ty > y)) {
+      y += sync.dy;
+    } else {
+      sync.dy = 0;
+    }
+    position.Set(x, y);
+    user.body.SetTransform(position, user.body.GetAngle());
+    --sync.iterations;
+  }
   var acceleration = user.acceleration;
   var velocity = user.body.GetLinearVelocity();
   var speed = velocity.Length();
@@ -30,27 +49,9 @@ export var preStep = function (user) {
 
 export var updateMesh = function (user) {
   var position = user.body.GetPosition();
-  var x = position.get_x();
-  var y = position.get_y();
-  var sync = user.sync;
-  if (sync && sync.iterations > 0 && (sync.dx || sync.dy)) {
-    if ((sync.dx < 0 && sync.tx > x) || (sync.dx > 0 && sync.tx < x)) {
-      x += sync.dx;
-    } else {
-      sync.dx = 0;
-    }
-    if ((sync.dy < 0 && sync.ty > y) || (sync.dy > 0 && sync.ty < y)) {
-      y += sync.dy;
-    } else {
-      sync.dy = 0;
-    }
-    position.Set(x, y);
-    user.body.SetTransform(position, user.body.GetAngle());
-    --sync.iterations;
-  }
   var mesh = user.mesh;
   var delta = mesh.position.clone();
-  mesh.position.set(x, y, mesh.position.z);
+  mesh.position.set(position.get_x(), position.get_y(), mesh.position.z);
   delta.sub(mesh.position);
   var theta = delta.length() / config.game.ballRadius;
   var axis = delta.cross(UP).normalize();
