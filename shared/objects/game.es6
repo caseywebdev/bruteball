@@ -34,14 +34,11 @@ var updateUser = function (game, u) {
   var id = u[0];
   var user = createObject(game, {type: 'user', id: id});
   var position = user.body.GetPosition();
-  // user.sync = {
-  //   tx: u[1],
-  //   ty: u[2],
-  //   dx: (u[1] - position.get_x()) / CORRECTION_ITERATIONS,
-  //   dy: (u[2] - position.get_y()) / CORRECTION_ITERATIONS,
-  //   iterations: CORRECTION_ITERATIONS
-  // };
-  position.Set(u[1], u[2]);
+  var x = position.get_x();
+  var y = position.get_y();
+  var dx = u[1] - x;
+  var dy = u[2] - y;
+  position.Set(x + (dx * 0.1), y + (dy * 0.1));
   user.body.SetTransform(position, user.body.GetAngle());
   var velocity = user.body.GetLinearVelocity();
   velocity.Set(u[3], u[4]);

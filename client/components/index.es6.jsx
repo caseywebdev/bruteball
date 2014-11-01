@@ -1,5 +1,4 @@
 import _ from 'underscore';
-import config from 'shared/config';
 import Cursors from 'cursors';
 import Game from 'shared/objects/game';
 import GameComponent from 'client/components/game';
@@ -14,9 +13,6 @@ var KEYS = {
 
 var PING_WAIT = 1000;
 var PINGS_TO_HOLD = 10;
-var LOSSES_TO_HOLD = 100;
-var MAX_TARDINESS = 1000 / config.game.broadcastsPerSecond / 2;
-var CORRECTION_DURATION = config.game.correctionDuration;
 
 export default React.createClass({
   mixins: [Cursors],
@@ -113,14 +109,7 @@ export default React.createClass({
   },
 
   handleGame: function (g) {
-    // var ping = this.getPing();
-    // var tardiness = Date.now() - g.t - ping.offset - ping.lag;
-    // var tardy = tardiness > MAX_TARDINESS;
     this.game.frames.push(g);
-  //   this.update({losses: {$splice: [
-  //     [0, 0, tardy ? 1 : 0],
-  //     [LOSSES_TO_HOLD, 1]
-  //   ]}});
   },
 
   removeUser: function (u) {
@@ -148,8 +137,6 @@ export default React.createClass({
         <div className='stats'>
           <div>FPS: {this.state.fps}</div>
           <div>Lag: {ping.lag}ms</div>
-          <div>Offset: {ping.offset}ms</div>
-          <div>Loss: {this.getLoss()}%</div>
           {this.game ? null : <div>Loading...</div>}
         </div>
         {this.renderGame()}
