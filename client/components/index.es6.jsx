@@ -13,6 +13,7 @@ var KEYS = {
 
 var PING_WAIT = 1000;
 var PINGS_TO_HOLD = 10;
+var LOSSES_TO_HOLD = 100;
 
 export default React.createClass({
   mixins: [Cursors],
@@ -52,25 +53,17 @@ export default React.createClass({
     this.pingTimeoutId = _.delay(this.ping, PING_WAIT);
   },
 
-  handlePing: function (er, data) {
-    if (er) throw new Error('Echo failed!');
-    var start = data.then;
-    var then = data.now;
-    var now = Date.now();
-    var lag = (now - start) / 2;
-    var offset = now - then - lag;
+  handlePing: function (er, then) {
+    if (er) throw new Error('Ping failed!');
     this.update({pings: {$splice: [
-      [0, 0, {lag: lag, offset: offset}],
+      [0, 0, (Date.now() - then) / 2],
       [PINGS_TO_HOLD, 1]
     ]}});
   },
 
-  getPing: function () {
+  getLag: function () {
     var pings = this.state.pings;
-    return _.sortBy(pings, 'lag')[Math.ceil(pings.length / 2)] || {
-      lag: 0,
-      offset: 0
-    };
+    return _.sortBy(pings)[Math.ceil(pings.length / 2)] || 0;
   },
 
   getLoss: function () {
@@ -109,7 +102,12 @@ export default React.createClass({
   },
 
   handleGame: function (g) {
-    this.game.frames.push(g);
+    var lost = g.s < this.game.step;
+    if (!lost) this.game.frames.push(g);
+    this.update({losses: {$splice: [
+      [0, 0, lost ? 1 : 0],
+      [LOSSES_TO_HOLD, 1]
+    ]}});
   },
 
   removeUser: function (u) {
@@ -131,12 +129,12 @@ export default React.createClass({
   },
 
   render: function () {
-    var ping = this.getPing();
     return (
       <div>
         <div className='stats'>
           <div>FPS: {this.state.fps}</div>
-          <div>Lag: {ping.lag}ms</div>
+          <div>Lag: {this.getLag()}ms</div>
+          <div>Loss: {this.getLoss()}%</div>
           {this.game ? null : <div>Loading...</div>}
         </div>
         {this.renderGame()}
