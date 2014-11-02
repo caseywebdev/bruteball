@@ -14,6 +14,7 @@ var KEYS = {
 var PING_WAIT = 1000;
 var PINGS_TO_HOLD = 10;
 var LOSSES_TO_HOLD = 100;
+var STEPS_PER_BROADCAST = config.game.stepsPerBroadcast;
 
 export default React.createClass({
   mixins: [Cursors],
@@ -103,7 +104,7 @@ export default React.createClass({
 
   handleGame: function (g) {
     var lost = g.s < this.game.step;
-    lost ? this.game.step -= 2 : this.game.frames.push(g);
+    lost ? this.game.step -= STEPS_PER_BROADCAST : this.game.frames.push(g);
     this.update({losses: {$splice: [
       [0, 0, lost ? 1 : 0],
       [LOSSES_TO_HOLD, 1]
