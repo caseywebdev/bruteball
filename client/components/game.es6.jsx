@@ -1,5 +1,4 @@
 import _ from 'underscore';
-import config from 'shared/config';
 import Cursors from 'cursors';
 import Game from 'shared/objects/game';
 import React from 'react';
@@ -53,7 +52,7 @@ export default React.createClass({
     this.handleResize();
     this.frames = [];
     this.lastFrame = Date.now();
-    this.renderMap();
+    this.renderMap(Date.now());
     window.addEventListener('resize', this.handleResize);
   },
 
@@ -69,9 +68,8 @@ export default React.createClass({
     CAMERA.updateProjectionMatrix();
   },
 
-  renderMap: function () {
+  renderMap: function (now) {
     this.rafId = requestAnimationFrame(this.renderMap);
-    var now = Date.now();
     this.frames = [now - this.lastFrame].concat(this.frames.slice(0, 59));
     this.lastFrame = now;
     this.update({fps: {$set: Math.ceil(1000 / getMedian(this.frames))}});
