@@ -1,4 +1,5 @@
 import _ from 'underscore';
+import config from 'config';
 import Cursors from 'cursors';
 import Game from 'shared/objects/game';
 import GameComponent from 'client/components/game';
