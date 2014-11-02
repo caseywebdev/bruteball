@@ -53,10 +53,12 @@ export var applyFrame = function (game, g) {
 
 var needsFrame = function (game) {
   var frames = game.frames;
-  if (!frames.length) return false;
-  var first = _.first(frames);
-  var last = _.last(frames);
-  return first.s <= game.step || game.step < last.s + STEP_BUFFER;
+  return !!frames.length && frames[0].s <= game.step;
+};
+
+var needsCatchup = function (game) {
+  var frames = game.frames;
+  return !!frames.length && game.step < _.last(frames).s - STEP_BUFFER;
 };
 
 export var step = function (game) {
@@ -67,7 +69,7 @@ export var step = function (game) {
   invoke(game, 'preStep');
   game.world.Step(DT, VI, PI);
   invoke(game, 'postStep');
-  var wait = DT_MS - (Date.now() - start);
+  var wait = needsCatchup(game) ? 0 : DT_MS - (Date.now() - start);
   game.stepTimeoutId = _.delay(_.partial(step, game), wait);
 };
 
