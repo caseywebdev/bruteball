@@ -1,5 +1,4 @@
 import _ from 'underscore';
-import config from 'shared/config';
 import Cursors from 'cursors';
 import Game from 'shared/objects/game';
 import GameComponent from 'client/components/game';
@@ -14,8 +13,6 @@ var KEYS = {
 
 var PING_WAIT = 1000;
 var PINGS_TO_HOLD = 10;
-var LOSSES_TO_HOLD = 100;
-var STEPS_PER_BROADCAST = config.game.stepsPerBroadcast;
 
 export default React.createClass({
   mixins: [Cursors],
@@ -23,8 +20,7 @@ export default React.createClass({
   getInitialState: function () {
     return {
       fps: 0,
-      pings: [],
-      losses: []
+      pings: []
     };
   },
 
@@ -68,13 +64,6 @@ export default React.createClass({
     return _.sortBy(pings)[Math.ceil(pings.length / 2)] || 0;
   },
 
-  getLoss: function () {
-    var losses = this.state.losses;
-    if (!losses.length) return 0;
-    var loss = _.filter(losses);
-    return Math.round(10000 * loss.length / losses.length) / 100;
-  },
-
   handleKey: function (ev) {
     var key = KEYS[ev.which];
     var state = ev.type === 'keydown';
@@ -104,12 +93,7 @@ export default React.createClass({
   },
 
   handleGame: function (g) {
-    var lost = g.s < this.game.step;
-    if (!lost) this.game.frames.push(g);
-    this.update({losses: {$splice: [
-      [0, 0, lost ? 1 : 0],
-      [LOSSES_TO_HOLD, 1]
-    ]}});
+    this.game.frames.push(g);
   },
 
   removeUser: function (u) {
@@ -136,7 +120,6 @@ export default React.createClass({
         <div className='stats'>
           <div>FPS: {this.state.fps}</div>
           <div>Lag: {this.getLag()}ms</div>
-          <div>Loss: {this.getLoss()}%</div>
           {this.game ? null : <div>Loading...</div>}
         </div>
         {this.renderGame()}
