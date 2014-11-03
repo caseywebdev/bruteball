@@ -11,6 +11,7 @@ var UP = config.node ? null : new THREE.Vector3(0, 0, 1);
 
 export var preStep = function (user) {
   var acceleration = user.acceleration;
+  if (!acceleration.Length()) return;
   var velocity = user.body.GetLinearVelocity();
   var next = new b2.b2Vec2(
     velocity.get_x() + (acceleration.get_x() * config.game.acceleration * DT),
