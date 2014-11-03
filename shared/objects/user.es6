@@ -13,17 +13,17 @@ export var preStep = function (user) {
   var acceleration = user.acceleration;
   if (!acceleration.Length()) return;
   var velocity = user.body.GetLinearVelocity();
-  var next = new b2.b2Vec2(
+  var speed = velocity.Length();
+  var maxSpeed = Math.max(config.game.maxSpeed, speed);
+  velocity.Set(
     velocity.get_x() + (acceleration.get_x() * config.game.acceleration * DT),
     velocity.get_y() + (acceleration.get_y() * config.game.acceleration * DT)
   );
-  var maxSpeed = Math.max(config.game.maxSpeed, velocity.Length());
-  if (next.Length() > maxSpeed) {
-    next.Normalize();
-    next.Set(next.get_x() * maxSpeed, next.get_y() * maxSpeed);
+  if (velocity.Length() > maxSpeed) {
+    velocity.Normalize();
+    velocity.Set(velocity.get_x() * maxSpeed, velocity.get_y() * maxSpeed);
   }
-  user.body.SetLinearVelocity(next);
-  b2.destroy(next);
+  user.body.SetLinearVelocity(velocity);
 };
 
 export var updateMesh = function (user) {
