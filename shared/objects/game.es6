@@ -51,8 +51,6 @@ export var applyFrame = function (game, g) {
   _.each(g.u, _.partial(updateUser, game));
 };
 
-
-
 var needsCatchup = function (game) {
   var frames = game.frames;
   return !!frames.length && game.step < _.last(frames).s - STEP_BUFFER;
@@ -71,12 +69,12 @@ var needsFrame = function (game) {
 export var step = function (game) {
   var wait = needsCatchup(game) ? 0 : needsDelay(game) ? 2 : 1;
   game.stepTimeoutId = _.delay(_.partial(step, game), DT_MS * wait);
-  ++game.step;
   if (game.step % STEPS_PER_BROADCAST === 0) broadcastAll(game);
   while (needsFrame(game)) applyFrame(game, game.frames.shift());
   invoke(game, 'preStep');
   game.world.Step(DT, VI, PI);
   invoke(game, 'postStep');
+  ++game.step;
 };
 
 var loopBroadcast = function (game) {
