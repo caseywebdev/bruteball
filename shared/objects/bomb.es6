@@ -1,5 +1,4 @@
 import _ from 'underscore';
-import b2 from 'box2d';
 import BombBody from 'shared/bodies/bomb';
 import config from 'shared/config';
 
@@ -34,11 +33,12 @@ export var explode = function (bomb) {
     var dy = position.get_y() - bombY;
     var distance = Math.sqrt((dx * dx) + (dy * dy));
     if (distance > BLAST_RADIUS) return;
-    var power = (BLAST_RADIUS - distance) * POWER;
-    var force = new b2.b2Vec2(dx, dy);
-    force.Normalize();
-    force.Set(force.get_x() * power, force.get_y() * power);
-    body.ApplyLinearImpulse(force);
-    b2.destroy(force);
+    var speed = (BLAST_RADIUS - distance) * POWER;
+    var velocity = object.body.GetLinearVelocity();
+    velocity.Set(
+      velocity.get_x() + (dx * speed),
+      velocity.get_y() + (dy * speed)
+    );
+    body.SetLinearVelocity(velocity);
   });
 };

@@ -19,3 +19,10 @@ export var create = function (options) {
     needsBroadcast: 0
   };
 };
+
+export var fire = function (boost, user) {
+  var velocity = user.body.GetLinearVelocity();
+  var speed = velocity.Normalize() + 15;
+  velocity.Set(velocity.get_x() * speed, velocity.get_y() * speed);
+  user.body.SetLinearVelocity(velocity);
+};

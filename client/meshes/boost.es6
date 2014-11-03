@@ -1,4 +1,3 @@
-import config from 'shared/config';
 import THREE from 'three';
 
 var GEOMETRY = new THREE.SphereGeometry(0.5, 16, 16);

@@ -1,6 +1,7 @@
 import _ from 'underscore';
 import b2 from 'box2d';
 import Bomb from 'shared/objects/bomb';
+import Boost from 'shared/objects/boost';
 import config from 'shared/config';
 import Wall from 'shared/objects/wall';
 
@@ -52,11 +53,11 @@ var needsFrame = function (game) {
 
 export var step = function (game) {
   game.stepTimeoutId = _.delay(_.partial(step, game), DT_MS);
-  if (game.step % STEPS_PER_BROADCAST === 0) broadcastAll(game);
-  while (needsFrame(game)) applyFrame(game, game.frames.shift());
   invoke(game, 'preStep');
   game.world.Step(DT, VI, PI);
   invoke(game, 'postStep');
+  if (game.step % STEPS_PER_BROADCAST === 0) broadcastAll(game);
+  while (needsFrame(game)) applyFrame(game, game.frames.shift());
   ++game.step;
 };
 
@@ -92,12 +93,7 @@ export var destroyObject = function (game, object) {
 
 var handleCollision = function (game, a, b) {
   if (a.type === 'boost' && b.type === 'user') {
-    var velocity = b.body.GetLinearVelocity();
-    var force = new b2.b2Vec2(velocity.get_x(), velocity.get_y());
-    force.Normalize();
-    force.Set(force.get_x() * 15, force.get_y() * 15);
-    b.body.ApplyLinearImpulse(force);
-    b2.destroy(force);
+    Boost.fire(a, b);
     broadcastAll(game);
   } else if (a.type === 'bomb') {
     Bomb.explode(a);
