@@ -1,4 +1,5 @@
 import _ from 'underscore';
+import average from 'shared/utils/average';
 import b2 from 'box2d';
 import Bomb from 'shared/objects/bomb';
 import Boost from 'shared/objects/boost';
@@ -15,6 +16,7 @@ var DT = config.game.dt;
 var DT_MS = DT * 1000;
 var PI = config.game.positionIterations;
 var STEPS_PER_BROADCAST = config.game.stepsPerBroadcast;
+var JITTERS_TO_HOLD = 100;
 var VI = config.game.velocityIterations;
 
 var broadcastAll = function (game) {
@@ -50,17 +52,20 @@ var needsFrame = function (game) {
   return !!frames.length && game.step >= frames[0].s;
 };
 
+var getStepBuffer = function (game) {
+  return Math.max(0, Math.ceil((average(game.jitters) / 1000) / DT ));
+};
+
 var needsCatchup = function (game) {
   var frames = game.frames;
-  var stepBuffer = Math.ceil(((game.lag || 1) / 1000) / DT);
-  return !!frames.length && game.step < _.last(frames).s - stepBuffer;
+  return !!frames.length && game.step < _.last(frames).s - getStepBuffer(game);
 };
 
 export var step = function (game) {
   if (config.node) {
     game.stepTimeoutId = _.defer(_.partial(step, game));
     if ((Date.now() - game.start) / DT_MS < game.step) return;
-  }
+  } else if (getStepBuffer(game) === 0) return;
   if (game.step % STEPS_PER_BROADCAST === 0) broadcastAll(game);
   while (needsFrame(game)) applyFrame(game, game.frames.shift());
   ++game.step;
@@ -110,11 +115,18 @@ var handleCollision = function (game, a, b) {
   }
 };
 
+export var addFrame = function (game, frame) {
+  var jitter = frame.s - game.step;
+  game.jitters = [jitter].concat(game.jitters).slice(0, JITTERS_TO_HOLD);
+  if (jitter > 0) game.frames.push(frame);
+};
+
 export var create = function () {
   var game = {
     incr: 0,
     step: 0,
     start: Date.now(),
+    jitters: [],
     frames: [],
     objects: [],
     world: new b2.b2World(),

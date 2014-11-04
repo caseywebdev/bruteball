@@ -57,7 +57,6 @@ export default React.createClass({
       [0, 0, (Date.now() - then) / 2],
       [PINGS_TO_HOLD, 1]
     ]}});
-    if (this.game) this.game.lag = this.getLag();
   },
 
   getLag: function () {
@@ -95,7 +94,7 @@ export default React.createClass({
   },
 
   handleGame: function (g) {
-    this.game.frames.push(g);
+    if (this.game) Game.addFrame(this.game, g);
   },
 
   removeUser: function (u) {
