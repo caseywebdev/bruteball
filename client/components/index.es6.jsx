@@ -57,6 +57,7 @@ export default React.createClass({
       [0, 0, (Date.now() - then) / 2],
       [PINGS_TO_HOLD, 1]
     ]}});
+    if (this.game) this.game.lag = this.getLag();
   },
 
   getLag: function () {

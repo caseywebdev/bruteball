@@ -14,7 +14,6 @@ var MAP_SIZE = 32;
 var DT = config.game.dt;
 var DT_MS = DT * 1000;
 var PI = config.game.positionIterations;
-var STEP_BUFFER = config.game.stepBuffer;
 var STEPS_PER_BROADCAST = config.game.stepsPerBroadcast;
 var VI = config.game.velocityIterations;
 
@@ -33,12 +32,7 @@ var updateUser = function (game, u) {
   var id = u[0];
   var user = createObject(game, {type: 'user', id: id});
   var position = user.body.GetPosition();
-  var x = position.get_x();
-  var y = position.get_y();
-  var dx = u[1] - x;
-  var dy = u[2] - y;
-  var correction = Math.sqrt((dx * dx) + (dy * dy)) < 1 ? 0.1 : 1;
-  position.Set(x + (dx * correction), y + (dy * correction));
+  position.Set(u[1], u[2]);
   user.body.SetTransform(position, user.body.GetAngle());
   var velocity = user.body.GetLinearVelocity();
   velocity.Set(u[3], u[4]);
@@ -56,6 +50,12 @@ var needsFrame = function (game) {
   return !!frames.length && game.step >= frames[0].s;
 };
 
+var needsCatchup = function (game) {
+  var frames = game.frames;
+  var stepBuffer = Math.ceil(((game.lag || 1) / 1000) / DT);
+  return !!frames.length && game.step < _.last(frames).s - stepBuffer;
+};
+
 export var step = function (game) {
   if (config.node) {
     game.stepTimeoutId = _.defer(_.partial(step, game));
@@ -67,7 +67,7 @@ export var step = function (game) {
   invoke(game, 'preStep');
   game.world.Step(DT, VI, PI);
   invoke(game, 'postStep');
-  if (game.frames.length > 1) step(game);
+  if (needsCatchup(game)) step(game);
 };
 
 export var setAcceleration = function (game, user, x, y) {
