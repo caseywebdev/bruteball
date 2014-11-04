@@ -39,7 +39,6 @@ var updateUser = function (game, u) {
   var dy = u[2] - y;
   var correction = Math.sqrt((dx * dx) + (dy * dy)) < 1 ? 0.1 : 1;
   position.Set(x + (dx * correction), y + (dy * correction));
-  position.Set(u[1], u[2]);
   user.body.SetTransform(position, user.body.GetAngle());
   var velocity = user.body.GetLinearVelocity();
   velocity.Set(u[3], u[4]);
