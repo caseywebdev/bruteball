@@ -33,6 +33,12 @@ var updateUser = function (game, u) {
   var id = u[0];
   var user = createObject(game, {type: 'user', id: id});
   var position = user.body.GetPosition();
+  var x = position.get_x();
+  var y = position.get_y();
+  var dx = u[1] - x;
+  var dy = u[2] - y;
+  var correction = Math.sqrt((dx * dx) + (dy * dy)) < 1 ? 0.1 : 1;
+  position.Set(x + (dx * correction), y + (dy * correction));
   position.Set(u[1], u[2]);
   user.body.SetTransform(position, user.body.GetAngle());
   var velocity = user.body.GetLinearVelocity();
@@ -51,11 +57,6 @@ var needsFrame = function (game) {
   return !!frames.length && game.step >= frames[0].s;
 };
 
-var needsCatchup = function (game) {
-  var frames = game.frames;
-  return !!frames.length && game.step < _.last(frames).s - STEP_BUFFER;
-};
-
 export var step = function (game) {
   if (config.node) {
     game.stepTimeoutId = _.defer(_.partial(step, game));
@@ -67,7 +68,7 @@ export var step = function (game) {
   invoke(game, 'preStep');
   game.world.Step(DT, VI, PI);
   invoke(game, 'postStep');
-  if (needsCatchup(game)) step(game);
+  if (game.frames.length > 1) step(game);
 };
 
 export var setAcceleration = function (game, user, x, y) {
