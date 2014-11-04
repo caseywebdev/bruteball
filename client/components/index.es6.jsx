@@ -12,7 +12,7 @@ var KEYS = {
 };
 
 var PING_WAIT = 1000;
-var PINGS_TO_HOLD = 10;
+var PINGS_TO_HOLD = 30;
 
 export default React.createClass({
   mixins: [Cursors],
@@ -61,7 +61,8 @@ export default React.createClass({
 
   getLag: function () {
     var pings = this.state.pings;
-    return _.sortBy(pings)[Math.ceil(pings.length / 2)] || 0;
+    var sum = _.reduce(pings, function (s, n) { return s + n; }, 0);
+    return Math.round(sum / pings.length);
   },
 
   handleKey: function (ev) {
