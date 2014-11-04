@@ -51,14 +51,23 @@ var needsFrame = function (game) {
   return !!frames.length && game.step >= frames[0].s;
 };
 
+var needsCatchup = function (game) {
+  var frames = game.frames;
+  return !!frames.length && game.step < _.last(frames).s - STEP_BUFFER;
+};
+
 export var step = function (game) {
-  game.stepTimeoutId = _.delay(_.partial(step, game), DT_MS);
-  invoke(game, 'preStep');
-  game.world.Step(DT, VI, PI);
-  invoke(game, 'postStep');
+  if (config.node) {
+    game.stepTimeoutId = _.defer(_.partial(step, game));
+    if ((Date.now() - game.start) / DT_MS < game.step) return;
+  }
   if (game.step % STEPS_PER_BROADCAST === 0) broadcastAll(game);
   while (needsFrame(game)) applyFrame(game, game.frames.shift());
   ++game.step;
+  invoke(game, 'preStep');
+  game.world.Step(DT, VI, PI);
+  invoke(game, 'postStep');
+  if (needsCatchup(game)) step(game);
 };
 
 export var setAcceleration = function (game, user, x, y) {
@@ -105,6 +114,7 @@ export var create = function () {
   var game = {
     incr: 0,
     step: 0,
+    start: Date.now(),
     frames: [],
     objects: [],
     world: new b2.b2World(),
