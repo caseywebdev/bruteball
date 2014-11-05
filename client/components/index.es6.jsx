@@ -120,7 +120,7 @@ export default React.createClass({
         <div className='stats'>
           <div>FPS: {this.state.fps}</div>
           <div>Ping: {this.getPing()}ms</div>
-          <div>Jitter: {this.game ? Game.getStepBuffer(this.game) : null}</div>
+          <div>Jitter: {this.game ? Game.getJitter(this.game) : 0} steps</div>
           {this.game ? null : <div>Loading...</div>}
         </div>
         {this.renderGame()}

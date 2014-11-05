@@ -17,7 +17,7 @@ var DT = config.game.dt;
 var DT_MS = DT * 1000;
 var PI = config.game.positionIterations;
 var STEPS_PER_BROADCAST = config.game.stepsPerBroadcast;
-var JITTERS_TO_HOLD = 100;
+var STEP_DELTAS_TO_HOLD = 100;
 var VI = config.game.velocityIterations;
 
 var broadcastAll = function (game) {
@@ -53,17 +53,17 @@ var needsFrame = function (game) {
   return !!frames.length && game.step >= frames[0].s;
 };
 
-export var getStepBuffer = function (game) {
-  return Math.ceil(2 * stdDev(game.jitters));
+export var getJitter = function (game) {
+  return Math.ceil(2 * stdDev(game.stepDeltas));
 };
 
 var needsCatchup = function (game) {
   var frames = game.frames;
-  return !!frames.length && game.step < _.last(frames).s - getStepBuffer(game);
+  return !!frames.length && game.step < _.last(frames).s - getJitter(game);
 };
 
 var needsWait = function (game) {
-  return average(game.jitters) < 0;
+  return average(game.stepDeltas) < 0;
 };
 
 export var step = function (game) {
@@ -121,9 +121,10 @@ var handleCollision = function (game, a, b) {
 };
 
 export var addFrame = function (game, frame) {
-  var jitter = frame.s - game.step;
-  game.jitters = [jitter].concat(game.jitters).slice(0, JITTERS_TO_HOLD);
-  if (jitter > 0) game.frames.push(frame);
+  var stepDelta = frame.s - game.step;
+  game.stepDeltas =
+    [stepDelta].concat(game.stepDeltas).slice(0, STEP_DELTAS_TO_HOLD);
+  if (stepDelta >= 0) game.frames.push(frame);
 };
 
 export var create = function () {
@@ -131,7 +132,7 @@ export var create = function () {
     incr: 0,
     step: 0,
     start: Date.now(),
-    jitters: [],
+    stepDeltas: [],
     frames: [],
     objects: [],
     world: new b2.b2World(),
