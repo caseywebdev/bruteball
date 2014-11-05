@@ -1,5 +1,10 @@
 BIN=node_modules/.bin/
+BOWER=$(BIN)bower
 COGS=$(BIN)cogs
+KNEX=$(BIN)knex
+SERVER=node build/node_modules
+SET_ENV=. .env.sh &&
+SSH_DEPLOY=ssh deploy@104.200.20.144
 WATCHY=$(BIN)watchy
 
 dev:
@@ -20,21 +25,24 @@ cogs-server:
 cogs-server-w:
 	$(COGS) -C cogs-server.json -w server,shared
 
+server:
+	$(SET_ENV) $(SERVER)
+
 server-w:
-	. .env.sh && $(WATCHY) -w build -- node build/node_modules
+	$(SET_ENV) $(WATCHY) -w build -- $(SERVER)
 
 deploy:
-	git push heroku master
+	$(SSH_DEPLOY) '\
+		cd bruteball && \
+		git pull && \
+		npm prune && \
+		npm install && \
+		$(BOWER) prune && \
+		$(BOWER) install && \
+		$(COGS) -C cogs-client.json -c && \
+		$(COGS) -C cogs-server.json && \
+		$(SET_ENV) $(KNEX) migrate:latest && \
+		(sudo restart bruteball || sudo start bruteball) \
+	'
 
-deploy-thursday:
-	git push thursday master
-
-launch:
-	npm prune
-	npm rebuild
-	npm install
-	node_modules/.bin/bower prune
-	node_modules/.bin/bower install
-	$(COGS) -C cogs-client.json -c
-	$(COGS) -C cogs-server.json
-	-kill `ps ax | grep -P '\d [n]ode build/node_modules' | grep -oP '^\s*\d+'`
+.PHONY: server
