@@ -54,7 +54,7 @@ var needsFrame = function (game) {
 };
 
 export var getStepBuffer = function (game) {
-  return Math.ceil(stdDev(game.jitters));
+  return Math.ceil(2 * stdDev(game.jitters));
 };
 
 var needsCatchup = function (game) {
