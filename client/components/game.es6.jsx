@@ -89,7 +89,7 @@ export default React.createClass({
     if (!user) return;
     CAMERA.position.x += (user.mesh.position.x - CAMERA.position.x) * 0.1;
     CAMERA.position.y += (user.mesh.position.y - CAMERA.position.y) * 0.1;
-    CAMERA.position.z = 15;
+    CAMERA.position.z = 25;
   },
 
   render: function () {
