@@ -1,9 +1,9 @@
 import _ from 'underscore';
+import average from 'shared/utils/average';
 import Cursors from 'cursors';
 import Game from 'shared/objects/game';
 import GameComponent from 'client/components/game';
 import React from 'react';
-import stdDev from 'shared/utils/standard-deviation';
 
 var KEYS = {
   '38': {down: false, x: 0, y: 1},
@@ -12,8 +12,8 @@ var KEYS = {
   '39': {down: false, x: 1, y: 0}
 };
 
-var PING_WAIT = 1000;
-var PINGS_TO_HOLD = 30;
+var PING_WAIT = 2000;
+var PINGS_TO_HOLD = 10;
 
 export default React.createClass({
   mixins: [Cursors],
@@ -55,15 +55,13 @@ export default React.createClass({
   handlePing: function (er, then) {
     if (er) throw new Error('Ping failed!');
     this.update({pings: {$splice: [
-      [0, 0, (Date.now() - then) / 2],
+      [0, 0, Date.now() - then],
       [PINGS_TO_HOLD, 1]
     ]}});
   },
 
-  getLag: function () {
-    var pings = this.state.pings;
-    var sum = _.reduce(pings, function (s, n) { return s + n; }, 0);
-    return Math.round(sum / pings.length);
+  getPing: function () {
+    return Math.ceil(average(this.state.pings));
   },
 
   handleKey: function (ev) {
@@ -121,8 +119,8 @@ export default React.createClass({
       <div>
         <div className='stats'>
           <div>FPS: {this.state.fps}</div>
-          <div>Lag: {this.getLag()}ms</div>
-          <div>Buffer: {this.game ? Game.getStepBuffer(this.game) : null}</div>
+          <div>Ping: {this.getPing()}ms</div>
+          <div>Jitter: {this.game ? Game.getStepBuffer(this.game) : null}</div>
           {this.game ? null : <div>Loading...</div>}
         </div>
         {this.renderGame()}
