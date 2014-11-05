@@ -3,7 +3,7 @@ BOWER=$(BIN)bower
 COGS=$(BIN)cogs
 KNEX=$(BIN)knex
 SERVER=node build/node_modules
-SET_ENV=. .env.sh &&
+SET_ENV=env `tr '\n' ' ' < .env.sh`
 SSH_DEPLOY=ssh deploy@104.200.20.144
 WATCHY=$(BIN)watchy
 
