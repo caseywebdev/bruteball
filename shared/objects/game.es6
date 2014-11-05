@@ -1,9 +1,9 @@
 import _ from 'underscore';
-import average from 'shared/utils/average';
 import b2 from 'box2d';
 import Bomb from 'shared/objects/bomb';
 import Boost from 'shared/objects/boost';
 import config from 'shared/config';
+import stdDev from 'shared/utils/standard-deviation';
 import Wall from 'shared/objects/wall';
 
 var app = config.node ? require('index') : null;
@@ -52,8 +52,8 @@ var needsFrame = function (game) {
   return !!frames.length && game.step >= frames[0].s;
 };
 
-var getStepBuffer = function (game) {
-  return Math.max(0, Math.ceil((average(game.jitters) / 1000) / DT ));
+export var getStepBuffer = function (game) {
+  return Math.max(0, Math.ceil((2 * stdDev(game.jitters) / 1000) / DT ));
 };
 
 var needsCatchup = function (game) {

@@ -1,6 +1,5 @@
-import _ from 'underscore';
+import sum from 'shared/utils/sum';
 
 export default function (ns) {
-  if (!ns.length) return 0;
-  return _.reduce(ns, function (sum, n) { return sum + n; }, 0) / ns.length;
+  return sum(ns) / ns.length;
 }

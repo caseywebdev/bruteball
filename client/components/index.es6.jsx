@@ -3,6 +3,7 @@ import Cursors from 'cursors';
 import Game from 'shared/objects/game';
 import GameComponent from 'client/components/game';
 import React from 'react';
+import stdDev from 'shared/utils/standard-deviation';
 
 var KEYS = {
   '38': {down: false, x: 0, y: 1},
@@ -121,6 +122,7 @@ export default React.createClass({
         <div className='stats'>
           <div>FPS: {this.state.fps}</div>
           <div>Lag: {this.getLag()}ms</div>
+          <div>Buffer: {this.game ? Game.getStepBuffer(this.game) : null}</div>
           {this.game ? null : <div>Loading...</div>}
         </div>
         {this.renderGame()}
