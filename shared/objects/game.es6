@@ -1,4 +1,5 @@
 import _ from 'underscore';
+import average from 'shared/utils/average';
 import b2 from 'box2d';
 import Bomb from 'shared/objects/bomb';
 import Boost from 'shared/objects/boost';
@@ -53,7 +54,7 @@ var needsFrame = function (game) {
 };
 
 export var getStepBuffer = function (game) {
-  return Math.max(0, Math.ceil(2 * stdDev(game.jitters)));
+  return Math.ceil(stdDev(game.jitters));
 };
 
 var needsCatchup = function (game) {
@@ -61,11 +62,15 @@ var needsCatchup = function (game) {
   return !!frames.length && game.step < _.last(frames).s - getStepBuffer(game);
 };
 
+var needsWait = function (game) {
+  return average(game.jitters) < 0;
+};
+
 export var step = function (game) {
   if (config.node) {
     game.stepTimeoutId = _.defer(_.partial(step, game));
     if ((Date.now() - game.start) / DT_MS < game.step) return;
-  } else if (getStepBuffer(game) === 0) return;
+  } else if (needsWait(game)) return;
   if (game.step % STEPS_PER_BROADCAST === 0) broadcastAll(game);
   while (needsFrame(game)) applyFrame(game, game.frames.shift());
   ++game.step;
