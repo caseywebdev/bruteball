@@ -10,7 +10,7 @@ export default function (socket) {
     var game = app.games.test;
     var obj = Game.findObject(game, {type: 'user', id: user.id});
     if (!obj) return;
-    app.io.server.to('game').emit('remove-user', userPattern(obj));
+    app.io.server.to('all').emit('remove-user', userPattern(obj));
     Game.destroyObject(game, obj);
   }
 }

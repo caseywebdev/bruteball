@@ -8,7 +8,7 @@ var listeners = getListeners(__dirname + '/../listeners/io');
 export var server = io(app.express.server);
 
 server.sockets.on('connection', function (socket) {
-  socket.join('game');
+  socket.join('all');
   _.each(listeners, function (listener, name) {
     socket.on(name, function (data, cb) {
       listener(socket, data, cb || _.noop);
