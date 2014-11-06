@@ -85,6 +85,7 @@ export default React.createClass({
     if (this.game) Game.stop(this.game);
     this.game = Game.create();
     this.game.id = _.uniqueId();
+    this.game.step = g.s;
     Game.applyFrame(this.game, g);
     Game.start(this.game);
     this.forceUpdate();

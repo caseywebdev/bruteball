@@ -18,7 +18,7 @@ var DT = config.game.dt;
 var DT_MS = DT * 1000;
 var PI = config.game.positionIterations;
 var STEPS_PER_BROADCAST = config.game.stepsPerBroadcast;
-var STEP_DELTAS_TO_HOLD = 100;
+var STEP_DELTAS_TO_HOLD = 10;
 var VI = config.game.velocityIterations;
 
 var broadcastAll = function (game) {
@@ -33,8 +33,9 @@ var invoke = function (game, key) {
 };
 
 export var applyFrame = function (game, g) {
-  game.step = g.s;
-  _.each(g.u, _.partial(User.applyFrame, game));
+  if (game.step === g.s) _.each(g.u, _.partial(User.applyFrame, game));
+  // _.each(g.b, _.partial(User.applyFrame, game));
+  // _.each(g.s, _.partial(User.applyFrame, game));
 };
 
 var needsFrame = function (game) {
@@ -113,7 +114,7 @@ export var addFrame = function (game, frame) {
   var stepDelta = frame.s - game.step;
   game.stepDeltas =
     [stepDelta].concat(game.stepDeltas).slice(0, STEP_DELTAS_TO_HOLD);
-  if (stepDelta >= 0) game.frames.push(frame);
+  game.frames.push(frame);
 };
 
 export var create = function () {
