@@ -8,7 +8,7 @@ SSH_DEPLOY=ssh deploy@104.200.20.144
 WATCHY=$(BIN)watchy
 
 dev:
-	$(MAKE) -j nginx postgres cogs-client-w cogs-server-w server-w
+	make -j nginx postgres cogs-client-w cogs-server-w server-w
 
 nginx:
 	mkdir -p log && sudo nginx >> log/nginx.log 2>&1
@@ -28,31 +28,35 @@ cogs-server-w:
 server:
 	$(SET_ENV) $(SERVER)
 
-
 server-w:
 	$(SET_ENV) $(WATCHY) -w build -- $(SERVER)
 
 install:
-	npm prune
-	npm install
-	$(BOWER) prune
-	$(BOWER) install
+	@echo 'Installing dependencies...'
+	@npm prune
+	@npm install
+	@$(BOWER) prune
+	@$(BOWER) install
 
 compress:
-	$(COGS) -C cogs-client.json -c
-	$(COGS) -C cogs-server.json
+	@echo 'Building files...'
+	@$(COGS) -C cogs-client.json -c
+	@$(COGS) -C cogs-server.json
 
 migrate:
-	$(SET_ENV) $(KNEX) migrate:latest
+	@echo 'Migrating database...'
+	@$(SET_ENV) $(KNEX) migrate:latest
 
 restart:
-	sudo restart bruteball || sudo start bruteball
+	@echo 'Restarting server...'
+	@sudo restart bruteball || sudo start bruteball
 
 deploy:
-	$(SSH_DEPLOY) '\
+	@echo 'Deploying...'
+	@$(SSH_DEPLOY) '\
 		cd bruteball && \
 		git pull && \
-		$(MAKE) install compress migrate restart \
+		make install compress migrate restart \
 	'
 
 .PHONY: server
