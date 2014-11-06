@@ -28,8 +28,12 @@ cogs-server-w:
 server:
 	$(SET_ENV) $(SERVER)
 
+
 server-w:
 	$(SET_ENV) $(WATCHY) -w build -- $(SERVER)
+
+migrate:
+	$(SET_ENV) $(KNEX) migrate:latest
 
 deploy:
 	$(SSH_DEPLOY) '\
@@ -41,7 +45,7 @@ deploy:
 		$(BOWER) install && \
 		$(COGS) -C cogs-client.json -c && \
 		$(COGS) -C cogs-server.json && \
-		$(SET_ENV) $(KNEX) migrate:latest && \
+		$(MAKE) migrate && \
 		(sudo restart bruteball || sudo start bruteball) \
 	'
 
