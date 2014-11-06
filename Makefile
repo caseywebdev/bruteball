@@ -55,7 +55,8 @@ deploy:
 	@echo 'Deploying...'
 	@$(SSH_DEPLOY) '\
 		cd bruteball && \
-		git pull && \
+		git fetch && \
+		git reset --hard origin/master && \
 		make install compress migrate restart \
 	'
 
