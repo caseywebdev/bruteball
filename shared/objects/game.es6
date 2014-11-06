@@ -5,6 +5,7 @@ import Bomb from 'shared/objects/bomb';
 import Boost from 'shared/objects/boost';
 import config from 'shared/config';
 import stdDev from 'shared/utils/standard-deviation';
+import User from 'shared/objects/user';
 import Wall from 'shared/objects/wall';
 
 var app = config.node ? require('index') : null;
@@ -31,21 +32,9 @@ var invoke = function (game, key) {
   });
 };
 
-var updateUser = function (game, u) {
-  var id = u[0];
-  var user = createObject(game, {type: 'user', id: id});
-  var position = user.body.GetPosition();
-  position.Set(u[1], u[2]);
-  user.body.SetTransform(position, user.body.GetAngle());
-  var velocity = user.body.GetLinearVelocity();
-  velocity.Set(u[3], u[4]);
-  user.body.SetLinearVelocity(velocity);
-  user.acceleration.Set(u[5], u[6]);
-};
-
 export var applyFrame = function (game, g) {
   game.step = g.s;
-  _.each(g.u, _.partial(updateUser, game));
+  _.each(g.u, _.partial(User.applyFrame, game));
 };
 
 var needsFrame = function (game) {
@@ -80,6 +69,10 @@ export var step = function (game) {
   if (needsCatchup(game)) step(game);
 };
 
+export var findObject = function (game, object) {
+  return _.find(game.objects, _.pick(object, 'type', 'id'));
+};
+
 export var setAcceleration = function (game, user, x, y) {
   var ref = findObject(game, {type: 'user', id: user.id});
   var acceleration = ref && ref.acceleration;
@@ -87,10 +80,6 @@ export var setAcceleration = function (game, user, x, y) {
   acceleration.Set(x, y);
   acceleration.Normalize();
   app.io.server.to('game').emit('g', gamePattern(game, {users: [ref]}));
-};
-
-export var findObject = function (game, object) {
-  return _.find(game.objects, _.pick(object, 'type', 'id'));
 };
 
 export var createObject = function (game, options) {

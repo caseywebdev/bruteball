@@ -2,6 +2,7 @@ import _ from 'underscore';
 import b2 from 'box2d';
 import BallBody from 'shared/bodies/ball';
 import config from 'shared/config';
+import Game from 'shared/objects/game';
 
 var BallMesh = config.node ? null : require('client/meshes/ball');
 var THREE = config.node ? null : require('three');
@@ -24,6 +25,18 @@ export var preStep = function (user) {
     velocity.Set(velocity.get_x() * maxSpeed, velocity.get_y() * maxSpeed);
   }
   user.body.SetLinearVelocity(velocity);
+};
+
+export var applyFrame = function (game, u) {
+  var id = u[0];
+  var user = Game.createObject(game, {type: 'user', id: id});
+  var position = user.body.GetPosition();
+  position.Set(u[1], u[2]);
+  user.body.SetTransform(position, user.body.GetAngle());
+  var velocity = user.body.GetLinearVelocity();
+  velocity.Set(u[3], u[4]);
+  user.body.SetLinearVelocity(velocity);
+  user.acceleration.Set(u[5], u[6]);
 };
 
 export var updateMesh = function (user) {
