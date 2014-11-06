@@ -27,27 +27,25 @@ export default React.createClass({
 
   componentDidMount: function () {
     this.ping();
-    this.state.live.on({
-      'new-game': this.handleNewGame,
-      g: this.handleGame,
-      'remove-user': this.removeUser
-    });
+    this.state.socket
+      .on('new-game', this.handleNewGame)
+      .on('g', this.handleGame)
+      .on('remove-user', this.removeUser);
     document.addEventListener('keydown', this.handleKey);
     document.addEventListener('keyup', this.handleKey);
   },
 
   componentWillUnmount: function () {
-    this.state.live.off({
-      'new-game': this.handleNewGame,
-      g: this.handleGame,
-      'remove-user': this.removeUser
-    });
+    this.state.socket
+      .off('new-game', this.handleNewGame)
+      .off('g', this.handleGame)
+      .off('remove-user', this.removeUser);
     document.removeEventListener('keydown', this.handleKey);
     document.removeEventListener('keyup', this.handleKey);
   },
 
   ping: function () {
-    this.state.live.send('ping', Date.now(), this.handlePing);
+    this.state.socket.emit('ping', Date.now(), this.handlePing);
     clearTimeout(this.pingTimeoutId);
     this.pingTimeoutId = _.delay(this.ping, PING_WAIT);
   },
@@ -74,7 +72,7 @@ export default React.createClass({
   },
 
   sendAv: function () {
-    this.state.live.send('set-av', this.getAv());
+    this.state.socket.emit('set-av', this.getAv());
   },
 
   getAv: function () {

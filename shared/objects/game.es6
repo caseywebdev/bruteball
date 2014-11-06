@@ -21,7 +21,7 @@ var STEP_DELTAS_TO_HOLD = 100;
 var VI = config.game.velocityIterations;
 
 var broadcastAll = function (game) {
-  if (config.node) app.ws.server.broadcast('g', gamePattern(game));
+  if (config.node) app.io.server.to('game').emit('g', gamePattern(game));
 };
 
 var invoke = function (game, key) {
@@ -86,7 +86,7 @@ export var setAcceleration = function (game, user, x, y) {
   if (!acceleration || acceleration.x === x && acceleration.y === y) return;
   acceleration.Set(x, y);
   acceleration.Normalize();
-  app.ws.server.broadcast('g', gamePattern(game, {users: [ref]}));
+  app.io.server.to('game').emit('g', gamePattern(game, {users: [ref]}));
 };
 
 export var findObject = function (game, object) {

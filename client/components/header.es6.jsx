@@ -17,7 +17,7 @@ export default React.createClass({
       isLoading: {$set: true},
       key: {$set: null}
     });
-    this.state.live.send('sign-out', null, this.handleSignOut);
+    this.state.socket.emit('sign-out', null, this.handleSignOut);
   },
 
   handleSignOut: function (er) {
@@ -27,17 +27,15 @@ export default React.createClass({
   },
 
   componentDidMount: function () {
-    this.state.live.on({
-      'live:state:connected': this.handleConnected,
-      'live:state:disconnected': this.handleDisconnected
-    }).connect();
+    this.state.socket
+      .on('connect', this.handleConnected)
+      .on('disconnect', this.handleDisconnected);
   },
 
   componentWillUnmount: function () {
-    this.state.live.off({
-      'live:state:connected': this.handleConnected,
-      'live:state:disconnected': this.handleDisconnected
-    });
+    this.state.socket
+      .off('connect', this.handleConnected)
+      .off('disconnect', this.handleDisconnected);
   },
 
   handleConnected: function () {
@@ -46,7 +44,7 @@ export default React.createClass({
 
   setKey: function () {
     this.update({isLoading: {$set: true}});
-    this.state.live.send('set-key', store.get('key'), this.handleSetKey);
+    this.state.socket.emit('set-key', store.get('key'), this.handleSetKey);
   },
 
   handleSetKey: function (er, user) {

@@ -6,15 +6,13 @@
   "options": {
     "concatAmd": true,
     "names": {
-      "backbone": "bower_components/backbone/backbone.js",
       "box2d": "bower_components/box2d/box2d.umd.js",
       "cursors": "bower_components/cursors/cursors.js",
       "fastclick": "bower_components/fastclick/lib/fastclick.js",
-      "herit": "bower_components/herit/herit.js",
       "jquery": "client/jquery.es6",
-      "live": "bower_components/live/live.js",
       "react": "bower_components/react/react-with-addons.min.js",
       "react-router": "bower_components/react-router/dist/react-router.min.js",
+      "socket.io": "bower_components/socket.io-client/socket.io.js",
       "superagent": "bower_components/superagent/superagent.js",
       "three": "bower_components/threejs/build/three.min.js",
       "underscore": "bower_components/underscore/underscore-min.js"
