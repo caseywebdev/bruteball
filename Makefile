@@ -32,21 +32,27 @@ server:
 server-w:
 	$(SET_ENV) $(WATCHY) -w build -- $(SERVER)
 
+install:
+	npm prune
+	npm install
+	$(BOWER) prune
+	$(BOWER) install
+
+compress:
+	$(COGS) -C cogs-client.json -c
+	$(COGS) -C cogs-server.json
+
 migrate:
 	$(SET_ENV) $(KNEX) migrate:latest
+
+restart:
+	sudo restart bruteball || sudo start bruteball
 
 deploy:
 	$(SSH_DEPLOY) '\
 		cd bruteball && \
 		git pull && \
-		npm prune && \
-		npm install && \
-		$(BOWER) prune && \
-		$(BOWER) install && \
-		$(COGS) -C cogs-client.json -c && \
-		$(COGS) -C cogs-server.json && \
-		$(MAKE) migrate && \
-		(sudo restart bruteball || sudo start bruteball) \
+		$(MAKE) install compress migrate restart \
 	'
 
 .PHONY: server
