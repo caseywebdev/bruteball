@@ -40,8 +40,9 @@ export default React.createClass({
     light.shadowMapWidth = light.shadowMapHeight = 2048;
 
     this.scene.add(light);
+    light.target.updateMatrixWorld();
 
-    var plane = new THREE.PlaneGeometry(MAP_SIZE, MAP_SIZE);
+    var plane = new THREE.PlaneBufferGeometry(MAP_SIZE, MAP_SIZE);
     var material = new THREE.MeshLambertMaterial();
     var floor = new THREE.Mesh(plane, material);
     floor.receiveShadow = true;
