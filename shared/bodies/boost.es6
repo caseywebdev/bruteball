@@ -4,7 +4,7 @@ import config from 'shared/config';
 var BODY_DEF = new b2.b2BodyDef();
 
 var SHAPE = new b2.b2CircleShape();
-SHAPE.set_m_radius(0.5);
+SHAPE.set_m_radius(config.game.boostRadius);
 
 var FIXTURE_DEF = new b2.b2FixtureDef();
 FIXTURE_DEF.set_shape(SHAPE);

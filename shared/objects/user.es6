@@ -27,7 +27,8 @@ export var preStep = function (user) {
   user.body.SetLinearVelocity(velocity);
 };
 
-export var applyFrame = function (game, u) {
+export var applyFrame = function (game, u, step) {
+  if (step !== game.step) return;
   var id = u[0];
   var user = Game.createObject(game, {type: 'user', id: id});
   var position = user.body.GetPosition();

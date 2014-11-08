@@ -26,7 +26,11 @@ export default {
     acceleration: 5,
     maxSpeed: 7.5,
     stepsPerBroadcast: 15,
-    ballRadius: 0.49
+    ballRadius: 0.49,
+    bombRadius: 0.4,
+    bombWait: 500,
+    boostRadius: 0.5,
+    boostWait: 500
   },
 
   knex: {

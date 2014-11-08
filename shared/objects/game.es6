@@ -5,7 +5,6 @@ import Bomb from 'shared/objects/bomb';
 import Boost from 'shared/objects/boost';
 import config from 'shared/config';
 import stdDev from 'shared/utils/standard-deviation';
-import User from 'shared/objects/user';
 import Wall from 'shared/objects/wall';
 
 var app = config.node ? require('index') : null;
@@ -21,8 +20,11 @@ var STEPS_PER_BROADCAST = config.game.stepsPerBroadcast;
 var STEP_DELTAS_TO_HOLD = 10;
 var VI = config.game.velocityIterations;
 
-var broadcastAll = function (game) {
-  if (config.node) app.io.server.to('all').emit('g', gamePattern(game));
+var broadcast = function (game) {
+  if (config.node && game.changed.length) {
+    app.io.server.to('all').emit('g', gamePattern(game));
+  }
+  game.changed = [];
 };
 
 var invoke = function (game, key) {
@@ -33,9 +35,10 @@ var invoke = function (game, key) {
 };
 
 export var applyFrame = function (game, g) {
-  if (game.step === g.s) _.each(g.u, _.partial(User.applyFrame, game));
-  // _.each(g.b, _.partial(User.applyFrame, game));
-  // _.each(g.s, _.partial(User.applyFrame, game));
+  _.each(g.o, function (objects, type) {
+    var Type = require('shared/objects/' + type);
+    _.each(objects, _.partial(Type.applyFrame, game, _, g.s));
+  });
 };
 
 var needsFrame = function (game) {
@@ -61,7 +64,10 @@ export var step = function (game) {
     game.stepTimeoutId = _.defer(_.partial(step, game));
     if ((Date.now() - game.start) / DT_MS < game.step) return;
   } else if (needsWait(game)) return;
-  if (game.step % STEPS_PER_BROADCAST === 0) broadcastAll(game);
+  if (game.step % STEPS_PER_BROADCAST === 0) {
+    game.changed = game.changed.concat(_.filter(game.objects, {type: 'user'}));
+  }
+  broadcast(game);
   while (needsFrame(game)) applyFrame(game, game.frames.shift());
   ++game.step;
   invoke(game, 'preStep');
@@ -80,7 +86,7 @@ export var setAcceleration = function (game, user, x, y) {
   if (!acceleration || acceleration.x === x && acceleration.y === y) return;
   acceleration.Set(x, y);
   acceleration.Normalize();
-  app.io.server.to('all').emit('g', gamePattern(game, {users: [ref]}));
+  game.changed.push(ref);
 };
 
 export var createObject = function (game, options) {
@@ -101,13 +107,8 @@ export var destroyObject = function (game, object) {
 };
 
 var handleCollision = function (game, a, b) {
-  if (a.type === 'boost' && b.type === 'user') {
-    Boost.fire(a, b);
-    broadcastAll(game);
-  } else if (a.type === 'bomb') {
-    Bomb.explode(a);
-    broadcastAll(game);
-  }
+  if (a.type === 'boost' && b.type === 'user') Boost.fire(a, b);
+  else if (a.type === 'bomb') Bomb.explode(a);
 };
 
 export var addFrame = function (game, frame) {
@@ -125,6 +126,7 @@ export var create = function () {
     stepDeltas: [],
     frames: [],
     objects: [],
+    changed: [],
     world: new b2.b2World(),
     scene: config.node ? null : new THREE.Scene()
   };

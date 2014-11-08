@@ -1,11 +1,13 @@
 import _ from 'underscore';
-import gamesUsersShowPattern from 'patterns/games/users/show';
 
-export default function (game, options) {
+export default function (game) {
   var obj = _.pick(game, 'id');
   obj.s = game.step;
-  var users = (options && options.users) ||
-    _.filter(game.objects, {type: 'user'});
-  obj.u = _.map(users, gamesUsersShowPattern);
+  _.each(_.unique(game.changed), function (object) {
+    var type = object.type;
+    if (!obj.o) obj.o = {};
+    if (!obj.o[type]) obj.o[type] = [];
+    obj.o[type].push(require('patterns/games/show-' + type).default(object));
+  });
   return obj;
 }
