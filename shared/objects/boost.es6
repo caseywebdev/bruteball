@@ -35,7 +35,7 @@ export var updateMesh = function (boost) {
   }
 };
 
-export var fire = function (boost, user) {
+export var use = function (boost, user) {
   if (isUsed(boost)) return;
   var velocity = user.body.GetLinearVelocity();
   var speed = velocity.Normalize() + 15;

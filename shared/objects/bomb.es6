@@ -38,7 +38,7 @@ export var updateMesh = function (bomb) {
   }
 };
 
-export var explode = function (bomb) {
+export var use = function (bomb) {
   if (isUsed(bomb)) return;
   var epicenter = bomb.body.GetPosition();
   var bombX = epicenter.get_x();

@@ -107,8 +107,8 @@ export var destroyObject = function (game, object) {
 };
 
 var handleCollision = function (game, a, b) {
-  if (a.type === 'boost' && b.type === 'user') Boost.fire(a, b);
-  else if (a.type === 'bomb') Bomb.explode(a);
+  if (a.type === 'boost' && b.type === 'user') Boost.use(a, b);
+  else if (a.type === 'bomb') Bomb.use(a);
 };
 
 export var addFrame = function (game, frame) {
