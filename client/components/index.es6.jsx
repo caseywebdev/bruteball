@@ -4,12 +4,13 @@ import Cursors from 'cursors';
 import Game from 'shared/objects/game';
 import GameComponent from 'client/components/game';
 import React from 'react';
+import THREE from 'three';
 
 var KEYS = {
-  '38': {down: false, x: 0, y: 1},
-  '40': {down: false, x: 0, y: -1},
-  '37': {down: false, x: -1, y: 0},
-  '39': {down: false, x: 1, y: 0}
+  '38': {down: false, direction: new THREE.Vector2(0, 1)},
+  '40': {down: false, direction: new THREE.Vector2(0, -1)},
+  '37': {down: false, direction: new THREE.Vector2(-1, 0)},
+  '39': {down: false, direction: new THREE.Vector2(1, 0)}
 };
 
 var PING_WAIT = 2000;
@@ -72,13 +73,13 @@ export default React.createClass({
   },
 
   sendAv: function () {
-    this.state.socket.emit('set-av', this.getAv());
+    this.state.socket.emit('set-av', this.getAv().toArray());
   },
 
   getAv: function () {
-    return _.reduce(_.filter(KEYS, {down: true}), function (av, key) {
-      return {x: av.x + key.x, y: av.y + key.y};
-    }, {x: 0, y: 0});
+    return _.reduce(_.filter(KEYS, 'down'), function (av, key) {
+      return av.add(key.direction);
+    }, new THREE.Vector2());
   },
 
   handleNewGame: function (g) {
