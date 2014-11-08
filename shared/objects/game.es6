@@ -169,14 +169,23 @@ export var create = function () {
       {x: 0, y: 1}
     ]
   },
-    {type: 'wall', x: 4, y: 6, points: Wall.WITHOUT_TOP_RIGHT},
-    {type: 'wall', x: 5, y: 6},
-    {type: 'wall', x: 4, y: 5, points: Wall.WITHOUT_BOTTOM_LEFT},
-    {type: 'wall', x: 6, y: 6, points: Wall.WITHOUT_TOP_LEFT},
-    {type: 'wall', x: 6, y: 5, points: Wall.WITHOUT_BOTTOM_RIGHT},
+    {type: 'wall', x: 4, y: 7},
+    {type: 'wall', x: 5, y: 8, points: Wall.WITHOUT_BOTTOM_RIGHT},
+    {type: 'wall', x: 4, y: 8, points: Wall.WITHOUT_TOP_LEFT},
+    {type: 'wall', x: 5, y: 9, points: Wall.WITHOUT_TOP_LEFT},
+    {type: 'wall', x: 6, y: 9},
+    {type: 'wall', x: 8, y: 9, points: Wall.WITHOUT_BOTTOM_RIGHT},
+    {type: 'wall', x: 7, y: 9},
+    {type: 'wall', x: 6, y: 7, points: Wall.WITHOUT_TOP_LEFT},
+    {type: 'wall', x: 7, y: 7},
+    {type: 'wall', x: 8, y: 7, points: Wall.WITHOUT_TOP_RIGHT},
+    {type: 'wall', x: 4, y: 6},
+    {type: 'wall', x: 4, y: 5},
+    {type: 'wall', x: 6, y: 6},
+    {type: 'wall', x: 6, y: 5},
     {type: 'wall', x: 4, y: 3, points: Wall.WITHOUT_BOTTOM_RIGHT},
-    {type: 'wall', x: 4, y: 4, points: Wall.WITHOUT_TOP_LEFT},
-    {type: 'wall', x: 6, y: 4, points: Wall.WITHOUT_TOP_RIGHT},
+    {type: 'wall', x: 4, y: 4},
+    {type: 'wall', x: 6, y: 4},
     {type: 'wall', x: 6, y: 3, points: Wall.WITHOUT_BOTTOM_LEFT},
     {type: 'boost', x: 12, y: 10},
     {type: 'boost', x: 16, y: 6},
@@ -184,7 +193,7 @@ export var create = function () {
     {type: 'bomb', x: 10, y: 8},
     {type: 'bomb', x: 14, y: 4},
     {type: 'bomb', x: 14, y: 8},
-    {type: 'bomb', x: 5, y: 5}
+    {type: 'boost', x: 5, y: 5}
   ], _.partial(createObject, game));
 
   var listener = new b2.JSContactListener();
