@@ -27,18 +27,14 @@ export default React.createClass({
   },
 
   componentDidMount: function () {
-    this.state.socket
-      .on('connect', this.handleConnected)
-      .on('disconnect', this.handleDisconnected);
+    this.state.socket.on('connect', this.handleConnect);
   },
 
   componentWillUnmount: function () {
-    this.state.socket
-      .off('connect', this.handleConnected)
-      .off('disconnect', this.handleDisconnected);
+    this.state.socket.off('connect', this.handleConnect);
   },
 
-  handleConnected: function () {
+  handleConnect: function () {
     this.setKey();
   },
 

@@ -14,8 +14,9 @@ export default function (socket, key, cb) {
     if (er) return cb(er);
     socket.user = user;
     Game.createObject(app.games.test, {type: 'user', id: user.id});
-    socket.emit('new-game', gamePattern(app.games.test));
     cb(null, usersShowPattern(user, {withPrivate: true}));
+    var game = app.games.test;
+    socket.emit('new-game', gamePattern(game, {objects: game.objects}));
   };
   if (!key || !_.isString(key)) return createUser(done);
   async.waterfall([
