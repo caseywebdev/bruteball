@@ -19,8 +19,8 @@ export var create = function (options) {
     id: ++options.game.incr,
     game: options.game,
     body: BombBody.create(options),
-    home: _.pick(options, 'x', 'y'),
     mesh: config.node ? null : BombMesh.create(options),
+    home: new b2.b2Vec2(options.x, options.y),
     usedAt: -config.game.bombWait
   };
 };
@@ -30,9 +30,7 @@ export var isUsed = function (bomb) {
 };
 
 export var preStep = function (bomb) {
-  var position = bomb.body.GetPosition();
-  var moveTo = isUsed(bomb) ? {x: -1, y: -1} : bomb.home;
-  position.Set(moveTo.x, moveTo.y);
+  var position = isUsed(bomb) ? config.game.hiddenPosition : bomb.home;
   bomb.body.SetTransform(position, bomb.body.GetAngle());
 };
 
@@ -76,6 +74,12 @@ export var use = function (bomb) {
 };
 
 export var applyFrame = function (game, b) {
-  var bomb = Game.findObject(game, {type: 'bomb', id: b[0]});
+  var bomb = _.find(game.objects, {type: 'bomb', id: b[0]});
   bomb.usedAt = b[1];
+};
+
+export var destroy = function (bomb) {
+  b2.destroy(bomb.home);
+  bomb.game.world.DestroyBody(bomb.body);
+  if (!config.node) bomb.game.scene.remove(bomb.mesh);
 };

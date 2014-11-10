@@ -1,4 +1,5 @@
 import _ from 'underscore';
+import b2 from 'box2d';
 import BoostBody from 'shared/bodies/boost';
 import config from 'shared/config';
 import Game from 'shared/objects/game';
@@ -16,7 +17,7 @@ export var create = function (options) {
     game: options.game,
     body: BoostBody.create(options),
     mesh: config.node ? null : BoostMesh.create(options),
-    home: _.pick(options, 'x', 'y'),
+    home: new b2.b2Vec2(options.x, options.y),
     usedAt: -config.game.boostWait
   };
 };
@@ -25,11 +26,9 @@ export var isUsed = function (boost) {
   return boost.game.step - boost.usedAt < config.game.boostWait;
 };
 
-export var preStep = function (bomb) {
-  var position = bomb.body.GetPosition();
-  var moveTo = isUsed(bomb) ? {x: -1, y: -1} : bomb.home;
-  position.Set(moveTo.x, moveTo.y);
-  bomb.body.SetTransform(position, bomb.body.GetAngle());
+export var preStep = function (boost) {
+  var position = isUsed(boost) ? config.game.hiddenPosition : boost.home;
+  boost.body.SetTransform(position, boost.body.GetAngle());
 };
 
 export var updateMesh = function (boost) {
@@ -54,7 +53,12 @@ export var use = function (boost, user) {
 };
 
 export var applyFrame = function (game, b) {
-  var boost = Game.findObject(game, {type: 'boost', id: b[0]});
+  var boost = _.find(game.objects, {type: 'boost', id: b[0]});
   boost.usedAt = b[1];
 };
 
+export var destroy = function (boost) {
+  b2.destroy(boost.home);
+  boost.game.world.DestroyBody(boost.body);
+  if (!config.node) boost.game.scene.remove(boost.mesh);
+};

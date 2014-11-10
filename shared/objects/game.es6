@@ -4,6 +4,7 @@ import b2 from 'box2d';
 import Bomb from 'shared/objects/bomb';
 import Boost from 'shared/objects/boost';
 import config from 'shared/config';
+import Hat from 'shared/objects/hat';
 import stdDev from 'shared/utils/standard-deviation';
 import Wall from 'shared/objects/wall';
 
@@ -76,12 +77,8 @@ export var step = function (game) {
   if (needsCatchup(game)) step(game);
 };
 
-export var findObject = function (game, object) {
-  return _.find(game.objects, _.pick(object, 'type', 'id'));
-};
-
 export var setAcceleration = function (game, user, x, y) {
-  var ref = findObject(game, {type: 'user', id: user.id});
+  var ref = _.find(game.objects, {type: 'user', id: user.id});
   var acceleration = ref && ref.acceleration;
   if (!acceleration || acceleration.x === x && acceleration.y === y) return;
   acceleration.Set(x, y);
@@ -90,7 +87,7 @@ export var setAcceleration = function (game, user, x, y) {
 };
 
 export var createObject = function (game, options) {
-  var existing = findObject(game, options);
+  var existing = _.find(game.objects, _.pick(options, 'type', 'id'));
   if (options.id && existing) return existing;
   var Type = require('shared/objects/' + options.type);
   var object = Type.create(_.extend({game: game}, options), game);
@@ -99,7 +96,7 @@ export var createObject = function (game, options) {
 };
 
 export var destroyObject = function (game, object) {
-  var existing = findObject(game, object);
+  var existing = _.find(game.objects, _.pick(object, 'type', 'id'));
   if (!existing) return;
   require('shared/objects/' + object.type).destroy(existing);
   game.objects = _.without(game.objects, existing);
@@ -108,6 +105,7 @@ export var destroyObject = function (game, object) {
 
 var handleCollision = function (game, a, b) {
   if (a.type === 'boost' && b.type === 'user') Boost.use(a, b);
+  if (a.type === 'hat' && b.type === 'user') Hat.use(a, b);
   else if (a.type === 'bomb') Bomb.use(a);
 };
 
@@ -195,7 +193,8 @@ export var create = function () {
     {type: 'bomb', x: 10, y: 8},
     {type: 'bomb', x: 14, y: 4},
     {type: 'bomb', x: 14, y: 8},
-    {type: 'boost', x: 5, y: 5}
+    {type: 'boost', x: 5, y: 5},
+    {type: 'hat', x: 20, y: 20}
   ], _.partial(createObject, game));
 
   var listener = new b2.JSContactListener();

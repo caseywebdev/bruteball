@@ -13,6 +13,7 @@ RENDERER.shadowMapCullFace = THREE.CullFaceBack;
 RENDERER.shadowMapType = THREE.PCFSoftShadowMap;
 
 var CAMERA = new THREE.PerspectiveCamera(45, 1, 0.1, 1000);
+CAMERA.up = new THREE.Vector3(0, 0, 1);
 
 var getMedian = function (array) {
   return _.sortBy(array)[Math.floor(array.length / 2)];
@@ -86,11 +87,12 @@ export default React.createClass({
   updateCamera: function () {
     var user = this.state.user;
     if (!user) return;
-    user = Game.findObject(this.props.game, {type: 'user', id: user.id});
+    user = _.find(this.props.game.objects, {type: 'user', id: user.id});
     if (!user) return;
     CAMERA.position.x += (user.mesh.position.x - CAMERA.position.x) * 0.1;
-    CAMERA.position.y += (user.mesh.position.y - CAMERA.position.y) * 0.1;
+    CAMERA.position.y += (user.mesh.position.y - 10 - CAMERA.position.y) * 0.1;
     CAMERA.position.z = 25;
+    CAMERA.lookAt(user.mesh.position);
   },
 
   render: function () {

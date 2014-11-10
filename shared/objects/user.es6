@@ -3,6 +3,7 @@ import b2 from 'box2d';
 import BallBody from 'shared/bodies/ball';
 import config from 'shared/config';
 import Game from 'shared/objects/game';
+import Hat from 'shared/objects/hat';
 
 var BallMesh = config.node ? null : require('client/meshes/ball');
 var THREE = config.node ? null : require('three');
@@ -44,7 +45,8 @@ export var updateMesh = function (user) {
   var position = user.body.GetPosition();
   var mesh = user.mesh;
   var delta = mesh.position.clone();
-  mesh.position.set(position.get_x(), position.get_y(), mesh.position.z);
+  mesh.position.x = position.get_x();
+  mesh.position.y = position.get_y();
   delta.sub(mesh.position);
   var theta = delta.length() / config.game.ballRadius;
   var axis = delta.cross(UP).normalize();
@@ -72,6 +74,8 @@ export var create = function (options) {
 
 export var destroy = function (user) {
   b2.destroy(user.acceleration);
-  user.game.world.DestroyBody(user.body);
+  var game = user.game;
+  game.world.DestroyBody(user.body);
+  _.each(_.filter(game.objects, {type: 'hat', usedBy: user.id}), Hat.drop);
   if (!config.node) user.game.scene.remove(user.mesh);
 };

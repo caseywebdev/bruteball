@@ -1,3 +1,5 @@
+import b2 from 'box2d';
+
 var node = typeof window === 'undefined';
 
 var ENV_VARS = node ? process.env : {};
@@ -27,10 +29,12 @@ export default {
     maxSpeed: 7.5,
     stepsPerBroadcast: 15,
     ballRadius: 0.49,
+    hatRadius: 0.375,
     bombRadius: 0.4,
     bombWait: 500,
     boostRadius: 0.5,
-    boostWait: 500
+    boostWait: 500,
+    hiddenPosition: new b2.b2Vec2(-1, -1)
   },
 
   knex: {

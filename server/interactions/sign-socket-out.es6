@@ -8,7 +8,7 @@ export default function (socket) {
   if (!user) return;
   if (!_.any(_.map(app.io.server.clients, 'user'), {id: user.id})) {
     var game = app.games.test;
-    var obj = Game.findObject(game, {type: 'user', id: user.id});
+    var obj = _.find(game.objects, {type: 'user', id: user.id});
     if (!obj) return;
     app.io.server.to('all').emit('remove-user', userPattern(obj));
     Game.destroyObject(game, obj);
