@@ -16,12 +16,20 @@ export var create = function (options) {
     game: options.game,
     body: BoostBody.create(options),
     mesh: config.node ? null : BoostMesh.create(options),
+    home: _.pick(options, 'x', 'y'),
     usedAt: -config.game.boostWait
   };
 };
 
 export var isUsed = function (boost) {
   return boost.game.step - boost.usedAt < config.game.boostWait;
+};
+
+export var preStep = function (bomb) {
+  var position = bomb.body.GetPosition();
+  var moveTo = isUsed(bomb) ? {x: -1, y: -1} : bomb.home;
+  position.Set(moveTo.x, moveTo.y);
+  bomb.body.SetTransform(position, bomb.body.GetAngle());
 };
 
 export var updateMesh = function (boost) {

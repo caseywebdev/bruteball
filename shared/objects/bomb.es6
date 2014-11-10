@@ -1,4 +1,5 @@
 import _ from 'underscore';
+import b2 from 'box2d';
 import BombBody from 'shared/bodies/bomb';
 import config from 'shared/config';
 import Game from 'shared/objects/game';
@@ -18,6 +19,7 @@ export var create = function (options) {
     id: ++options.game.incr,
     game: options.game,
     body: BombBody.create(options),
+    home: _.pick(options, 'x', 'y'),
     mesh: config.node ? null : BombMesh.create(options),
     usedAt: -config.game.bombWait
   };
@@ -25,6 +27,13 @@ export var create = function (options) {
 
 export var isUsed = function (bomb) {
   return bomb.game.step - bomb.usedAt < config.game.bombWait;
+};
+
+export var preStep = function (bomb) {
+  var position = bomb.body.GetPosition();
+  var moveTo = isUsed(bomb) ? {x: -1, y: -1} : bomb.home;
+  position.Set(moveTo.x, moveTo.y);
+  bomb.body.SetTransform(position, bomb.body.GetAngle());
 };
 
 export var updateMesh = function (bomb) {
@@ -49,15 +58,17 @@ export var use = function (bomb) {
     if (object.type !== 'user') return;
     var body = object.body;
     var position = body.GetPosition();
-    var dx = position.get_x() - bombX;
-    var dy = position.get_y() - bombY;
-    var distance = Math.sqrt((dx * dx) + (dy * dy));
-    if (distance > BLAST_RADIUS) return;
+    var delta = new b2.b2Vec2(
+      position.get_x() - bombX,
+      position.get_y() - bombY
+    );
+    var distance = delta.Normalize();
+    if (distance > BLAST_RADIUS) return b2.destroy(delta);
     var speed = (BLAST_RADIUS - distance) * POWER;
     var velocity = object.body.GetLinearVelocity();
     velocity.Set(
-      velocity.get_x() + (dx * speed),
-      velocity.get_y() + (dy * speed)
+      velocity.get_x() + (delta.get_x() * speed),
+      velocity.get_y() + (delta.get_y() * speed)
     );
     body.SetLinearVelocity(velocity);
     bomb.game.changed.push(object);
