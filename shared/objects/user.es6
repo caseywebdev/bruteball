@@ -72,6 +72,14 @@ export var create = function (options) {
   };
 };
 
+export var hit = function (a, b) {
+  var hat = _.find(a.game.objects, {type: 'hat'});
+  var hitter = hat.usedBy === a.id ? b : hat.usedBy === b.id ? a : null;
+  if (!hitter) return;
+  Hat.drop(hat);
+  Hat.use(hat, hitter);
+};
+
 export var destroy = function (user) {
   b2.destroy(user.acceleration);
   var game = user.game;

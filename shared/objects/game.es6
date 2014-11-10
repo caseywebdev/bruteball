@@ -6,6 +6,7 @@ import Boost from 'shared/objects/boost';
 import config from 'shared/config';
 import Hat from 'shared/objects/hat';
 import stdDev from 'shared/utils/standard-deviation';
+import User from 'shared/objects/user';
 import Wall from 'shared/objects/wall';
 
 var app = config.node ? require('index') : null;
@@ -105,7 +106,8 @@ export var destroyObject = function (game, object) {
 
 var handleCollision = function (game, a, b) {
   if (a.type === 'boost' && b.type === 'user') Boost.use(a, b);
-  if (a.type === 'hat' && b.type === 'user') Hat.use(a, b);
+  else if (a.type === 'hat' && b.type === 'user') Hat.use(a, b);
+  else if (a.type === 'user' && b.type === 'user') User.hit(a, b);
   else if (a.type === 'bomb') Bomb.use(a);
 };
 
