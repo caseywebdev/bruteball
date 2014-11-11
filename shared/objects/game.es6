@@ -19,7 +19,7 @@ var DT = config.game.dt;
 var DT_MS = DT * 1000;
 var PI = config.game.positionIterations;
 var STEPS_PER_BROADCAST = config.game.stepsPerBroadcast;
-var STEP_DELTAS_TO_HOLD = 10;
+var STEP_DELTAS_TO_HOLD = 100;
 var VI = config.game.velocityIterations;
 
 var broadcast = function (game) {
