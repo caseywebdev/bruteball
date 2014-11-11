@@ -1,10 +1,5 @@
-import _ from 'underscore';
-import average from 'shared/utils/average';
+import variance from 'shared/utils/variance';
 
 export default function (ns) {
-  var mean = average(ns);
-  var variance = average(_.map(ns, function (n) {
-    return Math.pow(mean - n, 2);
-  }));
-  return Math.sqrt(variance);
+  return Math.sqrt(variance(ns));
 }
