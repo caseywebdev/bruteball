@@ -3,6 +3,8 @@ import Header from 'client/components/header';
 import io from 'socket.io';
 import React from 'react';
 
+import {RouteHandler} from 'react-router';
+
 export default React.createClass({
   mixins: [Cursors],
 
@@ -21,7 +23,7 @@ export default React.createClass({
     return (
       <div>
         <Header cursors={cursors} />
-        {this.props.activeRouteHandler({cursors: cursors})}
+        <RouteHandler cursors={cursors} />
       </div>
     );
   }

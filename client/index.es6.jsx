@@ -5,12 +5,15 @@
 //= require ./init.js
 
 import FastClick from 'fastclick';
-import Router from 'client/components/router';
 import React from 'react';
+import ReactRouter from 'react-router';
+import routes from 'client/routes';
 
 var handleDomReady = function () {
   FastClick.attach(document.body);
-  React.render(<Router />, document.body);
+  ReactRouter.run(routes, ReactRouter.HistoryLocation, function (Handler) {
+    React.render(<Handler />, document.body);
+  });
 };
 
 if (document.readyState !== 'loading') handleDomReady();
