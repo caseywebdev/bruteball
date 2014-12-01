@@ -1,20 +1,18 @@
 BIN=node_modules/.bin/
-BOWER=$(BIN)bower
 COGS=$(BIN)cogs
-KNEX=$(BIN)knex
-SERVER=node build/node_modules
-SET_ENV=env `tr '\n' ' ' < .env.sh`
-SSH_DEPLOY=ssh deploy@104.200.20.144
 WATCHY=$(BIN)watchy
 
 dev:
 	make -j nginx postgres cogs-client-w cogs-server-w server-w
 
-nginx:
-	mkdir -p log && sudo nginx >> log/nginx.log 2>&1
+log:
+	mkdir -p log
 
-postgres:
-	mkdir -p log && postgres -D /usr/local/var/postgres >> log/postgres.log 2>&1
+nginx: log
+	sudo nginx >> log/nginx.log 2>&1
+
+postgres: log
+	postgres -D /usr/local/var/postgres >> log/postgres.log 2>&1
 
 cogs-client-w:
 	$(COGS) -C cogs-client.json -w client,shared,styles
@@ -25,39 +23,8 @@ cogs-server:
 cogs-server-w:
 	$(COGS) -C cogs-server.json -w server,shared
 
-server:
-	$(SET_ENV) $(SERVER)
-
 server-w:
-	$(SET_ENV) $(WATCHY) -w build -- $(SERVER)
-
-install:
-	@echo 'Installing dependencies...'
-	@npm prune
-	@npm install
-	@$(BOWER) prune
-	@$(BOWER) install
-
-compress:
-	@echo 'Building files...'
-	@$(COGS) -C cogs-client.json -c
-	@$(COGS) -C cogs-server.json
-
-migrate:
-	@echo 'Migrating database...'
-	@$(SET_ENV) $(KNEX) migrate:latest
-
-restart:
-	@echo 'Restarting server...'
-	@sudo restart bruteball || sudo start bruteball
+	. .env.sh && $(WATCHY) -w build -- node build/node_modules
 
 deploy:
-	@echo 'Deploying...'
-	@$(SSH_DEPLOY) '\
-		cd bruteball && \
-		git fetch && \
-		git reset --hard origin/master && \
-		make install compress migrate restart \
-	'
-
-.PHONY: server
+	git push heroku master
