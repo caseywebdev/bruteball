@@ -1,7 +1,7 @@
 import _ from 'underscore';
 import app from 'index';
 import Game from 'shared/objects/game';
-import userPattern from 'patterns/games/users/show';
+import userPattern from 'patterns/games/show-user';
 
 export default function (socket) {
   var user = socket.user;
