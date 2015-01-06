@@ -24,7 +24,8 @@ cogs-server-w:
 	$(COGS) -C cogs-server.json -w server,shared
 
 server-w:
-	. .env.sh && $(WATCHY) -w build -- node build/node_modules
+	. .env.sh && $(WATCHY) -w build \
+		'trap "kill \`jobs -p\`" EXIT; node build/node_modules'
 
 deploy:
 	git push heroku master
