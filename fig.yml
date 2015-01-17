@@ -23,22 +23,21 @@ cogsclient:
   volumes:
     - .:/assets
   environment:
-    CONFIG: cogs-client.json
+    CONFIG: cogs-client-dev.js
 
 cogsserver:
   image: caseywebdev/cogs:0.29.3
   volumes:
     - .:/assets
   environment:
-    CONFIG: cogs-server.json
+    CONFIG: cogs-server-dev.js
 
 app:
-  image: caseywebdev/watchy:0.5.8
+  build: .
   volumes:
-    - .:/assets
+    - .:/usr/local/src
   links:
     - postgres
   ports:
     - 3000
-  environment:
-    ARGS: -pw build -- exec node build/node_modules
+  command: node_modules/.bin/watchy -pw build -- exec node build/node_modules

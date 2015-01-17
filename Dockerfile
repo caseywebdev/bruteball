@@ -1,3 +1,3 @@
-FROM node:0.10.33-slim
-COPY . /usr/local/src
+FROM node:0.10.35-slim
 WORKDIR /usr/local/src
+CMD [ "node", "build/node_modules" ]

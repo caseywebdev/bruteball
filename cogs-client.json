@@ -3,12 +3,6 @@
     "vert": "txt",
     "frag": "txt"
   },
-  "watch": [
-    "client",
-    "shared",
-    "styles"
-  ],
-  "use-polling": true,
   "options": {
     "concatAmd": true,
     "names": {
@@ -38,7 +32,7 @@
     ]
   },
   "targets": {
-    "client/index.es6.jsx": "public",
+    "client/index.es6": "public",
     "styles/index.scss": "public"
   }
 }

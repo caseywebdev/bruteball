@@ -1,7 +1,7 @@
-/bower_components
-/build
-/node_modules
-/public/index.css
-/public/index.js
-/.env.sh
-/docker/var
+.env.sh
+bower_components
+build
+docker/var
+node_modules
+public/index.css
+public/index.js

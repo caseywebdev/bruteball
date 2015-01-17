@@ -1,9 +1,4 @@
 {
-  "watch": [
-    "server",
-    "shared"
-  ],
-  "use-polling": true,
   "options": {
     "processors.es6.options.modules": "common"
   },
