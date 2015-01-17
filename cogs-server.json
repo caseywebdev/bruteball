@@ -1,7 +1,11 @@
 {
+  "watch": [
+    "server",
+    "shared"
+  ],
+  "use-polling": true,
   "options": {
-    "processors.es6.options.compatFix": true,
-    "processors.es6.options.exporter": "toCJS"
+    "processors.es6.options.modules": "common"
   },
   "targets": {
     "server/**/*": "build/node_modules",

@@ -3,6 +3,12 @@
     "vert": "txt",
     "frag": "txt"
   },
+  "watch": [
+    "client",
+    "shared",
+    "styles"
+  ],
+  "use-polling": true,
   "options": {
     "concatAmd": true,
     "names": {
@@ -22,7 +28,7 @@
         "global": "THREE"
       }
     },
-    "processors.es6.options.compatFix": true,
+    "processors.es6.options.modules": "amd",
     "compressors.js.ignore": [
       "box2d",
       "react",

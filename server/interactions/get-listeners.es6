@@ -8,7 +8,7 @@ export default function (dir) {
     function (listeners, file) {
       if (file[0] !== '.') {
         var basename = path.basename(file, path.extname(file));
-        listeners[basename] = require(path.join(dir, file)).default;
+        listeners[basename] = require(path.join(dir, file));
       }
       return listeners;
     },

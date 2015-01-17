@@ -10,7 +10,7 @@ import User from 'shared/objects/user';
 import Wall from 'shared/objects/wall';
 
 var app = config.node ? require('index') : null;
-var gamePattern = config.node ? require('patterns/games/show').default : null;
+var gamePattern = config.node ? require('patterns/games/show') : null;
 var THREE = config.node ? null : require('three');
 
 var MAP_SIZE = 32;
