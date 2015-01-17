@@ -9,7 +9,6 @@
       "box2d": "bower_components/box2d/box2d.umd.js",
       "cursors": "bower_components/cursors/cursors.js",
       "fastclick": "bower_components/fastclick/lib/fastclick.js",
-      "jquery": "client/jquery.es6",
       "react": "bower_components/react/react-with-addons.min.js",
       "react-router": "bower_components/react-router/dist/react-router.min.js",
       "socket.io": "bower_components/socket.io-client/socket.io.js",
