@@ -1,6 +1,9 @@
 start:
 	fig start
 
+stop:
+	fig stop
+
 up:
 	fig up -d
 
