@@ -19,25 +19,26 @@ nginx:
     - app
 
 cogsclient:
-  image: caseywebdev/cogs:0.29.3
+  image: node:0.12.0-slim
   volumes:
-    - .:/assets
-  environment:
-    CONFIG: cogs-client-dev.js
+    - .:/src
+  working_dir: /src
+  command: node_modules/.bin/cogs -c cogs-client.js -pw src
 
 cogsserver:
-  image: caseywebdev/cogs:0.29.3
+  image: node:0.12.0-slim
   volumes:
-    - .:/assets
-  environment:
-    CONFIG: cogs-server-dev.js
+    - .:/src
+  working_dir: /src
+  command: node_modules/.bin/cogs -c cogs-server.js -pw src
 
 app:
-  build: .
+  image: node:0.12.0-slim
   volumes:
-    - .:/usr/local/src
+    - .:/src
+  working_dir: /src
   links:
     - postgres
   ports:
     - 3000
-  command: node_modules/.bin/watchy -pw build -- exec node build/node_modules
+  command: node_modules/.bin/watchy -pw build -- node build/node_modules

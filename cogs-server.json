@@ -1,9 +1,0 @@
-{
-  "options": {
-    "processors.es6.options.modules": "common"
-  },
-  "targets": {
-    "server/**/*": "build/node_modules",
-    "shared/**/*": "build/node_modules/shared"
-  }
-}

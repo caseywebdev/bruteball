@@ -13,7 +13,7 @@ echo 'Updating bower_components...'
 node_modules/.bin/bower install --allow-root
 
 echo 'Building server assets...'
-node_modules/.bin/cogs -C cogs-server.json
+node_modules/.bin/cogs -c cogs-server.json
 
 echo 'Building client assets...'
-node_modules/.bin/cogs -C cogs-client.json
+node_modules/.bin/cogs -c cogs-client.json
