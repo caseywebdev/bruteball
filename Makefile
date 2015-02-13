@@ -1,13 +1,7 @@
-start:
-	fig start
-
-stop:
-	fig stop
+init: bootstrap up migrate
 
 up:
 	fig up -d
-
-init: bootstrap up migrate
 
 bootstrap:
 	fig run app ./bootstrap
