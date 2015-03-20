@@ -9,7 +9,6 @@ import stdDev from 'shared/utils/standard-deviation';
 import * as User from 'shared/objects/user';
 import * as Wall from 'shared/objects/wall';
 
-var app = config.node ? require('index') : null;
 var gamePattern = config.node ? require('patterns/games/show') : null;
 var THREE = config.node ? null : require('three');
 
@@ -24,7 +23,7 @@ var VI = config.game.velocityIterations;
 
 var broadcast = function (game) {
   if (config.node && game.changed.length) {
-    app.io.server.to('all').emit('g', gamePattern(game));
+    require('setup/io').server.to('all').emit('g', gamePattern(game));
   }
   game.changed = [];
 };

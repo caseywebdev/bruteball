@@ -1,0 +1,4 @@
+#!/bin/bash -e
+
+echo 'Migrating database...'
+node_modules/.bin/knex migrate:latest

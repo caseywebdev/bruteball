@@ -1,7 +1,7 @@
 module.exports = {
-  manifestPath: 'manifest-server.json',
+  manifestPath: 'build/manifest.json',
   in: {
-    es6: {out: 'js', transformers: ['directives', '6to5']},
+    es6: {out: 'js', transformers: ['directives', 'babel']},
     js: {transformers: 'directives'}
   },
   builds: {

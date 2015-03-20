@@ -1,7 +1,5 @@
-import app from 'index';
+import {db} from 'setup/knex';
 import {createRand} from 'entities/user';
-
-var db = app.knex.db;
 
 export default function (cb) {
   db.insert({rand: createRand()})

@@ -2,13 +2,13 @@ const NODE_ENV = process.env.NODE_ENV || 'development';
 const MINIFY = NODE_ENV === 'production';
 
 module.exports = {
-  manifestPath: 'manifest-client.json',
+  manifestPath: 'public/manifest.json',
   in: {
     vert: {out: 'js', transformers: 'text'},
     frag: {out: 'js', transformers: 'text'},
     es6: {
       out: 'js',
-      transformers: ['directives', {name: '6to5', options: {modules: 'amd'}}]
+      transformers: ['directives', {name: 'babel', options: {modules: 'amd'}}]
     },
     js: {
       transformers: [
@@ -24,7 +24,10 @@ module.exports = {
       .concat(
         MINIFY ? {
           name: 'uglify-js',
-          except: '**/*+(.|-)min.js',
+          except: [
+            '**/*+(-|.)min.js',
+            '**/*/Box2D*.js'
+          ],
           options: {compress: {global_defs: {__DEV__: false}}}
         } : [],
         {name: 'prepend-path', options: {before: '// '}}

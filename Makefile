@@ -1,15 +1,13 @@
-init: bootstrap up migrate
+init: bootstrap migrate up
 
 up:
 	fig up -d
 
 bootstrap:
-	fig run app ./bootstrap
+	fig run app bin/bootstrap
 
 migrate:
-	fig run app node_modules/.bin/knex migrate:latest
+	fig run app bin/migrate
 
 deploy:
 	git push heroku master
-
-.PHONY: bootstrap

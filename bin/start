@@ -1,0 +1,6 @@
+#!/bin/bash -e
+
+bin/migrate
+
+echo 'Starting server...'
+node build/node_modules

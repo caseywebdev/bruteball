@@ -1,4 +1,6 @@
 import {create, start} from 'shared/objects/game';
 
-export var test = create();
+var test = create();
 start(test);
+
+export default {test};

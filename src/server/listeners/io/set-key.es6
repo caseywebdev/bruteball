@@ -1,5 +1,6 @@
 import _ from 'underscore';
-import app from 'index';
+import {db} from 'setup/knex';
+import games from 'setup/games';
 import async from 'async';
 import createUser from 'interactions/create-user';
 import * as Game from 'shared/objects/game';
@@ -7,15 +8,13 @@ import gamePattern from 'patterns/games/show';
 import * as User from 'entities/user';
 import usersShowPattern from 'patterns/users/show';
 
-var db = app.knex.db;
-
 export default function (socket, key, cb) {
   var done = function (er, user) {
     if (er) return cb(er);
     socket.user = user;
-    Game.createObject(app.games.test, {type: 'user', id: user.id});
+    Game.createObject(games.test, {type: 'user', id: user.id});
     cb(null, usersShowPattern(user, {withPrivate: true}));
-    var game = app.games.test;
+    var game = games.test;
     socket.emit('new-game', gamePattern(game, {objects: game.objects}));
   };
   if (!key || !_.isString(key)) return createUser(done);
