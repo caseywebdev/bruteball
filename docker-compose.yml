@@ -6,12 +6,12 @@ postgres:
     POSTGRES_USER: postgres
     POSTGRES_PASSWORD: postgres
   ports:
-    - 5432
+    - '5432'
 
 nginx:
   image: nginx:1.7.9
   ports:
-    - 81:80
+    - '80:80'
   volumes:
     - etc/nginx.conf:/etc/nginx/nginx.conf
     - public:/usr/share/nginx/html
@@ -40,7 +40,7 @@ app:
   links:
     - postgres
   ports:
-    - 3000
+    - '3000'
   environment:
     POSTGRES_URL: postgres://postgres:postgres@postgres/postgres
   command: node_modules/.bin/watchy -pw build -- node build/node_modules
