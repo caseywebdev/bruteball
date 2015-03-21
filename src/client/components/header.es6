@@ -44,7 +44,6 @@ export default React.createClass({
   },
 
   handleSetKey: function (er, user) {
-    console.log(er, user);
     if (er) return this.signOut();
     store.set('key', user.key);
     this.update({isLoading: {$set: false}, user: {$set: user}});
