@@ -1,5 +1,4 @@
-const NODE_ENV = process.env.NODE_ENV || 'development';
-const MINIFY = NODE_ENV === 'production';
+const MINIFY = process.env.NODE_ENV === 'production';
 
 module.exports = {
   manifestPath: 'public/manifest.json',

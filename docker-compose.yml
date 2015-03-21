@@ -33,14 +33,13 @@ cogsserver:
   command: node_modules/.bin/cogs -c cogs-server.js -pw src
 
 app:
-  image: node:0.12.0-slim
+  build: .
   volumes:
     - .:/src
   working_dir: /src
   links:
     - postgres
-  ports:
-    - '3000'
   environment:
-    POSTGRES_URL: postgres://postgres:postgres@postgres/postgres
+    AWS_ACCESS_KEY_ID:
+    AWS_SECRET_ACCESS_KEY:
   command: node_modules/.bin/watchy -pw build -- node build/node_modules
