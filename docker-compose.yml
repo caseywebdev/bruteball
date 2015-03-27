@@ -8,38 +8,33 @@ postgres:
   ports:
     - '5432'
 
-nginx:
-  image: nginx:1.7.9
-  ports:
-    - '80:80'
-  volumes:
-    - etc/nginx.conf:/etc/nginx/nginx.conf
-    - public:/usr/share/nginx/html
-  links:
-    - app
-
 cogsclient:
-  image: node:0.12.0-slim
+  image: node:0.12.1
   volumes:
-    - .:/src
-  working_dir: /src
+    - .:/code
+  working_dir: /code
   command: node_modules/.bin/cogs -c cogs-client.js -pw src
 
 cogsserver:
-  image: node:0.12.0-slim
+  image: node:0.12.1
   volumes:
-    - .:/src
-  working_dir: /src
+    - .:/code
+  working_dir: /code
   command: node_modules/.bin/cogs -c cogs-server.js -pw src
 
 app:
-  build: .
+  image: node:0.12.1
   volumes:
-    - .:/src
-  working_dir: /src
+    - .:/code
+  working_dir: /code
   links:
     - postgres
+  ports:
+    - '80:80'
   environment:
     AWS_ACCESS_KEY_ID:
     AWS_SECRET_ACCESS_KEY:
-  command: node_modules/.bin/watchy -pw build -- node build/node_modules
+    NODE_ENV: development
+    POSTGRES_URL: postgres://postgres:postgres@postgres/postgres
+    PORT: '80'
+  command: node_modules/.bin/watchy -pw build -- bin/start

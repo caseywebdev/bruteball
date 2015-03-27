@@ -1,4 +1,4 @@
 import ReactRouter from
-  '../bower_components/react-router/dist/react-router.min';
+  '../bower_components/react-router/build/global/ReactRouter.min';
 
 export default ReactRouter;
