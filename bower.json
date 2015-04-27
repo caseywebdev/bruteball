@@ -6,10 +6,10 @@
     "box2d": "5fae0ce4fd8cd0d043cf2206a3d8b80c36d2cd99",
     "cursors": "0.6.0",
     "fastclick": "1.0.6",
-    "react": "0.13.1",
+    "react": "0.13.2",
     "react-router": "0.13.2",
     "socket.io-client": "1.3.5",
     "threejs": "r71",
-    "underscore": "1.8.2"
+    "underscore": "1.8.3"
   }
 }
