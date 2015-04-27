@@ -90,10 +90,9 @@ export default React.createClass({
     if (!user) return;
     user = _.find(this.props.game.objects, {type: 'user', id: user.id});
     if (!user) return;
-    CAMERA.position.x += (user.mesh.position.x - CAMERA.position.x) * 0.1;
-    CAMERA.position.y += (user.mesh.position.y - 10 - CAMERA.position.y) * 0.1;
+    CAMERA.position.x = user.mesh.position.x;
+    CAMERA.position.y = user.mesh.position.y;
     CAMERA.position.z = 25;
-    CAMERA.lookAt(user.mesh.position);
   },
 
   render: function () {

@@ -30,7 +30,7 @@ app:
   links:
     - postgres
   ports:
-    - '80:80'
+    - '1234:80'
   environment:
     AWS_ACCESS_KEY_ID:
     AWS_SECRET_ACCESS_KEY:
