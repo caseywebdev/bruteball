@@ -25,7 +25,7 @@ cogs-server:
 	@$(COGS) -c cogs-server.js
 
 migrate:
-	$(KNEX) migrate:latest
+	$(KNEX) migrate:latest --env knex
 
 clean:
 	@if [ $(MINIFY) ]; then rm -fr bower_components src; fi
