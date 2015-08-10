@@ -37,4 +37,4 @@ app:
     NODE_ENV: development
     POSTGRES_URL: postgres://postgres:postgres@postgres/postgres
     PORT: '80'
-  command: node_modules/.bin/watchy -pw build -- bin/start
+  command: node_modules/.bin/watchy -pw build -- make start

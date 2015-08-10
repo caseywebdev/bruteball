@@ -23,7 +23,7 @@
     "npm": "2.13.4"
   },
   "scripts": {
-    "postinstall": "bin/heroku",
-    "start": "bin/start"
+    "postinstall": "make postinstall",
+    "start": "make start"
   }
 }

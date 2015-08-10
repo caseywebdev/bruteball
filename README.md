@@ -4,8 +4,8 @@ Roll into stuff.
 
 ## Development
 
-You'll need docker and fig. boot2docker might be necessary if you're running on
-non-linux.
+You'll need docker and docker-compose. boot2docker might be necessary if you're
+running on non-linux.
 
 ```
 make
