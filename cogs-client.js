@@ -1,4 +1,4 @@
-const MINIFY = process.env.NODE_ENV === 'production';
+var MINIFY = !!process.env.MINIFY;
 
 module.exports = {
   manifestPath: 'public/manifest.json',
@@ -33,7 +33,7 @@ module.exports = {
       )
     }
   },
-  'builds': {
+  builds: {
     'src/client/index.es6': 'public'
   }
 };

@@ -28,7 +28,7 @@ migrate:
 	$(KNEX) migrate:latest
 
 clean:
-	@if [ $(CLEAN_AFTER_INSTALL) ]; then rm -fr bower_components src; fi
+	@if [ $(MINIFY) ]; then rm -fr bower_components src; fi
 
 postinstall:
 	@$(BOWER) install --config.interactive=false --allow-root

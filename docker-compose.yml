@@ -34,7 +34,6 @@ app:
   environment:
     AWS_ACCESS_KEY_ID:
     AWS_SECRET_ACCESS_KEY:
-    NODE_ENV: development
     POSTGRES_URL: postgres://postgres:postgres@postgres/postgres
     PORT: '80'
   command: node_modules/.bin/watchy -pw build -- make start
