@@ -1,13 +1,13 @@
 init: bootstrap migrate up
 
 up:
-	fig up -d
+	dc up -d
 
 bootstrap:
-	fig run app bin/bootstrap
+	dc run app bin/bootstrap
 
 migrate:
-	fig run app bin/migrate
+	dc run app bin/migrate
 
 deploy:
 	git push heroku master

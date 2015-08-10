@@ -3,7 +3,7 @@ import express from 'express';
 import path from 'path';
 import errorListener from 'listeners/express/error';
 
-var PUBLIC = path.resolve(__dirname + '/../../../public');
+var PUBLIC = path.resolve(__dirname, '../../../public');
 
 var SERVE_INDEX = function (req, res) { res.sendFile(PUBLIC + '/index.html'); };
 
