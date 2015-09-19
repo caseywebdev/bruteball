@@ -21,6 +21,7 @@
   "engines": {
     "node": "4.1.0"
   },
+  "cacheDirectories": ["node_modules", "bower_components"],
   "scripts": {
     "postinstall": "make postinstall",
     "start": "make start"
