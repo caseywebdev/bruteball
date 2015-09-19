@@ -7,10 +7,10 @@ import React from 'react';
 import THREE from 'three';
 
 var KEYS = {
-  '38': {down: false, direction: new THREE.Vector2(0, 1)},
-  '40': {down: false, direction: new THREE.Vector2(0, -1)},
-  '37': {down: false, direction: new THREE.Vector2(-1, 0)},
-  '39': {down: false, direction: new THREE.Vector2(1, 0)}
+  38: {down: false, direction: new THREE.Vector2(0, 1)},
+  40: {down: false, direction: new THREE.Vector2(0, -1)},
+  37: {down: false, direction: new THREE.Vector2(-1, 0)},
+  39: {down: false, direction: new THREE.Vector2(1, 0)}
 };
 
 var PING_WAIT = 2000;
@@ -34,6 +34,7 @@ export default React.createClass({
       .on('remove-user', this.removeUser);
     document.addEventListener('keydown', this.handleKey);
     document.addEventListener('keyup', this.handleKey);
+    if (navigator.getGamepads) this.checkGamepad();
   },
 
   componentWillUnmount: function () {
@@ -43,6 +44,19 @@ export default React.createClass({
       .off('remove-user', this.removeUser);
     document.removeEventListener('keydown', this.handleKey);
     document.removeEventListener('keyup', this.handleKey);
+    cancelAnimationFrame(this.rafId);
+  },
+
+  checkGamepad: function () {
+    const pad = navigator.getGamepads()[0];
+    if (pad && pad.timestamp !== this.lastCheck) {
+      const [x, y] = pad.axes;
+      const xy = [Math.floor(x * 5) / 5, -Math.floor(y * 5) / 5];
+      if (!_.isEqual(xy, this.xy)) this.state.socket.emit('set-av', xy);
+      this.xy = xy;
+      this.lastCheck = pad.timestamp;
+    }
+    this.rafId = requestAnimationFrame(this.checkGamepad);
   },
 
   ping: function () {

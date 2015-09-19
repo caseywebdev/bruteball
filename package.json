@@ -2,7 +2,7 @@
   "private": true,
   "dependencies": {
     "async": "1.4.2",
-    "bower": "1.4.1",
+    "bower": "1.5.2",
     "cogs": "1.0.5",
     "cogs-transformer-babel": "1.0.12",
     "cogs-transformer-concat-amd": "1.0.6",
@@ -16,7 +16,7 @@
     "nodemailer-ses-transport": "1.3.0",
     "pg": "4.4.1",
     "socket.io": "1.3.6",
-    "watchy": "0.6.2"
+    "watchy": "0.6.4"
   },
   "engines": {
     "node": "0.12.7"

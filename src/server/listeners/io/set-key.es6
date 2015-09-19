@@ -24,7 +24,7 @@ export default function (socket, key, cb) {
         .from('users')
         .where({id: User.getIdFromKey(key), rand: User.getRandFromKey(key)})
         .limit(1)
-        .exec(cb);
+        .asCallback(cb);
     },
     function (rows, cb) { rows.length ? cb(null, rows[0]) : createUser(cb); }
   ], done);

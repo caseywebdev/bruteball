@@ -1,7 +1,7 @@
 postgres:
   image: postgres:9.4
   volumes:
-    - var/postgres:/var/lib/postgresql/data
+    - ./var/postgres:/var/lib/postgresql/data
   environment:
     POSTGRES_USER: postgres
     POSTGRES_PASSWORD: postgres
@@ -9,21 +9,21 @@ postgres:
     - '5432'
 
 cogsclient:
-  image: node:0.12.1
+  image: node:4.0.0
   volumes:
     - .:/code
   working_dir: /code
   command: node_modules/.bin/cogs -c cogs-client.js -pw src
 
 cogsserver:
-  image: node:0.12.1
+  image: node:4.0.0
   volumes:
     - .:/code
   working_dir: /code
   command: node_modules/.bin/cogs -c cogs-server.js -pw src
 
 app:
-  image: node:0.12.1
+  image: node:4.0.0
   volumes:
     - .:/code
   working_dir: /code

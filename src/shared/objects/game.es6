@@ -82,7 +82,7 @@ export var setAcceleration = function (game, user, x, y) {
   var acceleration = ref && ref.acceleration;
   if (!acceleration || acceleration.x === x && acceleration.y === y) return;
   acceleration.Set(x, y);
-  acceleration.Normalize();
+  if (acceleration.Length() > 1) acceleration.Normalize();
   game.changed.push(ref);
 };
 

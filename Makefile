@@ -10,7 +10,7 @@ up:
 	docker-compose up -d
 
 install:
-	npm install
+	docker-compose run app npm install
 
 start:
 	node build/node_modules

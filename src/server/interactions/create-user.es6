@@ -5,7 +5,7 @@ export default function (cb) {
   db.insert({rand: createRand()})
     .into('users')
     .returning('*')
-    .exec(function (er, users) {
+    .asCallback(function (er, users) {
       if (er) return cb(er);
       cb(null, users[0]);
     });
