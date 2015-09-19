@@ -19,7 +19,7 @@
     "watchy": "0.6.4"
   },
   "engines": {
-    "node": "0.12.7"
+    "node": "4.1.0"
   },
   "scripts": {
     "postinstall": "make postinstall",
