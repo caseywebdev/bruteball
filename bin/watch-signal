@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+set -e
+
+exec node_modules/.bin/watchy -w build/shared,build/signal node build/signal

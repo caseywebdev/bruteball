@@ -1,6 +1,0 @@
-(function (factory) {
-  if (typeof define === 'function') define('box2d', factory);
-  else module.exports = factory();
-})(function () {
-  var root = {};
-  (function () {

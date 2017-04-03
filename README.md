@@ -1,14 +1,9 @@
-# [Bruteball](http://www.bruteball.com)
+# [Bruteball][]
 
 Roll into stuff.
 
-## Development
+### Development
 
-You'll need docker and docker-compose. boot2docker might be necessary if you're
-running on non-linux.
+Run `docker-compose up -d` and visit http://localhost.
 
-```
-make
-```
-
-Now you're good to go!
+[Bruteball]: https://www.bruteball.com

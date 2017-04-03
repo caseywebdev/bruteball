@@ -1,39 +1,45 @@
-postgres:
-  image: postgres:9.4
-  volumes:
-    - ./var/postgres:/var/lib/postgresql/data
-  environment:
-    POSTGRES_USER: postgres
-    POSTGRES_PASSWORD: postgres
-  ports:
-    - '5432'
+version: '3'
 
-cogsclient:
-  image: node:4.0.0
-  volumes:
-    - .:/code
-  working_dir: /code
-  command: node_modules/.bin/cogs -c cogs-client.js -pw src
+volumes:
+  build:
+  pg-data:
 
-cogsserver:
-  image: node:4.0.0
-  volumes:
-    - .:/code
-  working_dir: /code
-  command: node_modules/.bin/cogs -c cogs-server.js -pw src
+services:
+  postgres:
+    image: postgres:9.6.2
+    volumes:
+      - pg-data:/var/lib/postgresql/data
 
-app:
-  image: node:4.0.0
-  volumes:
-    - .:/code
-  working_dir: /code
-  links:
-    - postgres
-  ports:
-    - '80:80'
-  environment:
-    AWS_ACCESS_KEY_ID:
-    AWS_SECRET_ACCESS_KEY:
-    POSTGRES_URL: postgres://postgres:postgres@postgres/postgres
-    PORT: '80'
-  command: node_modules/.bin/watchy -pw build -- make start
+  cogs: &shared
+    image: quay.io/coderiety/bruteball:809e6613bb78a6d4779c37b17dd9e55b4ce9ebd5
+    command: bin/watch-build
+    environment:
+      LIVERELOAD_URL: http://localhost:8081
+    volumes:
+      - ./.eslintrc:/code/.eslintrc
+      - ./.stylelintrc:/code/.stylelintrc
+      - ./bin:/code/bin
+      - ./etc:/code/etc
+      - ./package.json:/code/package.json
+      - ./src:/code/src
+      - build:/code/build
+
+  livereload:
+    <<: *shared
+    command: bin/livereload
+    ports:
+      - 8081:80
+
+  client:
+    <<: *shared
+    command: bin/client
+    ports:
+      - 80:80
+
+  signal:
+    <<: *shared
+    command: bin/watch-signal
+    depends_on:
+      - postgres
+    ports:
+      - 8080:80

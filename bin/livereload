@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+set -e
+
+exec node_modules/.bin/livereload build/client -p 80
