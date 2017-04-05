@@ -1,26 +1,26 @@
 import _ from 'underscore';
-import config from '../config';
-import * as WallBody from '../bodies/wall';
+import WallBody from '../bodies/wall';
 
-var WallMesh = config.node ? null : require('client/meshes/wall');
+const BOTTOM_LEFT = {x: 0, y: 0};
+const BOTTOM_RIGHT = {x: 1, y: 0};
+const TOP_RIGHT = {x: 1, y: 1};
+const TOP_LEFT = {x: 0, y: 1};
+const SQUARE = [BOTTOM_LEFT, BOTTOM_RIGHT, TOP_RIGHT, TOP_LEFT];
 
-var BOTTOM_LEFT = {x: 0, y: 0};
-var BOTTOM_RIGHT = {x: 1, y: 0};
-var TOP_RIGHT = {x: 1, y: 1};
-var TOP_LEFT = {x: 0, y: 1};
+export default class {
+  static SQUARE = SQUARE;
+  static WITHOUT_BOTTOM_LEFT = _.without(SQUARE, BOTTOM_LEFT);
+  static WITHOUT_BOTTOM_RIGHT = _.without(SQUARE, BOTTOM_RIGHT);
+  static WITHOUT_TOP_RIGHT = _.without(SQUARE, TOP_RIGHT);
+  static WITHOUT_TOP_LEFT = _.without(SQUARE, TOP_LEFT);
 
-export var SQUARE = [BOTTOM_LEFT, BOTTOM_RIGHT, TOP_RIGHT, TOP_LEFT];
-export var WITHOUT_BOTTOM_LEFT = _.without(SQUARE, BOTTOM_LEFT);
-export var WITHOUT_BOTTOM_RIGHT = _.without(SQUARE, BOTTOM_RIGHT);
-export var WITHOUT_TOP_RIGHT = _.without(SQUARE, TOP_RIGHT);
-export var WITHOUT_TOP_LEFT = _.without(SQUARE, TOP_LEFT);
+  constructor({game, points = SQUARE, x, y}) {
+    this.game = game;
+    this.points = points;
+    this.body = WallBody({game, points, x, y});
+  }
 
-export var create = function (options) {
-  options = _.extend({}, {points: SQUARE}, options);
-  return {
-    id: ++options.game.incr,
-    type: 'wall',
-    body: WallBody.create(options),
-    mesh: config.node ? null : WallMesh.create(options)
-  };
-};
+  destroy() {
+    this.game.world.DestroyBody(this.body);
+  }
+}

@@ -1,15 +1,18 @@
 import _ from 'underscore';
 import b2 from 'box2d.js';
-import * as BallBody from '../bodies/ball';
+import BallBody from '../bodies/ball';
 import config from '../config';
 import * as Game from '../objects/game';
 import * as Hat from '../objects/hat';
 
-var BallMesh = config.node ? null : require('client/meshes/ball');
-var THREE = config.node ? null : require('three');
-
 var DT = config.game.dt;
 var UP = config.node ? null : new THREE.Vector3(0, 0, 1);
+
+export default class {
+  constructor({game, x, y}) {
+    this.body = BallBody({game, x, y});
+  }
+}
 
 export var preStep = function (user) {
   var acceleration = user.acceleration;

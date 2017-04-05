@@ -1,5 +1,5 @@
 import b2 from 'box2d.js';
-import config from 'shared/config';
+import config from '../config';
 
 var BODY_DEF = new b2.b2BodyDef();
 
