@@ -11,7 +11,7 @@ export default () =>
     <div className={styles.headerWrapper}>
       <div className={styles.header}>
         <div className={styles.headerLeft}>
-          <img className={styles.logo} src='/gfx/logo.svg' />
+          Bruteball
         </div>
         <div className={styles.headerRight}>
           <User />

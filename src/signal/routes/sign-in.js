@@ -13,7 +13,7 @@ export default {
     findUser({emailAddress}).then(({signedInAt = null} = {}) =>
       mail({
         to: emailAddress,
-        subject: 'Sign in to Turbo Car Club',
+        subject: 'Sign in to Bruteball',
         markdown: signIn({
           token: sign(key, 'verify', {
             emailAddress,

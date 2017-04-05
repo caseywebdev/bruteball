@@ -7,7 +7,7 @@ import store from '../../utils/store';
 
 const render = () =>
   <BrowserRouter>
-    <Meta title='Turbo Car Club'>
+    <Meta title='Bruteball'>
       <Switch>
         <Route path='/games/:id' component={MainLayout} />
         <Route component={MainLayout} />
