@@ -62,7 +62,7 @@ var needsWait = function (game) {
 
 export var step = function (game) {
   if (config.node) {
-    game.stepTimeoutId = _.defer(_.partial(step, game));
+    game.stepImmediateId = setImmediate();
     if ((Date.now() - game.start) / DT_MS < game.step) return;
   } else if (needsWait(game)) return;
   if (game.step % STEPS_PER_BROADCAST === 0) {
@@ -218,5 +218,5 @@ export var start = function (game) {
 };
 
 export var stop = function (game) {
-  clearTimeout(game.stepTimeoutId);
+  clearImmediate(game.stepImmediateId);
 };
