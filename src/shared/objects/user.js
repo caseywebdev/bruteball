@@ -1,9 +1,9 @@
 import _ from 'underscore';
 import b2 from 'box2d.js';
-import * as BallBody from 'shared/bodies/ball';
-import config from 'shared/config';
-import * as Game from 'shared/objects/game';
-import * as Hat from 'shared/objects/hat';
+import * as BallBody from '../bodies/ball';
+import config from '../config';
+import * as Game from '../objects/game';
+import * as Hat from '../objects/hat';
 
 var BallMesh = config.node ? null : require('client/meshes/ball');
 var THREE = config.node ? null : require('three');

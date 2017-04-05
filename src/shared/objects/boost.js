@@ -1,7 +1,7 @@
 import _ from 'underscore';
 import b2 from 'box2d.js';
-import * as BoostBody from 'shared/bodies/boost';
-import config from 'shared/config';
+import * as BoostBody from '../bodies/boost';
+import config from '../config';
 
 var BoostMesh = config.node ? null : require('client/meshes/boost');
 

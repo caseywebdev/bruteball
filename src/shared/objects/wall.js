@@ -1,6 +1,6 @@
 import _ from 'underscore';
-import config from 'shared/config';
-import * as WallBody from 'shared/bodies/wall';
+import config from '../config';
+import * as WallBody from '../bodies/wall';
 
 var WallMesh = config.node ? null : require('client/meshes/wall');
 

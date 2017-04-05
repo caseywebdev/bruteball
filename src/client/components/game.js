@@ -1,4 +1,4 @@
-import Game from '../../../shared/objects/game';
+import Game from '../../shared/objects/game';
 import GameScene from '../scenes/game';
 import React, {Component, PropTypes} from 'react';
 

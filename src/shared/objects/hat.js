@@ -1,7 +1,7 @@
 import _ from 'underscore';
 import b2 from 'box2d.js';
-import * as BombBody from 'shared/bodies/hat';
-import config from 'shared/config';
+import * as BombBody from '../bodies/hat';
+import config from '../config';
 
 var HatMesh = config.node ? null : require('client/meshes/hat');
 

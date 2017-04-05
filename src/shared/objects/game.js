@@ -1,13 +1,13 @@
 import _ from 'underscore';
-import average from 'shared/utils/average';
+import average from '../utils/average';
 import b2 from 'box2d.js';
-import * as Bomb from 'shared/objects/bomb';
-import * as Boost from 'shared/objects/boost';
-import config from 'shared/config';
-import * as Hat from 'shared/objects/hat';
-import stdDev from 'shared/utils/standard-deviation';
-import * as User from 'shared/objects/user';
-import * as Wall from 'shared/objects/wall';
+import * as Bomb from './bomb';
+import * as Boost from './boost';
+import config from '../config';
+import * as Hat from './hat';
+import stdDev from '../utils/standard-deviation';
+import * as User from './user';
+import * as Wall from './wall';
 
 var gamePattern = config.node ? require('patterns/games/show') : null;
 var THREE = config.node ? null : require('three');
