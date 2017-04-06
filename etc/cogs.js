@@ -22,8 +22,7 @@ const STATIC = {
           'process.env.(\\w+)': (_, key) => JSON.stringify(process.env[key])
         }
       }
-    },
-    {name: 'imagemin', only: '**/*.svg', options: {plugins: {svgo: {}}}}
+    }
   ],
   builds: {
     'etc/nginx.conf': '/etc/nginx/nginx.conf',

@@ -5,7 +5,7 @@ const {env} = window;
 export default {
   ...shared,
   disk: {
-    namespace: 'tcc'
+    namespace: 'bruteball'
   },
   livereload: {
     url: env.LIVERELOAD_URL

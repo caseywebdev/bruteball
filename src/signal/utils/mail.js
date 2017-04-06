@@ -1,5 +1,4 @@
 import config from '../config';
-import log from './log';
 import nodemailer from 'nodemailer';
 import {markdown} from 'nodemailer-markdown';
 import nodemailerSesTransport from 'nodemailer-ses-transport';
@@ -14,7 +13,7 @@ export default options => {
   if (enabled) return transport.sendMail({...options, from});
 
   const {to, subject, markdown} = options;
-  log.info(`
+  console.log(`
 MAIL
 TO ${JSON.stringify(to)}
 FROM ${JSON.stringify(from)}

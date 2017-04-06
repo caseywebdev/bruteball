@@ -1,6 +1,5 @@
 import _ from 'underscore';
 import Live from 'live-socket';
-import log from '../utils/log';
 import Promise from 'better-promise';
 import ws from 'uws';
 
@@ -28,7 +27,7 @@ const LISTENERS = _.map({
     )
 );
 
-log.info('Starting WebSocket server...');
+console.log('Starting WebSocket server...');
 const wss = new ws.Server({port: 80});
 
 wss.on('connection', socket => {

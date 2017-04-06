@@ -13,15 +13,15 @@ export const up = ({schema}) =>
     .createTable('maps', t => {
       t.uuid('id').primary();
       t.string('name').notNullable().unique();
-      t.timestamps();
+      t.timestamp('createdAt').defaultTo('now()');
     })
 
     .createTable('games', t => {
       t.uuid('id').primary();
-      t.integer('mapId').notNullable().references('id').inTable('maps');
+      t.uuid('mapId').notNullable().references('id').inTable('maps');
       t.string('name');
       t.string('email').notNullable().unique();
-      t.timestamps();
+      t.timestamp('createdAt').defaultTo('now()');
     });
 
 export const down = ({schema}) =>
