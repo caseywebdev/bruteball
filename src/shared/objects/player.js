@@ -5,8 +5,10 @@ import config from '../config';
 var DT = config.game.dt;
 
 export default class {
-  constructor({game, x, y}) {
+  constructor({game, id, user, x, y}) {
     this.game = game;
+    this.id = id;
+    this.user = user;
     this.body = BallBody({game, x, y});
     this.acceleration = new b2.b2Vec2(0, 0);
   }
@@ -27,6 +29,12 @@ export default class {
       velocity.Set(velocity.get_x() * maxSpeed, velocity.get_y() * maxSpeed);
     }
     body.SetLinearVelocity(velocity);
+  }
+
+  setAcceleration({x, y}) {
+    const {acceleration} = this;
+    acceleration.Set(x, y);
+    if (acceleration.Length() > 1) acceleration.Normalize();
   }
 
   destroy() {

@@ -14,8 +14,9 @@ export default class {
   static WITHOUT_TOP_RIGHT = _.without(SQUARE, TOP_RIGHT);
   static WITHOUT_TOP_LEFT = _.without(SQUARE, TOP_LEFT);
 
-  constructor({game, points = SQUARE, x, y}) {
+  constructor({game, id, points = SQUARE, x, y}) {
     this.game = game;
+    this.id = id;
     this.points = points;
     this.body = WallBody({game, points, x, y});
   }

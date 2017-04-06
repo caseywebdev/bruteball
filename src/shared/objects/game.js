@@ -86,21 +86,27 @@ export var setAcceleration = function (game, user, x, y) {
   game.changed.push(ref);
 };
 
-export var createObject = function (game, options) {
-  var existing = _.find(game.objects, _.pick(options, 'type', 'id'));
-  if (options.id && existing) return existing;
-  var Type = require('shared/objects/' + options.type);
-  var object = Type.create(_.extend({game: game}, options), game);
-  game.objects = game.objects.concat(object);
+createObject(klass, options) {
+  let {id} = options;
+  if (id) {
+    const object = _.find(game.objects, {id});
+    if (object) return object;
+  } else {
+    id = ++game.idCounter;
+  }
+
+  const object = new klass(_.extend({}, options, {game: this, id});
+  game.objects.push(object);
   return object;
 };
 
-export var destroyObject = function (game, object) {
-  var existing = _.find(game.objects, _.pick(object, 'type', 'id'));
-  if (!existing) return;
-  require('shared/objects/' + object.type).destroy(existing);
-  game.objects = _.without(game.objects, existing);
-  return existing;
+destroyObject(game, {id}) {
+  const object = _.find(game.objects, _.pick(object, 'type', 'id'));
+  if (!object) return;
+
+  object.destroy();
+  game.objects = _.without(game.objects, object);
+  return object;
 };
 
 var handleCollision = function (game, a, b) {
@@ -119,7 +125,7 @@ export var addFrame = function (game, frame) {
 
 export var create = function () {
   var game = {
-    incr: 0,
+    idCounter: 0,
     step: 0,
     start: Date.now(),
     stepDeltas: [],
