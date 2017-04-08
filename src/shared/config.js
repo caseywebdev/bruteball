@@ -1,5 +1,5 @@
 import _ from 'underscore';
-import b2 from 'box2d.js';
+import {Vec2} from 'planck-js';
 import Qs from 'qs';
 
 const {env} = typeof window === 'undefined' ? process : window;
@@ -14,7 +14,7 @@ export default {
     boostWait: 500,
     fixedTimeStep: 1 / 60,
     hatRadius: 0.375,
-    hiddenPosition: new b2.b2Vec2(-1, -1),
+    hiddenPosition: new Vec2(-1, -1),
     linearDamping: 0.5,
     maxSpeed: 7.5,
     positionIterations: 10,

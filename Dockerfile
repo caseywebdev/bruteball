@@ -19,12 +19,12 @@ COPY bin/build /code/bin/build
 COPY etc/cogs.js /code/etc/cogs.js
 COPY etc/nginx.conf /code/etc/nginx.conf
 COPY src /code/src
-ENV CLIENT_URL http://localhost
 RUN MINIFY=1 bin/build
 
 COPY bin /code/bin
 COPY etc /code/etc
 
+ENV CLIENT_URL http://localhost
 ENV KEY foo
 ENV MAIL_ENABLED 0
 ENV MAIL_FROM_ADDRESS info@bruteball.com

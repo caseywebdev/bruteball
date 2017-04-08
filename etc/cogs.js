@@ -3,7 +3,7 @@ const url = require('url');
 const {env} = process;
 const MINIFY = env.MINIFY === '1';
 const ONLY_STATIC = env.ONLY_STATIC === '1';
-const {CLIENT_URL} = env;
+const {CLIENT_URL = 'http://localhost'} = env;
 const CLIENT_SERVER_NAME = url.parse(CLIENT_URL).hostname;
 
 const STATIC = {
