@@ -31,7 +31,7 @@
     "nodemailer-markdown": "1.0.1",
     "nodemailer-ses-transport": "1.5.1",
     "nodemailer": "4.0.0",
-    "pave-react": "0.8.2",
+    "pave-react": "0.8.3",
     "pave": "0.4.3",
     "pg": "6.1.5",
     "planck-js": "0.1.32",

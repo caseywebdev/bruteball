@@ -1,14 +1,9 @@
 import _ from 'underscore';
-import React, {Component, PropTypes} from 'react';
+import React, {Component} from 'react';
 
 let components = [];
 
 export default class extends Component {
-  static propTypes = {
-    children: PropTypes.element,
-    title: PropTypes.string
-  };
-
   componentWillMount() {
     components.push(this);
   }
