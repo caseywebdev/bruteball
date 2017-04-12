@@ -1,6 +1,6 @@
 // import _ from 'underscore';
 // import average from '../utils/average';
-// import b2 from 'box2d.js';
+// import {World} from 'planck-js';
 // import * as Bomb from './bomb';
 // import * as Boost from './boost';
 // import config from '../config';
@@ -8,9 +8,6 @@
 // import stdDev from '../utils/standard-deviation';
 // import * as User from './user';
 // import * as Wall from './wall';
-//
-// var gamePattern = config.node ? require('patterns/games/show') : null;
-// var THREE = config.node ? null : require('three');
 //
 // var MAP_SIZE = 32;
 //
@@ -20,13 +17,6 @@
 // var STEPS_PER_BROADCAST = config.game.stepsPerBroadcast;
 // var STEP_DELTAS_TO_HOLD = 10;
 // var VI = config.game.velocityIterations;
-//
-// var broadcast = function (game) {
-//   if (config.node && game.changed.length) {
-//     require('setup/io').server.to('all').emit('g', gamePattern(game));
-//   }
-//   game.changed = [];
-// };
 //
 // var invoke = function (game, key) {
 //   _.each(game.objects, function (object) {
@@ -134,8 +124,7 @@
 //     frames: [],
 //     objects: [],
 //     changed: [],
-//     world: new b2.b2World(),
-//     scene: config.node ? null : new THREE.Scene()
+//     world: new World()
 //   };
 //   _.each([{
 //     type: 'wall',
