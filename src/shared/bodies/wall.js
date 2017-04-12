@@ -1,19 +1,15 @@
-import b2 from 'box2d.js';
-import createVerticesPointer from '../utils/create-vertices-pointer';
+import _ from 'underscore';
+import {Polygon, Vec2} from 'planck-js';
 
-const BODY_DEF = new b2.b2BodyDef();
-
-const FIXTURE_DEF = new b2.b2FixtureDef();
-FIXTURE_DEF.set_restitution(0.2);
-FIXTURE_DEF.set_friction(0);
+const FIXTURE_DEF = {
+  friction: 0,
+  restitution: 0.2
+};
 
 export default ({game, points, x, y}) => {
-  const shape = new b2.b2PolygonShape();
-  shape.Set(createVerticesPointer(points), points.length);
-  BODY_DEF.get_position().Set(x, y);
-  const body = game.world.CreateBody(BODY_DEF);
-  FIXTURE_DEF.set_shape(shape);
-  body.CreateFixture(FIXTURE_DEF);
-  b2.destroy(shape);
+  const shape = new Polygon(_.map(points, ({x, y}) => new Vec2(x, y)));
+  const body = game.world.createBody();
+  body.setPosition(new Vec2(x, y));
+  body.createFixture(shape, FIXTURE_DEF);
   return body;
 };

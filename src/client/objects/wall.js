@@ -4,7 +4,7 @@ import WallMesh from '../meshes/wall';
 export default class extends Wall {
   constructor(options) {
     super(options);
-    const {points = Wall.SQAURE, x, y} = options;
+    const {points = Wall.SQUARE, x, y} = options;
     this.mesh = new WallMesh({points, x, y});
     this.game.scene.add(this.mesh);
   }

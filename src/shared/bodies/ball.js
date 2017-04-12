@@ -1,4 +1,4 @@
-import {CircleShape, Vec2} from 'planck-js';
+import {Circle, Vec2} from 'planck-js';
 import config from '../config';
 
 const {ballRadius, linearDamping} = config.game;
@@ -10,7 +10,7 @@ const BODY_DEF = {
 };
 
 const FIXTURE_DEF = {
-  shape: new CircleShape(ballRadius),
+  shape: new Circle(ballRadius),
   density: 1,
   restitution: 0.2,
   friction: 0

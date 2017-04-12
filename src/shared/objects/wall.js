@@ -17,11 +17,10 @@ export default class {
   constructor({game, id, points = SQUARE, x, y}) {
     this.game = game;
     this.id = id;
-    this.points = points;
     this.body = WallBody({game, points, x, y});
   }
 
   destroy() {
-    this.game.world.DestroyBody(this.body);
+    this.game.world.destroyBody(this.body);
   }
 }

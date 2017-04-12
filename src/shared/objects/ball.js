@@ -1,8 +1,8 @@
-import b2 from 'box2d.js';
+import {Vec2} from 'planck-js';
 import BallBody from '../bodies/ball';
 import config from '../config';
 
-var DT = config.game.dt;
+const {accelerationScalar, fixedTimeStep} = config.game;
 
 export default class {
   constructor({game, id, user, x, y}) {
@@ -10,36 +10,37 @@ export default class {
     this.id = id;
     this.user = user;
     this.body = BallBody({game, x, y});
-    this.acceleration = new b2.b2Vec2(0, 0);
+    this.acceleration = new Vec2(0, 0);
+    this.game.world.on('pre-step', this.handlePreStep);
   }
 
-  preStep() {
+  handlePreStep = () => {
     const {acceleration, body} = this;
-    if (!acceleration.Length()) return;
+    if (!acceleration.length()) return;
 
-    const velocity = body.GetLinearVelocity();
-    const speed = velocity.Length();
-    const maxSpeed = Math.max(config.game.maxSpeed, speed);
-    velocity.Set(
-      velocity.get_x() + (acceleration.get_x() * config.game.acceleration * DT),
-      velocity.get_y() + (acceleration.get_y() * config.game.acceleration * DT)
+    const velocity = body.getLinearVelocity();
+    const speed = velocity.length();
+    velocity.set(
+      velocity.x + (acceleration.x * accelerationScalar * fixedTimeStep),
+      velocity.y + (acceleration.y * accelerationScalar * fixedTimeStep)
     );
-    if (velocity.Length() > maxSpeed) {
-      velocity.Normalize();
-      velocity.Set(velocity.get_x() * maxSpeed, velocity.get_y() * maxSpeed);
+    const maxSpeed = Math.max(config.game.maxSpeed, speed);
+    if (velocity.length() > maxSpeed) {
+      velocity.normalize();
+      velocity.set(velocity.x * maxSpeed, velocity.y * maxSpeed);
     }
-    body.SetLinearVelocity(velocity);
+    body.setLinearVelocity(velocity);
   }
 
   setAcceleration({x, y}) {
     const {acceleration} = this;
-    acceleration.Set(x, y);
-    if (acceleration.Length() > 1) acceleration.Normalize();
+    acceleration.set(x, y);
+    if (acceleration.length() > 1) acceleration.normalize();
   }
 
   destroy() {
-    b2.destroy(this.acceleration);
-    this.game.world.DestroyBody(this.body);
+    this.game.world.off('pre-step', this.handlePreStep);
+    this.game.world.destroyBody(this.body);
   }
 }
 

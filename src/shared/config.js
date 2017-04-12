@@ -6,7 +6,7 @@ const {env} = typeof window === 'undefined' ? process : window;
 
 export default {
   game: {
-    acceleration: 5,
+    accelerationScalar: 5,
     ballRadius: 0.49,
     bombRadius: 0.4,
     bombWait: 500,

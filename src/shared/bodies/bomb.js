@@ -1,18 +1,16 @@
-import b2 from 'box2d.js';
+import {Circle, Vec2} from 'planck-js';
 import config from '../config';
 
-const BODY_DEF = new b2.b2BodyDef();
+const {bombRadius} = config.game;
 
-const SHAPE = new b2.b2CircleShape();
-SHAPE.set_m_radius(config.game.bombRadius);
-
-const FIXTURE_DEF = new b2.b2FixtureDef();
-FIXTURE_DEF.set_shape(SHAPE);
-FIXTURE_DEF.set_isSensor(true);
+const FIXTURE_DEF = {
+  shape: new Circle(bombRadius),
+  isSensor: true
+};
 
 export default ({game, x, y}) => {
-  BODY_DEF.get_position().Set(x, y);
-  const body = game.world.CreateBody(BODY_DEF);
-  body.CreateFixture(FIXTURE_DEF);
+  const body = game.world.createBody();
+  body.setPosition(new Vec2(x, y));
+  body.createFixture(FIXTURE_DEF);
   return body;
 };

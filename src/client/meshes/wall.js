@@ -1,19 +1,25 @@
 import _ from 'underscore';
-import THREE from 'three';
+import {
+  ExtrudeGeometry,
+  Mesh,
+  MeshLambertMaterial,
+  Shape,
+  Vector2
+} from 'three';
 
 const EXTRUDE_OPTIONS = {amount: 1, steps: 1, bevelEnabled: false};
 
-const MATERIAL = new THREE.MeshLambertMaterial({color: 0xff0000});
+const MATERIAL = new MeshLambertMaterial({color: 0xff0000});
 
-const getVectorsFromPoints = ({x, y}) => new THREE.Vector2(x, y);
+const getVectorsFromPoints = ({x, y}) => new Vector2(x, y);
 
 const getGeometryForPoints = points =>
-  new THREE.ExtrudeGeometry(
-    new THREE.Shape(_.map(points, getVectorsFromPoints)),
+  new ExtrudeGeometry(
+    new Shape(_.map(points, getVectorsFromPoints)),
     EXTRUDE_OPTIONS
   );
 
-export default class extends THREE.Mesh {
+export default class extends Mesh {
   constructor({points, x, y}) {
     super(getGeometryForPoints(points), MATERIAL);
     this.castShadow = true;
