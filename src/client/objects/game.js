@@ -12,12 +12,12 @@ import FloorMesh from '../meshes/floor';
 import Game from '../../shared/objects/game';
 import ClientWall from './wall';
 import ClientBomb from './bomb';
-// import ClientBoost from './boost';
+import ClientBoost from './boost';
 // import ClientHat from './hat';
 import Ball from '../../shared/objects/ball';
 import Bomb from '../../shared/objects/bomb';
 import Wall from '../../shared/objects/wall';
-// import Boost from '../../shared/objects/boost';
+import Boost from '../../shared/objects/boost';
 // import Hat from '../../shared/objects/hat';
 
 class ArenaLight extends DirectionalLight {
@@ -88,6 +88,7 @@ class Renderer extends WebGLRenderer {
 const CLASS_MAP = new Map();
 CLASS_MAP.set(Wall, ClientWall);
 CLASS_MAP.set(Bomb, ClientBomb);
+CLASS_MAP.set(Boost, ClientBoost);
 
 export default class extends Game {
   createScene() {

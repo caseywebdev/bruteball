@@ -11,7 +11,7 @@ services:
       - pg-data:/var/lib/postgresql/data
 
   cogs: &shared
-    image: quay.io/coderiety/bruteball:4761b94301ce3f8ae9f7e960485bf7a873edcf93
+    image: quay.io/coderiety/bruteball:b8c2e85dea9224eff38ae21615965f9a1e32cf23
     command: bin/watch-build
     environment:
       LIVERELOAD_URL: http://localhost:8081
