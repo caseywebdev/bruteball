@@ -1,4 +1,4 @@
-FROM node:7.8.0
+FROM node:7.9.0
 
 RUN curl https://nginx.org/keys/nginx_signing.key | apt-key add - && \
     echo deb http://nginx.org/packages/mainline/debian/ jessie nginx >> \
