@@ -1,25 +1,27 @@
 import {
-  ImageUtils,
   Mesh,
   MeshLambertMaterial,
   NearestFilter,
   RepeatWrapping,
-  SphereGeometry
+  SphereGeometry,
+  TextureLoader
 } from 'three';
 import config from '../../shared/config';
 
 const GEOMETRY = new SphereGeometry(config.game.ballRadius, 16, 16);
 
-const TEXTURE_URL = '/textures/checker.jpg';
-const DIFFUSE_TEXTURE = ImageUtils.loadTexture(TEXTURE_URL);
-DIFFUSE_TEXTURE.wrapS = RepeatWrapping;
-DIFFUSE_TEXTURE.repeat.set(2, 1);
-DIFFUSE_TEXTURE.magFilter = NearestFilter;
+const MATERIAL = new MeshLambertMaterial({color: 0x6666ff});
 
-const MATERIAL = new MeshLambertMaterial({
-  map: DIFFUSE_TEXTURE,
-  color: 0x6666ff
-});
+(new TextureLoader()).load(
+  '/textures/checker.jpg',
+  texture => {
+    texture.wrapS = RepeatWrapping;
+    texture.repeat.set(2, 1);
+    texture.magFilter = NearestFilter;
+    MATERIAL.setValues({map: texture});
+    MATERIAL.needsUpdate = true;
+  }
+);
 
 export default class extends Mesh {
   constructor({x, y}) {

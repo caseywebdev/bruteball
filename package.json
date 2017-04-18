@@ -30,7 +30,7 @@
     "node-uuid": "1.4.8",
     "nodemailer-markdown": "1.0.1",
     "nodemailer-ses-transport": "1.5.1",
-    "nodemailer": "4.0.0",
+    "nodemailer": "4.0.1",
     "pave-react": "0.8.3",
     "pave": "0.4.3",
     "pg": "6.1.5",
