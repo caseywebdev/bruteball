@@ -1,6 +1,7 @@
 import _ from 'underscore';
 import React, {Component} from 'react';
 import {Vector2} from 'three';
+import styles from './game.scss';
 
 const KEYS = {
   38: {down: false, direction: new Vector2(0, 1)},
@@ -18,12 +19,14 @@ const getAv = () =>
 
 export default class extends Component {
   componentDidMount() {
+    this.interval = setInterval(::this.forceUpdate, 250);
     document.addEventListener('keydown', this.handleKey);
     document.addEventListener('keyup', this.handleKey);
     this.el.appendChild(this.props.game.renderer.domElement);
   }
 
   componentWillUnmount() {
+    clearInterval(this.interval);
     document.removeEventListener('keydown', this.handleKey);
     document.removeEventListener('keyup', this.handleKey);
   }
@@ -38,6 +41,10 @@ export default class extends Component {
   }
 
   render() {
-    return <div ref={c => this.el = c} style={{top: 0, left: 0, position: 'fixed'}}/>;
+    return (
+      <div className={styles.root} ref={c => this.el = c}>
+        <div className={styles.hud}>{Math.round(this.props.game.fps)} FPS</div>
+      </div>
+    );
   }
 }

@@ -44,7 +44,7 @@ const STYLES = {
     {name: 'directives', only: 'src/**/*.scss'},
     {name: 'sass', only: '**/*.scss'},
     {name: 'autoprefixer'},
-    {name: 'local-css', options: {base: 'src/client/styles', debug: !MINIFY}},
+    {name: 'local-css', options: {base: 'src/client', debug: !MINIFY}},
     MINIFY ? {
       name: 'clean-css',
       only: '**/*.+(scss|css)',
@@ -52,7 +52,7 @@ const STYLES = {
     } : []
   ),
   builds: {
-    'src/client/styles/index.scss': 'build/client/index.css'
+    'src/client/index.scss': 'build/client/index.css'
   }
 };
 
@@ -62,7 +62,7 @@ const CLIENT = {
     {
       name: 'local-css',
       only: 'src/**/*.scss',
-      options: {base: 'src/client/styles', debug: !MINIFY, export: true}
+      options: {base: 'src/client', debug: !MINIFY, export: true}
     },
     {name: 'eslint', only: 'src/**/*.js'},
     {

@@ -1,14 +1,18 @@
 import config from '../../shared/config';
-import THREE from 'three';
+import {
+  Mesh,
+  MeshLambertMaterial,
+  SphereGeometry
+} from 'three';
 
-const GEOMETRY = new THREE.SphereGeometry(config.game.hatRadius, 16, 16);
+const GEOMETRY = new SphereGeometry(config.game.hatRadius, 16, 16);
 
-const MATERIAL = new THREE.MeshLambertMaterial({color: 0xF4A460});
+const MATERIAL = new MeshLambertMaterial({color: 0xF4A460});
 
-export default class extends THREE.Mesh {
+export default class extends Mesh {
   constructor({x, y}) {
     super(GEOMETRY, MATERIAL);
     this.position.set(x, y, config.game.ballRadius * 2);
-    this.cashShadow = true;
+    this.castShadow = true;
   }
 }

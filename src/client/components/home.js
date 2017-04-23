@@ -2,7 +2,7 @@ import Game from '../objects/game';
 import GameComponent from './game';
 import React from 'react';
 import Regions from './regions';
-import styles from '../styles/home';
+import styles from './home.scss';
 import Ball from '../objects/ball';
 
 const game = new Game();
