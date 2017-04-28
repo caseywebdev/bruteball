@@ -20,6 +20,8 @@ export default class extends Ball {
     mesh.position.x = position.x;
     mesh.position.y = position.y;
     delta.sub(mesh.position);
+    if (!delta.length()) return;
+
     const theta = delta.length() / config.game.ballRadius;
     const axis = delta.cross(UP).normalize();
     mesh.matrix =

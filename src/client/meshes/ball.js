@@ -10,18 +10,12 @@ import config from '../../shared/config';
 
 const GEOMETRY = new SphereGeometry(config.game.ballRadius, 16, 16);
 
-const MATERIAL = new MeshLambertMaterial({color: 0x6666ff});
+const TEXTURE = (new TextureLoader()).load('/textures/checker.jpg');
+TEXTURE.wrapS = RepeatWrapping;
+TEXTURE.repeat.set(2, 1);
+TEXTURE.magFilter = NearestFilter;
 
-(new TextureLoader()).load(
-  '/textures/checker.jpg',
-  texture => {
-    texture.wrapS = RepeatWrapping;
-    texture.repeat.set(2, 1);
-    texture.magFilter = NearestFilter;
-    MATERIAL.setValues({map: texture});
-    MATERIAL.needsUpdate = true;
-  }
-);
+const MATERIAL = new MeshLambertMaterial({color: 0x6666ff, map: TEXTURE});
 
 export default class extends Mesh {
   constructor({x, y}) {
