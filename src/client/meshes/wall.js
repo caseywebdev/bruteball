@@ -4,12 +4,18 @@ import {
   Mesh,
   MeshLambertMaterial,
   Shape,
-  Vector2
+  Vector2,
+  RepeatWrapping,
+  TextureLoader
 } from 'three';
 
 const EXTRUDE_OPTIONS = {amount: 1, steps: 1, bevelEnabled: false};
 
-const MATERIAL = new MeshLambertMaterial({color: 0xff0000});
+const TEXTURE = (new TextureLoader()).load('/textures/dirt.jpg');
+TEXTURE.wrapS = TEXTURE.wrapT = RepeatWrapping;
+TEXTURE.repeat.set(0.25, 0.25);
+
+const MATERIAL = new MeshLambertMaterial({map: TEXTURE});
 
 const getVectorsFromPoints = ({x, y}) => new Vector2(x, y);
 

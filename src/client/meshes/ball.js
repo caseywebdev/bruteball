@@ -1,7 +1,6 @@
 import {
   Mesh,
   MeshLambertMaterial,
-  NearestFilter,
   RepeatWrapping,
   SphereGeometry,
   TextureLoader
@@ -10,12 +9,10 @@ import config from '../../shared/config';
 
 const GEOMETRY = new SphereGeometry(config.game.ballRadius, 16, 16);
 
-const TEXTURE = (new TextureLoader()).load('/textures/checker.jpg');
-TEXTURE.wrapS = RepeatWrapping;
-TEXTURE.repeat.set(2, 1);
-TEXTURE.magFilter = NearestFilter;
+const TEXTURE = (new TextureLoader()).load('/textures/rocks.png');
+TEXTURE.wrapS = TEXTURE.wrapT = RepeatWrapping;
 
-const MATERIAL = new MeshLambertMaterial({color: 0x6666ff, map: TEXTURE});
+const MATERIAL = new MeshLambertMaterial({map: TEXTURE});
 
 export default class extends Mesh {
   constructor({x, y}) {

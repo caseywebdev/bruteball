@@ -20,9 +20,9 @@ export default class extends Ball {
     mesh.position.x = position.x;
     mesh.position.y = position.y;
     delta.sub(mesh.position);
-    if (!delta.length()) return;
-
     const theta = delta.length() / config.game.ballRadius;
+    if (!theta) return;
+
     const axis = delta.cross(UP).normalize();
     mesh.matrix =
       (new Matrix4()).makeRotationAxis(axis, theta).multiply(mesh.matrix);
