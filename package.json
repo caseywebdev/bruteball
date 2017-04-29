@@ -24,7 +24,7 @@
     "eslint-plugin-react": "6.10.3",
     "eslint": "3.19.0",
     "jsonwebtoken": "7.4.0",
-    "knex": "0.12.9",
+    "knex": "0.13.0",
     "live-socket": "0.10.9",
     "livereload": "0.6.2",
     "node-uuid": "1.4.8",
@@ -45,7 +45,7 @@
     "three": "0.85.2",
     "underscore.string": "3.3.4",
     "underscore": "1.8.3",
-    "uws": "0.14.4",
+    "uws": "0.14.5",
     "watchy": "0.6.7",
     "whatwg-fetch": "2.0.3",
     "wrtc": "0.0.62"
