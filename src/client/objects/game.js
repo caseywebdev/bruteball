@@ -66,7 +66,8 @@ class Camera extends PerspectiveCamera {
 
 class Renderer extends WebGLRenderer {
   constructor() {
-    super({antialias: true});
+    super({antialias: false});
+    this.setPixelRatio(1);
     this.domElement.style.display = 'block';
     this.shadowMap.renderReverseSided = false;
     this.shadowMap.enabled = true;
