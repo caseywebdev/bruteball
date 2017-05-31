@@ -9,7 +9,7 @@ const {key} = config;
 
 export default {
   'signIn!.$obj':
-  ({store: {cache: {socket}}, 1: {emailAddress}}) =>
+  ({store: {state: {socket}}, 1: {emailAddress}}) =>
     findUser({emailAddress}).then(({signedInAt = null} = {}) =>
       mail({
         to: emailAddress,

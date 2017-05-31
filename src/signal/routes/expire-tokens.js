@@ -7,7 +7,7 @@ const {errors: {authRequired}} = config;
 
 export default {
   'expireTokens!':
-  ({store: {cache: {socket: {userId: id}}}}) => {
+  ({store: {state: {socket: {userId: id}}}}) => {
     if (!id) throw authRequired;
 
     return db('users')

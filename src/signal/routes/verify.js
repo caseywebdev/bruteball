@@ -34,7 +34,7 @@ const createAuthToken = (socket, data, user) => {
 
 export default {
   'verify!.$obj':
-  ({store: {cache: {socket}}, 1: {token}}) => {
+  ({store: {state: {socket}}, 1: {token}}) => {
     const data = verify(key, 'verify', token, verifyKeyMaxAge);
     if (!data) throw invalidKey;
 

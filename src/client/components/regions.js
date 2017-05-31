@@ -7,7 +7,7 @@ const renderRegion = ({id, ping}) =>
     {id} {ping == null ? '...' : Math.floor(ping * 1000)} ping
   </div>;
 
-const render = ({props: {pave: {cache: {regions}, error}}}) =>
+const render = ({props: {pave: {state: {regions}, error}}}) =>
   <div>{error ? error.toString() : _.map(regions, renderRegion)}</div>;
 
 export default withPave(
@@ -19,6 +19,6 @@ export default withPave(
       ['id', 'url', 'ping']
     ],
 
-    getCache: ({store}) => ({regions: store.get(['regions'])})
+    getState: ({store}) => ({regions: store.get(['regions'])})
   }
 );

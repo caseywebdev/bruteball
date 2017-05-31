@@ -14,7 +14,7 @@ const signOut = ({props: {pave: {store}}}) => {
   live.socket.close();
 };
 
-const render = ({props, props: {pave: {cache: {user}, error, isLoading}}}) =>
+const render = ({props, props: {pave: {state: {user}, error, isLoading}}}) =>
   <div>
     {
       user ?
@@ -38,7 +38,7 @@ export default withPave(
       store.get(['authToken']) ? [['user', ['id', 'name', 'emailHash']]] : []
     )],
 
-    getCache: () => ({
+    getState: () => ({
       authToken: store.get(['authToken']),
       user: store.get(['user'])
     })
