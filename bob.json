@@ -1,0 +1,9 @@
+{
+  "buildArgs": {
+    "VERSION": "{{SHA}}"
+  },
+  "tags": [
+    "quay.io/coderiety/bruteball:{{REF}}",
+    "quay.io/coderiety/bruteball:{{SHA}}"
+  ]
+}
