@@ -1,5 +1,5 @@
 import _ from 'underscore';
-import {Vec2} from 'planck-js';
+import {Vec2} from 'matter-js';
 import Qs from 'qs';
 
 const {env} = typeof window === 'undefined' ? process : window;

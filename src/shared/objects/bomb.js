@@ -1,5 +1,5 @@
 import _ from 'underscore';
-import {Vec2} from 'planck-js';
+import {Vec2} from 'matter-js';
 import Ball from './ball';
 import BombBody from '../bodies/bomb';
 import config from '../config';

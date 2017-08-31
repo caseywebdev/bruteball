@@ -1,4 +1,4 @@
-import {Vec2} from 'planck-js';
+import {Vec2} from 'matter-js';
 import BallBody from '../bodies/ball';
 import config from '../config';
 

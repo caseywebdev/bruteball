@@ -1,5 +1,5 @@
 import _ from 'underscore';
-import {Polygon, Vec2} from 'planck-js';
+import {Polygon, Vec2} from 'matter-js';
 
 const FIXTURE_DEF = {
   friction: 0,

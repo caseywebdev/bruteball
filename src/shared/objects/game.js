@@ -1,5 +1,5 @@
 import _ from 'underscore';
-import {World} from 'planck-js';
+import {World} from 'matter-js';
 import Bomb from './bomb';
 import Boost from './boost';
 import config from '../config';

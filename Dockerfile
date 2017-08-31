@@ -5,7 +5,7 @@ ENV \
   CONTAINERPILOT_VERSION='3.3.4'
 
 RUN \
-  apk --no-cache add curl libc6-compat nginx python && \
+  apk --no-cache add curl libc6-compat make g++ nginx python && \
   curl -fLsS https://releases.hashicorp.com/consul-template/$CONSUL_TEMPLATE_VERSION/consul-template_${CONSUL_TEMPLATE_VERSION}_linux_amd64.tgz | \
     tar xz -C /usr/local/bin && \
   curl -fLsS https://github.com/joyent/containerpilot/releases/download/$CONTAINERPILOT_VERSION/containerpilot-$CONTAINERPILOT_VERSION.tar.gz | \
@@ -18,6 +18,7 @@ RUN npm install
 
 COPY .eslintrc .stylelintrc ./
 COPY bin/build ./bin/
+COPY etc/cogs.js ./etc/
 COPY src src
 RUN MINIFY='1' bin/build
 

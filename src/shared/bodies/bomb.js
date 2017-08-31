@@ -1,4 +1,4 @@
-import {Circle, Vec2} from 'planck-js';
+import {Circle, Vec2} from 'matter-js';
 import config from '../config';
 
 const {bombRadius} = config.game;
