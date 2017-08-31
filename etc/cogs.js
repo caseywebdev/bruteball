@@ -1,31 +1,22 @@
-const url = require('url');
-
 const {env} = process;
 const MINIFY = env.MINIFY === '1';
 const ONLY_STATIC = env.ONLY_STATIC === '1';
-const {CLIENT_URL = 'http://localhost'} = env;
-const CLIENT_SERVER_NAME = url.parse(CLIENT_URL).hostname;
 
 const STATIC = {
   transformers: [
-    {
-      name: 'replace',
-      only: 'etc/nginx.conf',
-      options: {flags: 'g', patterns: {CLIENT_SERVER_NAME, CLIENT_URL}}
-    },
     {
       name: 'replace',
       only: 'src/client/public/index.html',
       options: {
         flags: 'g',
         patterns: {
-          'process.env.(\\w+)': (_, key) => JSON.stringify(process.env[key])
+          '{{env.escaped.(\\w+)}}': (_, key) => JSON.stringify(env[key]),
+          '{{env.literal.(\\w+)}}': (_, key) => env[key]
         }
       }
     }
   ],
   builds: {
-    'etc/nginx.conf': '/etc/nginx/nginx.conf',
     'src/client/public/**/*': {dir: 'build/client'}
   }
 };

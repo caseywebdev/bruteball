@@ -34,7 +34,7 @@
     "pave-react": "0.9.0",
     "pave": "0.4.6",
     "pg": "6.4.0",
-    "planck-js": "0.1.34",
+    "matter-js": "0.13.0",
     "qs": "6.4.0",
     "react-dom": "15.6.1",
     "react-router-dom": "4.1.1",

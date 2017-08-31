@@ -11,10 +11,10 @@
     <link href='/index.css' rel='stylesheet' />
     <script>
       window.env = {
-        LIVERELOAD_URL: process.env.LIVERELOAD_URL,
-        REGIONS: process.env.REGIONS,
-        SIGNAL_URL: process.env.SIGNAL_URL,
-        VERSION: process.env.VERSION
+        LIVERELOAD_URL: {{env.escaped.LIVERELOAD_URL}},
+        REGIONS: {{env.escaped.REGIONS}},
+        SIGNAL_URL: {{env.escaped.SIGNAL_URL}},
+        VERSION: {{env.escaped.VERSION}}
       };
     </script>
   </head>

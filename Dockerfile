@@ -1,39 +1,40 @@
-FROM node:8.1.2
+FROM node:8.4.0-alpine
 
-RUN curl https://nginx.org/keys/nginx_signing.key | apt-key add - && \
-    echo deb http://nginx.org/packages/mainline/debian/ jessie nginx >> \
-      /etc/apt/sources.list && \
-    echo deb-src http://nginx.org/packages/mainline/debian/ jessie nginx >> \
-      /etc/apt/sources.list && \
-    apt-get update && \
-    apt-get install -y nginx
+ENV \
+  CONSUL_TEMPLATE_VERSION='0.19.0' \
+  CONTAINERPILOT_VERSION='3.3.4'
+
+RUN \
+  apk --no-cache add libc6-compat nginx && \
+  curl -fLsS https://releases.hashicorp.com/consul-template/$CONSUL_TEMPLATE_VERSION/consul-template_${CONSUL_TEMPLATE_VERSION}_linux_amd64.tgz | \
+    tar xz -C /usr/local/bin && \
+  curl -fLsS https://github.com/joyent/containerpilot/releases/download/$CONTAINERPILOT_VERSION/containerpilot-$CONTAINERPILOT_VERSION.tar.gz | \
+    tar xz -C /usr/local/bin
 
 WORKDIR /code
 
-COPY package.json /code/package.json
+COPY package.json ./
 RUN npm install
 
-COPY .eslintrc /code/.eslintrc
-COPY .stylelintrc /code/.stylelintrc
-COPY bin/build /code/bin/build
-COPY etc/cogs.js /code/etc/cogs.js
-COPY etc/nginx.conf /code/etc/nginx.conf
-COPY src /code/src
-RUN MINIFY=1 bin/build
+COPY .eslintrc .stylelintrc ./
+COPY bin/build ./bin/
+COPY src src
+RUN MINIFY='1' bin/build
 
-COPY bin /code/bin
-COPY etc /code/etc
-
-ENV CLIENT_URL http://localhost
-ENV KEY foo
-ENV MAIL_ENABLED 0
-ENV MAIL_FROM_ADDRESS info@bruteball.com
-ENV MAIL_FROM_NAME Bruteball
-ENV POSTGRES_URL pg://postgres:postgres@postgres/postgres
-ENV REGIONS dev=http://localhost
-ENV SIGNAL_URL ws://localhost:8080
+COPY bin bin
+COPY etc etc
 
 ARG VERSION
-ENV VERSION $VERSION
+ENV \
+  CLIENT_URL='http://localhost' \
+  CONTAINERPILOT='/code/etc/containerpilot.json.gotmpl' \
+  KEY='foo' \
+  MAIL_ENABLED='0' \
+  MAIL_FROM_ADDRESS='info@bruteball.com' \
+  MAIL_FROM_NAME='Bruteball' \
+  POSTGRES_URL='pg://postgres:postgres@postgres/postgres' \
+  REGIONS='dev=http://localhost' \
+  SIGNAL_URL='ws://localhost:8080' \
+  VERSION="$VERSION"
 
-CMD ["bin/client"]
+CMD ["containerpilot"]
