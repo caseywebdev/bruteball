@@ -1,6 +1,6 @@
 import {BrowserRouter, Route, Switch} from 'react-router-dom';
 import {withPave} from 'pave-react';
-import MainLayout from './main';
+import MainLayout from '../main/layout';
 import Meta from '../meta';
 import React from 'react';
 import store from '../../utils/store';

@@ -1,11 +1,12 @@
 {
   consul: '{{env "CONSUL_URL"}}',
   jobs: [
+{{- if eq (env "COMMAND") "client"}}
     {name: 'setup', exec: 'bin/setup'},
-{{if (eq (env "WATCH") "1")}}
+  {{- if eq (env "WATCH") "1"}}
     {
-      name: 'watch-build',
-      exec: 'bin/watch-build',
+      name: 'build',
+      exec: 'bin/build',
       when: {source: 'setup', once: 'exitSuccess'},
       restarts: 'unlimited'
     },
@@ -15,17 +16,9 @@
       when: {source: 'setup', once: 'exitSuccess'},
       restarts: 'unlimited'
     },
-{{end}}
+  {{- end}}
+{{- end}}
     {
-      name: 'api',
-      exec: 'bin/api',
-      when: {source: 'setup', once: 'exitSuccess'},
-      restarts: 'unlimited'
-    },
-    {
-      name: '{{env "CONSUL_SERVICE_NAME"}}',
-      exec: 'nginx',
-      when: {source: 'setup', once: 'exitSuccess'},
 {{- if env "CONSUL_URL"}}
       port: 80,
       health: {
@@ -41,7 +34,14 @@
 {{- if env "CONSUL_SERVICE_TAGS"}}
       tags: ["{{env "CONSUL_SERVICE_TAGS" | split "," | join "\", \""}}"],
 {{- end}}
-      restarts: 'unlimited'
+{{- if or (eq (env "COMMAND") "client") (eq (env "COMMAND"), "signal")}}
+      restarts: 'unlimited',
+{{- end}}
+{{- if eq (env "COMMAND") "client"}}
+      when: {source: 'setup', once: 'exitSuccess'},
+{{- end}}
+      name: '{{env "CONSUL_SERVICE_NAME"}}-{{env "COMMAND"}}',
+      exec: 'bin/{{env "COMMAND"}}'
     }
   ]
 }

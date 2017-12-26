@@ -1,5 +1,12 @@
-#!/bin/sh
+#!/bin/sh -e
 
-set -e
-
-exec node_modules/.bin/cogs -c etc/cogs.js "$@"
+if [ "$WATCH" == '1' ]; then
+  node_modules/.bin/cogs \
+    -c etc/cogs.js \
+    -w dist/manifest.json \
+    -w etc/nginx.conf \
+    -w src/client \
+    -w src/shared
+else
+  node_modules/.bin/cogs -c etc/cogs.js
+fi

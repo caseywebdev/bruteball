@@ -1,6 +1,6 @@
-import _ from 'underscore';
-import {Vec2} from 'matter-js';
-import Qs from 'qs';
+const _ = require('underscore');
+const {Vec2} = require('matter-js');
+const Qs = require('qs');
 
 const {env} = typeof window === 'undefined' ? process : window;
 

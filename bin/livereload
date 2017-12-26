@@ -1,5 +1,3 @@
-#!/bin/sh
+#!/bin/sh -e
 
-set -e
-
-exec node_modules/.bin/livereload build/client -p 80
+node_modules/.bin/livereload dist/client -p 8080

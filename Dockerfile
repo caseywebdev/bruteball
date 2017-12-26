@@ -1,41 +1,41 @@
-FROM node:8.4.0-alpine
+FROM node:9.3.0-alpine
 
-ENV \
-  CONSUL_TEMPLATE_VERSION='0.19.0' \
-  CONTAINERPILOT_VERSION='3.3.4'
+ENV CONTAINERPILOT_VERSION='3.4.3'
 
 RUN \
-  apk --no-cache add curl libc6-compat make g++ nginx python && \
-  curl -fLsS https://releases.hashicorp.com/consul-template/$CONSUL_TEMPLATE_VERSION/consul-template_${CONSUL_TEMPLATE_VERSION}_linux_amd64.tgz | \
-    tar xz -C /usr/local/bin && \
+  apk --no-cache add curl make g++ nginx python && \
   curl -fLsS https://github.com/joyent/containerpilot/releases/download/$CONTAINERPILOT_VERSION/containerpilot-$CONTAINERPILOT_VERSION.tar.gz | \
     tar xz -C /usr/local/bin
 
 WORKDIR /code
 
 COPY package.json ./
-RUN npm install
+RUN npm install --no-save
 
 COPY .eslintrc .stylelintrc ./
 COPY bin/build ./bin/
-COPY etc/cogs.js ./etc/
-COPY src src
+COPY etc/cogs.js etc/nginx.conf ./etc/
+COPY src/client src/client
+COPY src/shared src/shared
 RUN MINIFY='1' bin/build
 
 COPY bin bin
 COPY etc etc
+COPY src src
 
 ARG VERSION
 ENV \
   CLIENT_URL='http://localhost' \
+  COMMAND='client' \
+  CONSUL_SERVICE_NAME='bruteball' \
+  CONSUL_SERVICE_TAGS='' \
+  CONSUL_URL='' \
   CONTAINERPILOT='/code/etc/containerpilot.json.gotmpl' \
-  KEY='foo' \
   MAIL_ENABLED='0' \
-  MAIL_FROM_ADDRESS='info@bruteball.com' \
+  MAIL_FROM_ADDRESS='bruteball@example.com' \
   MAIL_FROM_NAME='Bruteball' \
   POSTGRES_URL='pg://postgres:postgres@postgres/postgres' \
   REGIONS='dev=http://localhost' \
   SIGNAL_URL='ws://localhost:8080' \
-  VERSION="$VERSION"
-
-CMD ["containerpilot"]
+  VERSION="$VERSION" \
+  WATCH='0'

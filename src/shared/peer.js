@@ -1,4 +1,4 @@
-import wrtc from 'wrtc';
+const wrtc = require('wrtc');
 
 const resolveKey = key =>
   wrtc[key] ||

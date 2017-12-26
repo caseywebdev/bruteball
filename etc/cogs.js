@@ -1,59 +1,40 @@
 const {env} = process;
-const MINIFY = env.MINIFY === '1';
-const ONLY_STATIC = env.ONLY_STATIC === '1';
+const url = require('url');
 
-const STATIC = {
-  transformers: [
-    {
-      name: 'replace',
-      only: 'src/client/public/index.html',
-      options: {
-        flags: 'g',
-        patterns: {
-          '{{env.escaped.(\\w+)}}': (_, key) => JSON.stringify(env[key]),
-          '{{env.literal.(\\w+)}}': (_, key) => env[key]
-        }
-      }
-    }
-  ],
+const {CLIENT_URL = 'http://localhost'} = env;
+const MINIFY = env.MINIFY === '1';
+const ONLY_FINAL = env.ONLY_FINAL === '1';
+const WATCH = env.WATCH === '1';
+
+const CLIENT_HOSTNAME = url.parse(CLIENT_URL).hostname;
+
+const FINAL = {
+  transformers: {
+    name: 'underscore-template',
+    options: {data: {CLIENT_HOSTNAME, CLIENT_URL, WATCH}}
+  },
   builds: {
-    'src/client/public/**/*': {dir: 'build/client'}
+    'etc/nginx.conf': {base: 'etc', dir: '/etc/nginx'},
+    'src/client/index.html': {base: 'src', dir: 'dist'}
   }
 };
 
-const SERVER = {
-  transformers: [
-    'eslint',
-    {name: 'babel', options: {presets: ['es2015', 'stage-0']}}
-  ],
-  builds: {'src/+(host|signal|shared)/**/*.js': {dir: 'build'}}
-};
-
-const STYLES = {
+const FULL = {
   transformers: [].concat(
     {name: 'stylelint', only: 'src/**/*.scss', options: {syntax: 'scss'}},
-    {name: 'directives', only: 'src/**/*.scss'},
     {name: 'sass', only: '**/*.scss'},
-    {name: 'autoprefixer'},
-    {name: 'local-css', options: {base: 'src/client', debug: !MINIFY}},
-    MINIFY ? {
-      name: 'clean-css',
-      only: '**/*.+(scss|css)',
-      options: {processImport: false}
-    } : []
-  ),
-  builds: {
-    'src/client/index.scss': 'build/client/index.css'
-  }
-};
-
-const CLIENT = {
-  transformers: [].concat(
-    {name: 'sass', only: '**/*.scss'},
+    {name: 'autoprefixer', only: '**/*.+(css|scss)'},
+    MINIFY ? {name: 'clean-css', only: '**/*.+(scss|css)'} : [],
     {
       name: 'local-css',
-      only: 'src/**/*.scss',
-      options: {base: 'src/client', debug: !MINIFY, export: true}
+      only: '**/*.scss',
+      except: 'src/client/global.scss',
+      options: {debug: !MINIFY}
+    },
+    {
+      name: 'local-css',
+      only: 'src/client/global.scss',
+      options: {debug: !MINIFY, rename: false}
     },
     {name: 'eslint', only: 'src/**/*.js'},
     {
@@ -66,30 +47,40 @@ const CLIENT = {
         }
       }
     },
-    {name: 'text', only: '**/*.+(frag|vert)'},
-    {name: 'json', only: '**/*.+(json|scss)'},
     {
       name: 'babel',
-      only: ['src/**/*.+(js|json|frag|vert|scss)'],
+      only: 'src/**/*.+(js|css|scss)',
       options: {presets: ['es2015', 'stage-0', 'react']}
     },
     {
       name: 'concat-commonjs',
-      only: '**/*.+(js|json|vert|frag|scss)',
+      only: '**/*+(js|css|scss)',
       options: {
+        alias: {
+          react:
+            MINIFY ? 'react/cjs/react.production.min.js' :
+            'react/cjs/react.development.js'
+        },
         entry: 'src/client/index.js',
-        extensions: ['.js', '.json', '.vert', '.frag', '.scss']
+        extensions: ['.js', '.css', '.scss']
       }
     },
     MINIFY ? {
       name: 'uglify-js',
-      only: '**/*.+(js|json|vert|frag|scss)',
+      only: '**/*.+(js|css|scss)',
       except: '**/*+(-|_|.)min.js'
     } : []
   ),
   builds: {
-    'src/client/index.js': 'build/client/index.js'
-  }
+    'node_modules/font-awesome/fonts/*': {
+      base: 'node_modules/font-awesome',
+      dir: 'dist'
+    },
+    'src/client/public/**/*': {base: 'src/client/public', dir: 'dist'},
+    'src/client/index.js': {base: 'src/client', dir: 'dist'}
+  },
+  manifestPath: 'dist/manifest.json',
+  then: FINAL
 };
 
-module.exports = ONLY_STATIC ? [STATIC] : [CLIENT, STATIC, SERVER, STYLES];
+module.exports = ONLY_FINAL ? FINAL : FULL;
