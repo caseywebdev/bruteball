@@ -15,7 +15,7 @@ const FINAL = {
   },
   builds: {
     'etc/nginx.conf': {base: 'etc', dir: '/etc/nginx'},
-    'src/client/index.html': {base: 'src', dir: 'dist'}
+    'src/client/index.html': {base: 'src/client', dir: 'dist'}
   }
 };
 

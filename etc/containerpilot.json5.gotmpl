@@ -34,7 +34,7 @@
 {{- if env "CONSUL_SERVICE_TAGS"}}
       tags: ["{{env "CONSUL_SERVICE_TAGS" | split "," | join "\", \""}}"],
 {{- end}}
-{{- if or (eq (env "COMMAND") "client") (eq (env "COMMAND"), "signal")}}
+{{- if or (eq (env "COMMAND") "client") (eq (env "COMMAND") "signal")}}
       restarts: 'unlimited',
 {{- end}}
 {{- if eq (env "COMMAND") "client"}}
