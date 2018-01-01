@@ -39,3 +39,5 @@ ENV \
   SIGNAL_URL='ws://localhost:8080' \
   VERSION="$VERSION" \
   WATCH='0'
+
+CMD ["containerpilot"]
