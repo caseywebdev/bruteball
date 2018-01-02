@@ -1,48 +1,48 @@
-import {Vec2} from 'matter-js';
-import BallBody from '../bodies/ball';
-import config from '../config';
+const {Body, Events, Vector} = require('matter-js');
+const BallBody = require('../bodies/ball');
+const config = require('../config');
 
-const {accelerationScalar, fixedTimeStep} = config.game;
+const {accelerationScalar, fixedTimeStep, maxSpeed} = config.game;
 
-export default class {
+module.exports = class {
   constructor({game, id, user, x, y}) {
     this.game = game;
     this.id = id;
     this.user = user;
     this.body = BallBody({game, x, y});
-    this.acceleration = new Vec2(0, 0);
-    this.game.world.on('pre-step', this.handlePreStep);
+    this.acceleration = Vector.create(0, 0);
+    Events.on(this.game.engine, 'beforeUpdate', this.handlePreStep);
   }
 
   handlePreStep = () => {
-    const {acceleration, body} = this;
-    if (!acceleration.length()) return;
+    const {
+      acceleration: {x: ax, y: ay},
+      body,
+      body: {velocity: {x: vx, y: vy}}
+    } = this;
+    if (!ax && !ay) return;
 
-    const velocity = body.getLinearVelocity();
-    const speed = velocity.length();
-    velocity.set(
-      velocity.x + (acceleration.x * accelerationScalar * fixedTimeStep),
-      velocity.y + (acceleration.y * accelerationScalar * fixedTimeStep)
+    let velocity = Vector.create(
+      vx + (ax * accelerationScalar * fixedTimeStep),
+      vy + (ay * accelerationScalar * fixedTimeStep)
     );
-    const maxSpeed = Math.max(config.game.maxSpeed, speed);
-    if (velocity.length() > maxSpeed) {
-      velocity.normalize();
-      velocity.set(velocity.x * maxSpeed, velocity.y * maxSpeed);
+    if (Vector.magnitude(velocity) > maxSpeed) {
+      velocity = Vector.mult(Vector.normalise(velocity), maxSpeed);
     }
-    body.setLinearVelocity(velocity);
+    Body.setVelocity(body, velocity);
   }
 
   setAcceleration({x, y}) {
-    const {acceleration} = this;
-    acceleration.set(x, y);
-    if (acceleration.length() > 1) acceleration.normalize();
+    let v = Vector.create(x, y);
+    if (Vector.magnitude(v) > 1) v = Vector.normalise(v);
+    this.acceleration = v;
   }
 
   destroy() {
-    this.game.world.off('pre-step', this.handlePreStep);
+    Events.off(this.game.engine, 'beforeUpdate', this.handlePreStep);
     this.game.world.destroyBody(this.body);
   }
-}
+};
 
 // export var applyFrame = function (game, u, step) {
 //   if (step !== game.step) return;

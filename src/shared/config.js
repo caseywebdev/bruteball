@@ -1,12 +1,12 @@
 const _ = require('underscore');
-const {Vec2} = require('matter-js');
+const {Vector} = require('matter-js');
 const Qs = require('qs');
 
 const {env} = typeof window === 'undefined' ? process : window;
 
-export default {
+module.exports = {
   game: {
-    accelerationScalar: 5,
+    accelerationScalar: 0.2,
     ballRadius: 0.49,
     bombRadius: 0.4,
     bombWait: 500,
@@ -14,7 +14,7 @@ export default {
     boostWait: 500,
     fixedTimeStep: 1 / 60,
     hatRadius: 0.375,
-    hiddenPosition: new Vec2(-1, -1),
+    hiddenPosition: Vector.create(-1, -1),
     linearDamping: 0.5,
     maxSpeed: 7.5,
     positionIterations: 10,

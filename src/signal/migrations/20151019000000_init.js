@@ -1,4 +1,4 @@
-export const up = ({schema}) =>
+exports.up = ({schema}) =>
   schema
     .raw('CREATE EXTENSION IF NOT EXISTS citext')
     .createTable('users', t => {
@@ -24,7 +24,7 @@ export const up = ({schema}) =>
       t.timestamp('createdAt').defaultTo('now()');
     });
 
-export const down = ({schema}) =>
+exports.down = ({schema}) =>
   schema
     .dropTable('games')
     .dropTable('maps')

@@ -1,6 +1,6 @@
-// import _ from 'underscore';
-import live from '../utils/live';
-import Peer from '../../shared/peer';
+// const _ = require('underscore');
+const live = require('../utils/live');
+const Peer = require('../../shared/peer');
 
 const peers = {};
 
@@ -16,6 +16,6 @@ live.on('signal', ({id, data}) => getPeer(id).signal(data));
 //   _.each(PEERS, peer => peer.send('u', message));
 // };
 
-export default {peers};
+module.exports = {peers};
 
 // setInterval(() => _.invoke(peers, 'send', 'u', Date.now()), 1000);

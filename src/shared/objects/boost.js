@@ -1,15 +1,15 @@
-import Ball from './ball';
-import BoostBody from '../bodies/boost';
-import config from '../config';
+const Ball = require('./ball');
+const BoostBody = require('../bodies/boost');
+const config = require('../config');
 
 const POWER = 15;
 
-export default class {
+module.exports = class {
   constructor({game, id, x, y}) {
     this.game = game;
     this.id = id;
     this.body = BoostBody({game, x, y});
-    this.game.world.on('pre-step', this.handlePreStep);
+    // this.game.world.on('pre-step', this.handlePreStep);
   }
 
   isUsed() {
@@ -34,4 +34,4 @@ export default class {
     this.game.world.off('pre-step', this.handlePreStep);
     this.game.world.destroyBody(this.body);
   }
-}
+};

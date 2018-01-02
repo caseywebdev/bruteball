@@ -1,6 +1,6 @@
-import _ from 'underscore';
+const _ = require('underscore');
 
-export default () => {
+module.exports = () => {
   if (typeof process !== 'undefined') {
     const [s, ns] = process.hrtime();
     return s + (ns / 1e9);

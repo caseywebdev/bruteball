@@ -1,6 +1,6 @@
-import config from '../config';
-import Live from 'live-socket';
-import ws from 'uws';
+const config = require('../config');
+const Live = require('live-socket');
+const ws = require('uws');
 
 const {key, name, signal: {url}} = config;
 
@@ -16,4 +16,4 @@ live.on('open', () => {
   });
 });
 
-export default live;
+module.exports = live;

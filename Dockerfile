@@ -4,6 +4,7 @@ ENV CONTAINERPILOT_VERSION='3.4.3'
 
 RUN \
   apk --no-cache add curl make g++ nginx python && \
+  mkdir -p /run/nginx && \
   curl -fLsS https://github.com/joyent/containerpilot/releases/download/$CONTAINERPILOT_VERSION/containerpilot-$CONTAINERPILOT_VERSION.tar.gz | \
     tar xz -C /usr/local/bin
 
@@ -30,7 +31,7 @@ ENV \
   CONSUL_SERVICE_NAME='bruteball' \
   CONSUL_SERVICE_TAGS='' \
   CONSUL_URL='' \
-  CONTAINERPILOT='/code/etc/containerpilot.json.gotmpl' \
+  CONTAINERPILOT='/code/etc/containerpilot.json5.gotmpl' \
   MAIL_ENABLED='0' \
   MAIL_FROM_ADDRESS='bruteball@example.com' \
   MAIL_FROM_NAME='Bruteball' \

@@ -1,5 +1,5 @@
-import jwt from 'jsonwebtoken';
+const jwt = require('jsonwebtoken');
 
-export default (key, subject, token, maxAge) => {
+module.exports = (key, subject, token, maxAge) => {
   try { return jwt.verify(token, key, {subject, maxAge}); } catch (er) {}
 };

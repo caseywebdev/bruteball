@@ -1,13 +1,13 @@
-import _ from 'underscore';
-import config from '../config';
-import findUser from '../utils/find-user';
-import sign from '../../shared/utils/sign';
-import signIn from '../templates/sign-in';
-import mail from '../utils/mail';
+const _ = require('underscore');
+const config = require('../config');
+const findUser = require('../utils/find-user');
+const sign = require('../../shared/utils/sign');
+const signIn = require('../templates/sign-in');
+const mail = require('../utils/mail');
 
 const {key} = config;
 
-export default {
+module.exports = {
   'signIn!.$obj':
   ({store: {state: {socket}}, 1: {emailAddress}}) =>
     findUser({emailAddress}).then(({signedInAt = null} = {}) =>

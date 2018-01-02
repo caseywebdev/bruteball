@@ -1,6 +1,6 @@
-import auth from '../utils/auth';
+const auth = require('../utils/auth');
 
-export default {
+module.exports = {
   'auth!.$obj':
   ({store: {state: {socket}}, 1: options}) =>
     auth(socket, options.token, options)

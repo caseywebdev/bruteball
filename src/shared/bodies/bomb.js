@@ -1,16 +1,10 @@
-import {Circle, Vec2} from 'matter-js';
-import config from '../config';
+const {Bodies, World} = require('matter-js');
+const config = require('../config');
 
 const {bombRadius} = config.game;
 
-const FIXTURE_DEF = {
-  shape: new Circle(bombRadius),
-  isSensor: true
-};
-
-export default ({game, x, y}) => {
-  const body = game.world.createBody();
-  body.setPosition(new Vec2(x, y));
-  body.createFixture(FIXTURE_DEF);
+module.exports = ({game, x, y}) => {
+  const body = Bodies.circle(x, y, bombRadius, {isSensor: true});
+  World.addBody(game.world, body);
   return body;
 };

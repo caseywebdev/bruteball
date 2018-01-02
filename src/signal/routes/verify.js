@@ -1,10 +1,10 @@
-import auth from '../utils/auth';
-import config from '../config';
-import findOrCreateUser from '../utils/find-or-create-user';
-import sockets from '../utils/sockets';
-import sign from '../../shared/utils/sign';
-import updateSignedInAt from '../utils/update-signed-in-at';
-import verify from '../../shared/utils/verify';
+const auth = require('../utils/auth');
+const config = require('../config');
+const findOrCreateUser = require('../utils/find-or-create-user');
+const sockets = require('../utils/sockets');
+const sign = require('../../shared/utils/sign');
+const updateSignedInAt = require('../utils/update-signed-in-at');
+const verify = require('../../shared/utils/verify');
 
 const {key, errors: {invalidKey}, verifyKeyMaxAge} = config;
 
@@ -32,7 +32,7 @@ const createAuthToken = (socket, data, user) => {
   return auth(socket, token).then(() => delta);
 };
 
-export default {
+module.exports = {
   'verify!.$obj':
   ({store: {state: {socket}}, 1: {token}}) => {
     const data = verify(key, 'verify', token, verifyKeyMaxAge);

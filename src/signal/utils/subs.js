@@ -1,13 +1,13 @@
-import sockets from '../utils/sockets';
+const sockets = require('../utils/sockets');
 
 const SUBS = {};
 
-export const add = (socket, event) => {
+exports.add = (socket, event) => {
   (socket.events || (socket.events = {}))[event] = true;
   (SUBS[event] || (SUBS[event] = {}))[socket.id] = true;
 };
 
-export const remove = (socket, event) => {
+exports.remove = (socket, event) => {
   const {events} = socket;
 
   if (!events) return;
@@ -21,7 +21,7 @@ export const remove = (socket, event) => {
   delete SUBS[event][socket.id];
 };
 
-export const trigger = (event, data) => {
+exports.trigger = (event, data) => {
   const {all} = sockets;
   for (let id in SUBS[event]) all[id].send(event, data);
 };

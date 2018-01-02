@@ -1,5 +1,5 @@
-import createUser from './create-user';
-import findUser from './find-user';
+const createUser = require('./create-user');
+const findUser = require('./find-user');
 
-export default where =>
+module.exports = where =>
   findUser(where).then(user => user || createUser(where));

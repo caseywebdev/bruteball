@@ -1,3 +1,3 @@
-import _ from 'underscore';
+const _ = require('underscore');
 
-export default ns => _.reduce(ns, (sum, n) => sum + n, 0);
+module.exports = ns => _.reduce(ns, (sum, n) => sum + n, 0);

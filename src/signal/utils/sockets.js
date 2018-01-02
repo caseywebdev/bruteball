@@ -1,1 +1,1 @@
-export default {all: {}, users: {}, hosts: {}};
+module.exports = {all: {}, users: {}, hosts: {}};

@@ -1,3 +1,3 @@
-import jwt from 'jsonwebtoken';
+const jwt = require('jsonwebtoken');
 
-export default (key, subject, obj) => jwt.sign(obj, key, {subject});
+module.exports = (key, subject, obj) => jwt.sign(obj, key, {subject});

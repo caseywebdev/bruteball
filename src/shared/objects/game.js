@@ -1,11 +1,11 @@
-import _ from 'underscore';
-import {World} from 'matter-js';
-import Bomb from './bomb';
-import Boost from './boost';
-import config from '../config';
-import Hat from './hat';
-import Wall from './wall';
-import now from '../utils/now';
+const _ = require('underscore');
+const {Engine, World} = require('matter-js');
+const Bomb = require('./bomb');
+const Boost = require('./boost');
+const config = require('../config');
+const Hat = require('./hat');
+const Wall = require('./wall');
+const now = require('../utils/now');
 
 const {fixedTimeStep, positionIterations, velocityIterations} = config.game;
 
@@ -82,22 +82,27 @@ const createMap = game => {
   ], ({klass, ...options}) => game.createObject(klass, options));
 };
 
-export default class {
+module.exports = class {
   stepCount = 0;
   time = 0;
   idCounter = 0;
   objects = [];
-  world = new World();
+  world = World.create();
+  engine = Engine.create({
+    positionIterations,
+    velocityIterations,
+    world: this.world
+  });
 
   constructor() {
     this.createScene();
     createMap(this);
-    this.world.on('begin-contact', ({m_fixtureA: a, m_fixtureB: b}) => {
-      a = _.find(this.objects, {body: a.m_body});
-      b = _.find(this.objects, {body: b.m_body});
-      if (a.handleContact) a.handleContact(b);
-      if (b.handleContact) b.handleContact(a);
-    });
+    // this.world.on('begin-contact', ({m_fixtureA: a, m_fixtureB: b}) => {
+    //   a = _.find(this.objects, {body: a.m_body});
+    //   b = _.find(this.objects, {body: b.m_body});
+    //   if (a.handleContact) a.handleContact(b);
+    //   if (b.handleContact) b.handleContact(a);
+    // });
     this.start();
   }
 
@@ -119,9 +124,7 @@ export default class {
     }
 
     ++this.stepCount;
-    this.world.publish('pre-step');
-    this.world.step(fixedTimeStep, velocityIterations, positionIterations);
-    this.world.publish('post-step');
+    Engine.update(this.engine, fixedTimeStep);
     this.step();
   }
 
@@ -146,4 +149,4 @@ export default class {
     this.objects = _.without(this.objects, object);
     return object;
   }
-}
+};

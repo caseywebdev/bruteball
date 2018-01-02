@@ -1,5 +1,5 @@
-import _ from 'underscore';
-import db from './db';
+const _ = require('underscore');
+const db = require('./db');
 
-export default where =>
+module.exports = where =>
   db('users').select('*').where(where).then(_.first);

@@ -1,4 +1,4 @@
-import _ from 'underscore';
-import sockets from '../utils/sockets';
+const _ = require('underscore');
+const sockets = require('../utils/sockets');
 
-export default () => _.compact(_.map(sockets.all, 'host'));
+module.exports = () => _.compact(_.map(sockets.all, 'host'));

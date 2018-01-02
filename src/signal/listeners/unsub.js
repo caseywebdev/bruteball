@@ -1,3 +1,3 @@
-import {remove} from '../utils/subs';
+const {remove} = require('../utils/subs');
 
-export default ({socket, params: event}) => remove(socket, event);
+module.exports = ({socket, params: event}) => remove(socket, event);

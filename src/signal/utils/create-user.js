@@ -1,8 +1,8 @@
-import _ from 'underscore';
-import db from './db';
-import uuid from 'node-uuid';
+const _ = require('underscore');
+const db = require('./db');
+const uuid = require('node-uuid');
 
-export default where =>
+module.exports = where =>
   db.insert(_.extend({}, where, {id: uuid.v4()}))
     .into('users')
     .returning('*')

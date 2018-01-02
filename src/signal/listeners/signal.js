@@ -1,6 +1,6 @@
-import sockets from '../utils/sockets';
+const sockets = require('../utils/sockets');
 
-export default ({socket, params: {id, data}}) => {
+module.exports = ({socket, params: {id, data}}) => {
   console.log(`${socket.id} signaled ${id}: ${data.type}`);
   const recipient = sockets.all[id];
   if (!recipient) {

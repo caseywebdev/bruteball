@@ -1,7 +1,7 @@
-import Ball from './ball';
-import HatBody from '../bodies/hat';
+const Ball = require('./ball');
+const HatBody = require('../bodies/hat');
 
-export default class {
+module.exports = class {
   constructor({game, id, x, y}) {
     this.game = game;
     this.id = id;
@@ -19,4 +19,4 @@ export default class {
   destroy() {
     this.game.world.destroyBody(this.body);
   }
-}
+};

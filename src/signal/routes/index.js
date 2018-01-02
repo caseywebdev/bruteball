@@ -1,13 +1,13 @@
-import {Router} from 'pave';
-import auth from './auth';
-import expireTokens from './expire-tokens';
-import notFound from './not-found';
-import signIn from './sign-in';
-import user from './user';
-import usersById from './users-by-id';
-import verify from './verify';
+const {Router} = require('pave');
+const auth = require('./auth');
+const expireTokens = require('./expire-tokens');
+const notFound = require('./not-found');
+const signIn = require('./sign-in');
+const user = require('./user');
+const usersById = require('./users-by-id');
+const verify = require('./verify');
 
-export default new Router({
+module.exports = new Router({
   maxQueryCost: 10000,
   routes: {
     ...auth,

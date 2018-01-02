@@ -1,9 +1,9 @@
-import config from '../config';
-import Qs from 'qs';
+const config = require('../config');
+const Qs = require('qs');
 
 const {url} = config.client;
 
-export default ({token}) => `
+module.exports = ({token}) => `
 [Here's your sign in link.](${url}/verify?${Qs.stringify({token})})
 
 If you're not trying to sign in to Bruteball, you can delete this message.

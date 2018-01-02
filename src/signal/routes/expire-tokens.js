@@ -1,11 +1,11 @@
-import _ from 'underscore';
-import config from '../../shared/config';
-import db from '../utils/db';
-import sockets from '../utils/sockets';
+const _ = require('underscore');
+const config = require('../../shared/config');
+const db = require('../utils/db');
+const sockets = require('../utils/sockets');
 
 const {errors: {authRequired}} = config;
 
-export default {
+module.exports = {
   'expireTokens!':
   ({store: {state: {socket: {userId: id}}}}) => {
     if (!id) throw authRequired;

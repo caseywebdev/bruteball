@@ -1,3 +1,3 @@
-export default function (n, precision) {
+module.exports = function (n, precision) {
   return Math.round(n * precision) / precision;
 }

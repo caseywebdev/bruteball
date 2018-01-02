@@ -1,15 +1,15 @@
-import config from '../config';
-import nodemailer from 'nodemailer';
-import {markdown} from 'nodemailer-markdown';
-import nodemailerSesTransport from 'nodemailer-ses-transport';
-import Promise from 'better-promise';
+const config = require('../config');
+const nodemailer = require('nodemailer');
+const {markdown} = require('nodemailer-markdown');
+const nodemailerSesTransport = require('nodemailer-ses-transport');
+const Promise = require('better-promise');
 
 const transport = nodemailer.createTransport(nodemailerSesTransport());
 transport.use('compile', markdown());
 
 const {enabled, from} = config.mail;
 
-export default options => {
+module.exports = options => {
   if (enabled) return transport.sendMail({...options, from});
 
   const {to, subject, markdown} = options;

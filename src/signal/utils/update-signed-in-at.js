@@ -1,7 +1,7 @@
-import _ from 'underscore';
-import db from './db';
+const _ = require('underscore');
+const db = require('./db');
 
-export default id =>
+module.exports = id =>
   db('users')
     .where({id})
     .update({signedInAt: new Date()})

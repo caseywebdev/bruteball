@@ -1,8 +1,8 @@
-import {Store} from 'pave';
-import auth from '../utils/auth';
-import Promise from 'better-promise';
-import config from '../config';
-import router from '../routes';
+const {Store} = require('pave');
+const auth = require('../utils/auth');
+const Promise = require('better-promise');
+const config = require('../config');
+const router = require('../routes');
 
 const {invalidKey} = config.errors;
 
@@ -15,7 +15,7 @@ const tryAuth = (socket, authToken) =>
       throw er;
     });
 
-export default ({socket, params: {query, authToken}}) =>
+module.exports = ({socket, params: {query, authToken}}) =>
   tryAuth(socket, authToken).then(authTokenDelta =>
     (new Store({state: {socket}, router})).run({query}).then(delta =>
       authTokenDelta ? [authTokenDelta, delta] : delta

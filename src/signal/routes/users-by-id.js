@@ -1,10 +1,10 @@
-import crypto from 'crypto';
-import db from '../utils/db';
-import _ from 'underscore';
+const crypto = require('crypto');
+const db = require('../utils/db');
+const _ = require('underscore');
 
 const hash = str => crypto.createHash('md5').update(str).digest('hex');
 
-export default {
+module.exports = {
   'usersById.$keys.$keys':
   ({1: ids, 2: fields}) =>
     db('users').select('*').whereIn('id', ids).then(users => {

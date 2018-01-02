@@ -17,7 +17,7 @@ const DEFAULTS = {
   timeout: 10000
 };
 
-export default class {
+module.exports = class {
   constructor({timeout} = DEFAULTS) {
     this.listeners = {};
     this.candidates = [];

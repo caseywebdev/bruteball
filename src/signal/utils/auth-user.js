@@ -1,7 +1,7 @@
-import _ from 'underscore';
-import sockets from '../utils/sockets';
+const _ = require('underscore');
+const sockets = require('../utils/sockets');
 
-export default (socket, userId) => {
+module.exports = (socket, userId) => {
   if (socket.userId === userId) return;
 
   console.log(`${socket.id} authorized as User ${userId}`);

@@ -1,14 +1,14 @@
-import _ from 'underscore';
-import Live from 'live-socket';
-import Promise from 'better-promise';
-import ws from 'uws';
+const _ = require('underscore');
+const Live = require('live-socket');
+const Promise = require('better-promise');
+const ws = require('uws');
 
-import close from '../listeners/close';
-import open from '../listeners/open';
-import pave from '../listeners/pave';
-import signal from '../listeners/signal';
-import sub from '../listeners/sub';
-import unsub from '../listeners/unsub';
+const close = require('../listeners/close');
+const open = require('../listeners/open');
+const pave = require('../listeners/pave');
+const signal = require('../listeners/signal');
+const sub = require('../listeners/sub');
+const unsub = require('../listeners/unsub');
 
 const LISTENERS = _.map({
   close,

@@ -1,13 +1,13 @@
-import authHost from './auth-host';
-import authUser from './auth-user';
-import Promise from 'better-promise';
-import config from '../config';
-import db from './db';
-import verify from '../../shared/utils/verify';
+const authHost = require('./auth-host');
+const authUser = require('./auth-user');
+const Promise = require('better-promise');
+const config = require('../config');
+const db = require('./db');
+const verify = require('../../shared/utils/verify');
 
 const {key, errors: {invalidKey}} = config;
 
-export default (socket, token, {host: {name} = {}} = {}) => {
+module.exports = (socket, token, {host: {name} = {}} = {}) => {
   if (socket.userId || socket.host) return Promise.resolve();
 
   const data = verify(key, 'auth', token);

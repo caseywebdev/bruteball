@@ -1,1 +1,1 @@
-export default ({id, name}) => name || `User ${id}`;
+module.exports = ({id, name}) => name || `User ${id}`;

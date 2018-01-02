@@ -1,8 +1,8 @@
-import shared from '../shared/config';
+const shared = require('../shared/config');
 
 const {env} = process;
 
-export default {
+module.exports = {
   ...shared,
   key: env.KEY,
   name: env.NAME,

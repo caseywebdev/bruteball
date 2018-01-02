@@ -10,9 +10,14 @@ services:
       - pg-data:/var/lib/postgresql/data
 
   client: &client
-    image: coderiety/bruteball:master
+    # image: coderiety/bruteball:master
+    image: 8f188894877c
+    depends_on:
+      - signal
     environment:
       WATCH: 1
+    ports:
+      - 80:80
     volumes:
       - ./.eslintrc:/code/.eslintrc
       - ./.stylelintrc:/code/.stylelintrc
@@ -22,7 +27,7 @@ services:
       - ./src:/code/src
 
   signal:
-    <<: *shared
+    <<: *client
     environment:
       COMMAND: signal
       WATCH: 1

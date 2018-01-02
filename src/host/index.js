@@ -1,5 +1,5 @@
 import './utils/live';
-import game from './initializers/game';
-import peers from './initializers/peers';
+const game = require('./initializers/game');
+const peers = require('./initializers/peers');
 
-export default {game, peers};
+module.exports = {game, peers};

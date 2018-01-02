@@ -1,5 +1,5 @@
-import variance from 'shared/utils/variance';
+const variance = require('shared/utils/variance');
 
-export default function (ns) {
+module.exports = function (ns) {
   return Math.sqrt(variance(ns));
 }

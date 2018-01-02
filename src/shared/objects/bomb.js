@@ -1,18 +1,18 @@
-import _ from 'underscore';
-import {Vec2} from 'matter-js';
-import Ball from './ball';
-import BombBody from '../bodies/bomb';
-import config from '../config';
+const _ = require('underscore');
+const {Vector} = require('matter-js');
+const Ball = require('./ball');
+const BombBody = require('../bodies/bomb');
+const config = require('../config');
 
 const BLAST_RADIUS = 5;
 const POWER = 5;
 
-export default class {
+module.exports = class {
   constructor({game, id, x, y}) {
     this.game = game;
     this.id = id;
     this.body = BombBody({game, x, y});
-    this.game.world.on('pre-step', this.handlePreStep);
+    // this.game.world.on('pre-step', this.handlePreStep);
   }
 
   isUsed() {
@@ -35,7 +35,7 @@ export default class {
 
       const body = object.body;
       const position = body.getPosition();
-      const delta = new Vec2(position.x - bombX, position.y - bombY);
+      const delta = Vector.create(position.x - bombX, position.y - bombY);
       const distance = delta.normalize();
       if (distance > BLAST_RADIUS) return;
 
@@ -53,4 +53,4 @@ export default class {
     this.game.world.off('pre-step', this.handlePreStep);
     this.game.world.destroyBody(this.body);
   }
-}
+};

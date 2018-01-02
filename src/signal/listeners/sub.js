@@ -1,3 +1,3 @@
-import {add} from '../utils/subs';
+const {add} = require('../utils/subs');
 
-export default ({socket, params: event}) => add(socket, event);
+module.exports = ({socket, params: event}) => add(socket, event);

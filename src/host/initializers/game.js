@@ -1,3 +1,3 @@
-import Game from '../../shared/objects/game';
+const Game = require('../../shared/objects/game');
 
-export default new Game();
+module.exports = new Game();

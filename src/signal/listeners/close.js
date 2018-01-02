@@ -1,8 +1,8 @@
-import _ from 'underscore';
-import {remove, trigger} from '../utils/subs';
-import sockets from '../utils/sockets';
+const _ = require('underscore');
+const {remove, trigger} = require('../utils/subs');
+const sockets = require('../utils/sockets');
 
-export default ({socket}) => {
+module.exports = ({socket}) => {
   remove(socket);
   if (socket.host) {
     delete sockets.hosts[socket.host.id];

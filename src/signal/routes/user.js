@@ -1,13 +1,13 @@
-import _str from 'underscore.string';
-import config from '../../shared/config';
-import db from '../utils/db';
+const _str = require('underscore.string');
+const config = require('../../shared/config');
+const db = require('../utils/db');
 
 const {errors: {authRequired}} = config;
 
 const MAX = config.maxUserNameLength;
 const INVALID_NAME = new Error(`Name must be between 1 and ${MAX} characters`);
 
-export default {
+module.exports = {
   user:
   ({store: {state: {socket: {userId}}}}) =>
     ({user: {$set: userId ? {$ref: ['usersById', userId]} : null}}),

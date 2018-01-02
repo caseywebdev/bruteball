@@ -1,2 +1,2 @@
-import './initializers/migrate';
-import './initializers/live';
+require('./initializers/migrate');
+require('./initializers/live');

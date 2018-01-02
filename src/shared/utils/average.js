@@ -1,3 +1,3 @@
 const sum = require('./sum');
 
-export default ns => sum(ns) / ns.length;
+module.exports = ns => sum(ns) / ns.length;

@@ -1,7 +1,7 @@
-import {trigger} from '../utils/subs';
-import sockets from '../utils/sockets';
+const {trigger} = require('../utils/subs');
+const sockets = require('../utils/sockets');
 
-export default (socket, ownerId, name, key) => {
+module.exports = (socket, ownerId, name, key) => {
   const id = `${ownerId}-${name}`;
   if (socket.host && socket.host.name === id) return;
   if (sockets.hosts[id]) throw new Error(`Host ${id} is already online`);

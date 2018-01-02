@@ -9,5 +9,6 @@ export default {
   },
   livereload: {
     url: env.LIVERELOAD_URL
-  }
+  },
+  watch: env.WATCH === '1'
 };
