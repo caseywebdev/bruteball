@@ -1,48 +1,48 @@
-const {Body, Events, Vector} = require('matter-js');
+const {Vec2} = require('planck-js');
 const BallBody = require('../bodies/ball');
 const config = require('../config');
 
-const {accelerationScalar, fixedTimeStep, maxSpeed} = config.game;
+const {accelerationScalar, fixedTimeStep} = config.game;
 
-module.exports = class {
+export default class {
   constructor({game, id, user, x, y}) {
     this.game = game;
     this.id = id;
     this.user = user;
     this.body = BallBody({game, x, y});
-    this.acceleration = Vector.create(0, 0);
-    Events.on(this.game.engine, 'beforeUpdate', this.handlePreStep);
+    this.acceleration = new Vec2(0, 0);
+    this.game.world.on('pre-step', this.handlePreStep);
   }
 
   handlePreStep = () => {
-    const {
-      acceleration: {x: ax, y: ay},
-      body,
-      body: {velocity: {x: vx, y: vy}}
-    } = this;
-    if (!ax && !ay) return;
+    const {acceleration, body} = this;
+    if (!acceleration.length()) return;
 
-    let velocity = Vector.create(
-      vx + (ax * accelerationScalar * fixedTimeStep),
-      vy + (ay * accelerationScalar * fixedTimeStep)
+    const velocity = body.getLinearVelocity();
+    const speed = velocity.length();
+    velocity.set(
+      velocity.x + (acceleration.x * accelerationScalar * fixedTimeStep),
+      velocity.y + (acceleration.y * accelerationScalar * fixedTimeStep)
     );
-    if (Vector.magnitude(velocity) > maxSpeed) {
-      velocity = Vector.mult(Vector.normalise(velocity), maxSpeed);
+    const maxSpeed = Math.max(config.game.maxSpeed, speed);
+    if (velocity.length() > maxSpeed) {
+      velocity.normalize();
+      velocity.set(velocity.x * maxSpeed, velocity.y * maxSpeed);
     }
-    Body.setVelocity(body, velocity);
+    body.setLinearVelocity(velocity);
   }
 
   setAcceleration({x, y}) {
-    let v = Vector.create(x, y);
-    if (Vector.magnitude(v) > 1) v = Vector.normalise(v);
-    this.acceleration = v;
+    const {acceleration} = this;
+    acceleration.set(x, y);
+    if (acceleration.length() > 1) acceleration.normalize();
   }
 
   destroy() {
-    Events.off(this.game.engine, 'beforeUpdate', this.handlePreStep);
+    this.game.world.off('pre-step', this.handlePreStep);
     this.game.world.destroyBody(this.body);
   }
-};
+}
 
 // export var applyFrame = function (game, u, step) {
 //   if (step !== game.step) return;

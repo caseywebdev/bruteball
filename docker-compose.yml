@@ -10,8 +10,7 @@ services:
       - pg-data:/var/lib/postgresql/data
 
   client: &client
-    # image: coderiety/bruteball:master
-    image: 081168c4c5db
+    image: coderiety/bruteball:master
     depends_on:
       - signal
     environment:

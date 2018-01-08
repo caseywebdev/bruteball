@@ -1,5 +1,5 @@
 const _ = require('underscore');
-const {Vector} = require('matter-js');
+const {Vec2} = require('planck-js');
 const Qs = require('qs');
 
 const {env} = typeof window === 'undefined' ? process : window;
@@ -14,7 +14,7 @@ module.exports = {
     boostWait: 500,
     fixedTimeStep: 1 / 60,
     hatRadius: 0.375,
-    hiddenPosition: Vector.create(-1, -1),
+    hiddenPosition: new Vec2(-1, -1),
     linearDamping: 0.5,
     maxSpeed: 7.5,
     positionIterations: 10,

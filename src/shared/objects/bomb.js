@@ -1,5 +1,5 @@
 const _ = require('underscore');
-const {Vector} = require('matter-js');
+const {Vec2} = require('planck-js');
 const Ball = require('./ball');
 const BombBody = require('../bodies/bomb');
 const config = require('../config');
@@ -7,12 +7,12 @@ const config = require('../config');
 const BLAST_RADIUS = 5;
 const POWER = 5;
 
-module.exports = class {
+export default class {
   constructor({game, id, x, y}) {
     this.game = game;
     this.id = id;
     this.body = BombBody({game, x, y});
-    // this.game.world.on('pre-step', this.handlePreStep);
+    this.game.world.on('pre-step', this.handlePreStep);
   }
 
   isUsed() {
@@ -35,7 +35,7 @@ module.exports = class {
 
       const body = object.body;
       const position = body.getPosition();
-      const delta = Vector.create(position.x - bombX, position.y - bombY);
+      const delta = new Vec2(position.x - bombX, position.y - bombY);
       const distance = delta.normalize();
       if (distance > BLAST_RADIUS) return;
 
@@ -53,4 +53,4 @@ module.exports = class {
     this.game.world.off('pre-step', this.handlePreStep);
     this.game.world.destroyBody(this.body);
   }
-};
+}

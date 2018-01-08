@@ -1,7 +1,15 @@
-const {Bodies, World} = require('matter-js');
+const _ = require('underscore');
+const {Polygon, Vec2} = require('planck-js');
 
-module.exports = ({game, points, x, y}) => {
-  const body = Bodies.fromVertices(x, y, points, {isStatic: true});
-  World.addBody(game.world, body);
+const FIXTURE_DEF = {
+  friction: 0,
+  restitution: 0.2
+};
+
+export default ({game, points, x, y}) => {
+  const shape = new Polygon(_.map(points, ({x, y}) => new Vec2(x, y)));
+  const body = game.world.createBody();
+  body.setPosition(new Vec2(x, y));
+  body.createFixture(shape, FIXTURE_DEF);
   return body;
 };

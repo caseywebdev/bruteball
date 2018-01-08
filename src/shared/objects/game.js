@@ -1,5 +1,5 @@
 const _ = require('underscore');
-const {Engine, World} = require('matter-js');
+const {World} = require('planck-js');
 const Bomb = require('./bomb');
 const Boost = require('./boost');
 const config = require('../config');
@@ -18,9 +18,9 @@ const createMap = game => {
     y: 0,
     points: [
       {x: 0, y: 0},
-      {x: 0, y: MAP_SIZE},
+      {x: 1, y: 0},
       {x: 1, y: MAP_SIZE},
-      {x: 1, y: 0}
+      {x: 0, y: MAP_SIZE}
     ]
   }, {
     klass: Wall,
@@ -28,9 +28,9 @@ const createMap = game => {
     y: 0,
     points: [
       {x: 0, y: 0},
-      {x: 0, y: MAP_SIZE},
+      {x: 1, y: 0},
       {x: 1, y: MAP_SIZE},
-      {x: 1, y: 0}
+      {x: 0, y: MAP_SIZE}
     ]
   }, {
     klass: Wall,
@@ -38,9 +38,9 @@ const createMap = game => {
     y: 0,
     points: [
       {x: 0, y: 0},
-      {x: 0, y: 1},
+      {x: MAP_SIZE - 2, y: 0},
       {x: MAP_SIZE - 2, y: 1},
-      {x: MAP_SIZE - 2, y: 0}
+      {x: 0, y: 1}
     ]
   }, {
     klass: Wall,
@@ -48,9 +48,9 @@ const createMap = game => {
     y: MAP_SIZE - 1,
     points: [
       {x: 0, y: 0},
-      {x: 0, y: 1},
+      {x: MAP_SIZE - 2, y: 0},
       {x: MAP_SIZE - 2, y: 1},
-      {x: MAP_SIZE - 2, y: 0}
+      {x: 0, y: 1}
     ]
   },
     {klass: Wall, x: 4, y: 7},
@@ -82,27 +82,22 @@ const createMap = game => {
   ], ({klass, ...options}) => game.createObject(klass, options));
 };
 
-module.exports = class {
+export default class {
   stepCount = 0;
   time = 0;
   idCounter = 0;
   objects = [];
-  world = World.create({gravity: {scale: 0}});
-  engine = Engine.create({
-    positionIterations,
-    velocityIterations,
-    world: this.world
-  });
+  world = new World();
 
   constructor() {
     this.createScene();
     createMap(this);
-    // this.world.on('begin-contact', ({m_fixtureA: a, m_fixtureB: b}) => {
-    //   a = _.find(this.objects, {body: a.m_body});
-    //   b = _.find(this.objects, {body: b.m_body});
-    //   if (a.handleContact) a.handleContact(b);
-    //   if (b.handleContact) b.handleContact(a);
-    // });
+    this.world.on('begin-contact', ({m_fixtureA: a, m_fixtureB: b}) => {
+      a = _.find(this.objects, {body: a.m_body});
+      b = _.find(this.objects, {body: b.m_body});
+      if (a.handleContact) a.handleContact(b);
+      if (b.handleContact) b.handleContact(a);
+    });
     this.start();
   }
 
@@ -124,7 +119,9 @@ module.exports = class {
     }
 
     ++this.stepCount;
-    Engine.update(this.engine, fixedTimeStep);
+    this.world.publish('pre-step');
+    this.world.step(fixedTimeStep, velocityIterations, positionIterations);
+    this.world.publish('post-step');
     this.step();
   }
 
@@ -149,4 +146,4 @@ module.exports = class {
     this.objects = _.without(this.objects, object);
     return object;
   }
-};
+}
