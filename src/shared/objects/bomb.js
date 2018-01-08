@@ -7,7 +7,7 @@ const config = require('../config');
 const BLAST_RADIUS = 5;
 const POWER = 5;
 
-export default class {
+module.exports = class {
   constructor({game, id, x, y}) {
     this.game = game;
     this.id = id;
@@ -53,4 +53,4 @@ export default class {
     this.game.world.off('pre-step', this.handlePreStep);
     this.game.world.destroyBody(this.body);
   }
-}
+};

@@ -82,7 +82,7 @@ const createMap = game => {
   ], ({klass, ...options}) => game.createObject(klass, options));
 };
 
-export default class {
+module.exports = class {
   stepCount = 0;
   time = 0;
   idCounter = 0;
@@ -146,4 +146,4 @@ export default class {
     this.objects = _.without(this.objects, object);
     return object;
   }
-}
+};

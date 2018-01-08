@@ -8,7 +8,7 @@ const FIXTURE_DEF = {
   isSensor: true
 };
 
-export default ({game, x, y}) => {
+module.exports = ({game, x, y}) => {
   const body = game.world.createBody();
   body.setPosition(new Vec2(x, y));
   body.createFixture(FIXTURE_DEF);

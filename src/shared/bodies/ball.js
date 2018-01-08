@@ -16,7 +16,7 @@ const FIXTURE_DEF = {
   friction: 0
 };
 
-export default ({game, x, y}) => {
+module.exports = ({game, x, y}) => {
   const body = game.world.createBody(BODY_DEF);
   body.setPosition(new Vec2(x, y));
   body.createFixture(FIXTURE_DEF);

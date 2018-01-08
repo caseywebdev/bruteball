@@ -6,7 +6,7 @@ const FIXTURE_DEF = {
   restitution: 0.2
 };
 
-export default ({game, points, x, y}) => {
+module.exports = ({game, points, x, y}) => {
   const shape = new Polygon(_.map(points, ({x, y}) => new Vec2(x, y)));
   const body = game.world.createBody();
   body.setPosition(new Vec2(x, y));

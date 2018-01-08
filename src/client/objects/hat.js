@@ -12,7 +12,7 @@ export default class extends Hat {
   updateMesh() {
     const {mesh} = this;
     const {body} = this.carrier || this;
-    const position = body.position;
+    const position = body.getPosition();
     mesh.position.x = position.x;
     mesh.position.y = position.y;
   }

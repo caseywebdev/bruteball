@@ -4,7 +4,7 @@ const config = require('../config');
 
 const {accelerationScalar, fixedTimeStep} = config.game;
 
-export default class {
+module.exports = class {
   constructor({game, id, user, x, y}) {
     this.game = game;
     this.id = id;
@@ -16,8 +16,6 @@ export default class {
 
   handlePreStep = () => {
     const {acceleration, body} = this;
-    if (!acceleration.length()) return;
-
     const velocity = body.getLinearVelocity();
     const speed = velocity.length();
     velocity.set(
@@ -42,7 +40,7 @@ export default class {
     this.game.world.off('pre-step', this.handlePreStep);
     this.game.world.destroyBody(this.body);
   }
-}
+};
 
 // export var applyFrame = function (game, u, step) {
 //   if (step !== game.step) return;

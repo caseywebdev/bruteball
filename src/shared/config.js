@@ -6,7 +6,7 @@ const {env} = typeof window === 'undefined' ? process : window;
 
 module.exports = {
   game: {
-    accelerationScalar: 0.2,
+    accelerationScalar: 5,
     ballRadius: 0.49,
     bombRadius: 0.4,
     bombWait: 500,

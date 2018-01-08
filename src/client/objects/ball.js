@@ -14,7 +14,7 @@ export default class extends Ball {
   }
 
   updateMesh() {
-    const position = this.body.position;
+    const position = this.body.getPosition();
     const {mesh} = this;
     const delta = mesh.position.clone();
     mesh.position.x = position.x;
