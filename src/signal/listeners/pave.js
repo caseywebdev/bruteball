@@ -1,6 +1,5 @@
 const {Store} = require('pave');
 const auth = require('../utils/auth');
-const Promise = require('better-promise');
 const config = require('../config');
 const router = require('../routes');
 

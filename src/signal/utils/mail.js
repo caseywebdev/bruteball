@@ -2,7 +2,6 @@ const config = require('../config');
 const nodemailer = require('nodemailer');
 const {markdown} = require('nodemailer-markdown');
 const nodemailerSesTransport = require('nodemailer-ses-transport');
-const Promise = require('better-promise');
 
 const transport = nodemailer.createTransport(nodemailerSesTransport());
 transport.use('compile', markdown());

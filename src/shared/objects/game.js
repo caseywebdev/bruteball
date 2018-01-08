@@ -18,9 +18,9 @@ const createMap = game => {
     y: 0,
     points: [
       {x: 0, y: 0},
-      {x: 1, y: 0},
+      {x: 0, y: MAP_SIZE},
       {x: 1, y: MAP_SIZE},
-      {x: 0, y: MAP_SIZE}
+      {x: 1, y: 0}
     ]
   }, {
     klass: Wall,
@@ -28,9 +28,9 @@ const createMap = game => {
     y: 0,
     points: [
       {x: 0, y: 0},
-      {x: 1, y: 0},
+      {x: 0, y: MAP_SIZE},
       {x: 1, y: MAP_SIZE},
-      {x: 0, y: MAP_SIZE}
+      {x: 1, y: 0}
     ]
   }, {
     klass: Wall,
@@ -38,9 +38,9 @@ const createMap = game => {
     y: 0,
     points: [
       {x: 0, y: 0},
-      {x: MAP_SIZE - 2, y: 0},
+      {x: 0, y: 1},
       {x: MAP_SIZE - 2, y: 1},
-      {x: 0, y: 1}
+      {x: MAP_SIZE - 2, y: 0}
     ]
   }, {
     klass: Wall,
@@ -48,9 +48,9 @@ const createMap = game => {
     y: MAP_SIZE - 1,
     points: [
       {x: 0, y: 0},
-      {x: MAP_SIZE - 2, y: 0},
+      {x: 0, y: 1},
       {x: MAP_SIZE - 2, y: 1},
-      {x: 0, y: 1}
+      {x: MAP_SIZE - 2, y: 0}
     ]
   },
     {klass: Wall, x: 4, y: 7},
@@ -87,7 +87,7 @@ module.exports = class {
   time = 0;
   idCounter = 0;
   objects = [];
-  world = World.create();
+  world = World.create({gravity: {scale: 0}});
   engine = Engine.create({
     positionIterations,
     velocityIterations,

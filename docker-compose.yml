@@ -11,7 +11,7 @@ services:
 
   client: &client
     # image: coderiety/bruteball:master
-    image: 8f188894877c
+    image: 081168c4c5db
     depends_on:
       - signal
     environment:

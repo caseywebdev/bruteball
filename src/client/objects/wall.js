@@ -9,6 +9,14 @@ export default class extends Wall {
     this.game.scene.add(this.mesh);
   }
 
+  updateMesh() {
+    const {angle, position} = this.body;
+    const {mesh} = this;
+    mesh.position.x = position.x;
+    mesh.position.y = position.y;
+    mesh.rotation.z = angle;
+  }
+
   destroy() {
     super.destroy();
     this.game.scene.remove(this.mesh);

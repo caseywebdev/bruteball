@@ -1,6 +1,5 @@
 const _ = require('underscore');
 const Live = require('live-socket');
-const Promise = require('better-promise');
 const ws = require('uws');
 
 const close = require('../listeners/close');
@@ -34,3 +33,5 @@ wss.on('connection', socket => {
   _.invoke(LISTENERS, 'call', null, socket = new Live({socket}));
   socket.trigger('open');
 });
+
+module.exports = async () => {};

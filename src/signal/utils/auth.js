@@ -1,6 +1,5 @@
 const authHost = require('./auth-host');
 const authUser = require('./auth-user');
-const Promise = require('better-promise');
 const config = require('../config');
 const db = require('./db');
 const verify = require('../../shared/utils/verify');

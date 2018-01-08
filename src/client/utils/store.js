@@ -3,10 +3,12 @@ import {Store, Router} from 'pave';
 import config from '../config';
 import disk from './disk';
 import live from './live';
-import Promise from 'better-promise';
 import now from '../../shared/utils/now';
 
-const send = Promise.promisify(::live.send);
+const send = (...args) =>
+  new Promise((resolve, reject) =>
+    live.send(...args, (er, val) => er ? reject(er) : resolve(val))
+  );
 
 const getMedian = ns => _.sortBy(ns)[Math.floor(ns.length / 2)];
 

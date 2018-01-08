@@ -5,7 +5,7 @@ const BOTTOM_LEFT = {x: 0, y: 0};
 const BOTTOM_RIGHT = {x: 1, y: 0};
 const TOP_RIGHT = {x: 1, y: 1};
 const TOP_LEFT = {x: 0, y: 1};
-const SQUARE = [BOTTOM_LEFT, BOTTOM_RIGHT, TOP_RIGHT, TOP_LEFT];
+const SQUARE = [BOTTOM_LEFT, TOP_LEFT, TOP_RIGHT, BOTTOM_RIGHT];
 
 module.exports = class {
   static SQUARE = SQUARE;
